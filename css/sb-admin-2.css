@@ -1496,7 +1496,7 @@ pre code {
 }
 
 .table thead th {
-  vertical-align: bottom;
+  vertical-align: middle;
   border-bottom: 2px solid #e3e6f0;
 }
 
@@ -10935,6 +10935,7 @@ form.user .btn-user {
   color: #fff;
   background-color: #3b5998;
   border-color: #fff;
+  border-radius: 0.3em;
 }
 
 .btn-facebook:hover {
@@ -10945,6 +10946,7 @@ form.user .btn-user {
 
 .btn-facebook:focus, .btn-facebook.focus {
   color: #fff;
+
   background-color: #30497c;
   border-color: #e6e6e6;
   box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.5);
