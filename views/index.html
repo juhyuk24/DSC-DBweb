@@ -19,6 +19,8 @@
 
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="StyleSheet" href="../css/dtree.css" type="text/css" />
+    <script type="text/javascript" src="../js/dtree.js"></script>
 
 </head>
 
@@ -28,7 +30,7 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-light sidebar sidebar-divider accordion border-right" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -38,86 +40,55 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            <!-- Nav Item - Pages Collapse Menu - Resource -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResource"
-                    aria-expanded="true" aria-controls="collapseResource">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>자원 모니터링</span>
-                </a>
-                <div id="collapseResource" class="collapse" aria-labelledby="headingResource" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="resources/resource-a.html">A Database</a>
-                        <a class="collapse-item" href="resources/resource-b.html">B Database</a>
-                        <a class="collapse-item" href="resources/resource-c.html">C Database</a>
-                        <a class="collapse-item" href="resources/resource-d.html">D Database</a>
-                    </div>
-                </div>
-            </li>
+            <div class="dtree">
 
-            <!-- Nav Item - Pages Collapse Menu - System -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSystem"
-                   aria-expanded="true" aria-controls="collapseSystem">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>시스템 모니터링</span>
-                </a>
-                <div id="collapseSystem" class="collapse" aria-labelledby="headingSystem" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="systems/system-a.html">A Database</a>
-                        <a class="collapse-item" href="systems/system-b.html">B Database</a>
-                        <a class="collapse-item" href="systems/system-c.html">C Database</a>
-                        <a class="collapse-item" href="systems/system-d.html">D Database</a>
-                    </div>
-                </div>
-            </li>
+                <p><a href="javascript: d.openAll();">open all</a> | <a href="javascript: d.closeAll();">close all</a></p>
 
-            <!-- Nav Item - Pages Collapse Menu - Site -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSite"
-                   aria-expanded="true" aria-controls="collapseSite">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>현장 모니터링</span>
-                </a>
-                <div id="collapseSite" class="collapse" aria-labelledby="headingSite" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="sites/site-a.html">A Database</a>
-                        <a class="collapse-item" href="sites/site-b.html">B Database</a>
-                        <a class="collapse-item" href="sites/site-c.html">C Database</a>
-                        <a class="collapse-item" href="sites/site-d.html">D Database</a>
-                    </div>
-                </div>
-            </li>
+                <script type="text/javascript">
+                    d = new dTree('d');
 
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="table-db.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>DB 테이블</span></a>
-            </li>
+                    d.add(0,-1,'My example tree');
+                    d.add(1,0,'Node 1');
+                    d.add(2,0,'Node 2','index.html');
+                    d.add(3,1,'Node 1.1');
+                    d.add(4,0,'Node 3','index.html');
+                    d.add(5,3,'Node 1.1.1','index.html');
+                    d.add(6,5,'Node 1.1.1.1','index.html');
+                    d.add(7,0,'Node 4','index.html');
+                    d.add(8,1,'Node 1.2','index.html');
+                    d.add(9,0,'My Pictures','index.html','Pictures I\'ve taken over the years','','','../img/imgfolder.gif');
+                    d.add(10,9,'The trip to Iceland','index.html','Pictures of Gullfoss and Geysir');
+                    d.add(11,9,'Mom\'s birthday','index.html');
+                    d.add(12,0,'Recycle Bin','index.html','','','../img/trash.gif');
 
-            <!-- Nav Item - Authority -->
-            <li class="nav-item">
-                <a class="nav-link" href="authority.html">
-                    <i class="fas fa-fw fa-users"></i>
-                    <span>권한 관리</span></a>
-            </li>
+                    document.write(d);
 
-            <!-- Nav Item - History -->
-            <li class="nav-item">
-                <a class="nav-link" href="history.html">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>히스토리 관리</span></a>
-            </li>
+                </script>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
 
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 large">사용자 명</span>
+                    <img class="img-profile rounded-circle"
+                         src="../img/undraw_profile.svg">
+                </a>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                     aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="#">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        사용자 정보 조회
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        로그아웃
+                    </a>
+                </div>
+            </li>
         </ul>
         <!-- End of Sidebar -->
 
@@ -127,69 +98,6 @@
 
             <!-- Main Content -->
             <div id="content">
-
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 large">사용자 명</span>
-                                <img class="img-profile rounded-circle"
-                                    src="../img/undraw_profile.svg">
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    사용자 정보 조회
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    로그아웃
-                                </a>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </nav>
-                <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">

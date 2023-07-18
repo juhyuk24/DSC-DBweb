@@ -10149,7 +10149,8 @@ a:focus {
 
 .sidebar .nav-item .nav-link,
 .topbar .nav-item .nav-link {
-  position: relative;
+  position: fixed;
+  bottom: 1px;
 }
 
 .sidebar .nav-item .nav-link .badge-counter,
