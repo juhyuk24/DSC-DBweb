@@ -63,48 +63,17 @@
                 </div>
             </li>
 
-            <!-- tree view -->
+            <!-- Tree View -->
             <div class="dtree">
 
-                <p><a href="javascript: d.openAll();">open all</a> | <a href="javascript: d.closeAll();">close all</a></p>
+                <!-- All tree menu fold / unfold -->
+                <p><a href="javascript: d.openAll();">모두 펼치기</a> | <a href="javascript: d.closeAll();">모두 접기</a></p>
 
-                <script type="text/javascript">
-                    d = new dTree('d');
-
-                    d.add(0,-1,'My example tree');
-                    d.add(1,0,'Node 1');
-                    d.add(2,0,'Node 2','index.html');
-                    d.add(3,1,'Node 1.1');
-                    d.add(4,0,'Node 3','index.html');
-                    d.add(5,3,'Node 1.1.1','index.html');
-                    d.add(6,5,'Node 1.1.1.1','index.html');
-                    d.add(7,0,'Node 4','index.html');
-                    d.add(8,1,'Node 1.2','index.html');
-                    d.add(9,0,'My Pictures','index.html','Pictures I\'ve taken over the years');
-                    d.add(10,9,'The trip to Iceland','index.html','Pictures of Gullfoss and Geysir');
-                    d.add(11,9,'Mom\'s birthday','index.html');
-                    d.add(12,0,'Recycle Bin','index.html','','','fa fa-trash');
-                    d.add(13,-1,'database');
-                    d.add(10,-1,'My example tree');
-                    d.add(11,0,'Node 1');
-                    d.add(12,0,'Node 2','index.html');
-                    d.add(13,1,'Node 1.1');
-                    d.add(14,0,'Node 3','index.html');
-                    d.add(15,3,'Node 1.1.1','index.html');
-                    d.add(16,5,'Node 1.1.1.1','index.html');
-                    d.add(17,0,'Node 4','index.html');
-                    d.add(18,1,'Node 1.2','index.html');
-                    d.add(19,0,'My Pictures','index.html','Pictures I\'ve taken over the years');
-                    d.add(110,9,'The trip to Iceland','index.html','Pictures of Gullfoss and Geysir');
-                    d.add(111,9,'Mom\'s birthday','index.html');
-                    d.add(112,0,'Recycle Bin','index.html','','','fa fa-trash');
-                    d.add(113,-1,'database');
-
-                    document.write(d);
-
-                </script>
+                <!-- Tree Menu -->
+                <div id="dTreeview"></div>
 
             </div>
+            <!-- End of Tree View -->
 
         </ul>
         <!-- End of Sidebar -->

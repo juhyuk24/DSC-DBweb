@@ -15,12 +15,3 @@
     cursor: ew-resize;
     width: 5px;
 }
-.content-wrapper {
-    /* left가 차지하고 남은 공간에 따라 유동적으로 변화 */
-    flex: 1;
-
-    /* 중앙 정렬 */
-    align-items: center;
-    display: flex;
-    justify-content: center;
-}
