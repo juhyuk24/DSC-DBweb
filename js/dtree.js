@@ -84,13 +84,13 @@ function dTree(objName) {
 
 	this.icon = {
 
-		root				: '../img/base.gif',
+		root				: 'fa fa-database',
 
-		folder			: '../img/folder.gif',
+		folder			: 'fa fa-folder',
 
-		folderOpen	: '../img/folderopen.gif',
+		folderOpen	: 'fa fa-folder-open',
 
-		node				: '../img/page.gif',
+		node				: 'fa fa-file',
 
 		empty				: '../img/empty.gif',
 
@@ -256,7 +256,7 @@ dTree.prototype.node = function(node, nodeId) {
 
 		}
 
-		str += '<img id="i' + this.obj + nodeId + '" src="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" />';
+		str += '<p id="i' + this.obj + nodeId + '" class="' + ((node._io) ? node.iconOpen : node.icon) + '" />';
 
 	}
 
@@ -542,7 +542,7 @@ dTree.prototype.nodeStatus = function(status, id, bottom) {
 
 		eIcon	= document.getElementById('i' + this.obj + id);
 
-		eIcon.src = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
+		eIcon.className = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
 
 	}
 
