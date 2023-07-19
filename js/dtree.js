@@ -256,7 +256,7 @@ dTree.prototype.node = function(node, nodeId) {
 
 		}
 
-		str += '<p id="i' + this.obj + nodeId + '" class="' + ((node._io) ? node.iconOpen : node.icon) + '" />';
+		str += '<a id="i' + this.obj + nodeId + '" class="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" />';
 
 	}
 
@@ -542,7 +542,7 @@ dTree.prototype.nodeStatus = function(status, id, bottom) {
 
 		eIcon	= document.getElementById('i' + this.obj + id);
 
-		eIcon.className = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
+		eIcon.src = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
 
 	}
 
