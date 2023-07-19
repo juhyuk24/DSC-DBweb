@@ -10149,8 +10149,6 @@ a:focus {
 
 .sidebar .nav-item .nav-link,
 .topbar .nav-item .nav-link {
-  position: fixed;
-  bottom: 1px;
 }
 
 .sidebar .nav-item .nav-link .badge-counter,
@@ -10510,7 +10508,7 @@ a:focus {
 
 @media (min-width: 768px) {
   .sidebar {
-    width: 14rem !important;
+    width: 380px;
   }
   .sidebar .nav-item .collapse {
     position: relative;

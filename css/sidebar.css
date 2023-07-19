@@ -1,4 +1,26 @@
+.navbar-nav {
+    overflow: auto;
+}
+.sidebar-brand {
+    max-width: 168px;
+    justify-content: flex-start;
+    margin-left: 10px;
+}
 .sidebar-logo {
     object-fit: cover;
-    width: 103.99px;
+    overflow: auto;
+}
+#resize-handle {
+    background-color: #cbd5e0;
+    cursor: ew-resize;
+    width: 5px;
+}
+.content-wrapper {
+    /* left가 차지하고 남은 공간에 따라 유동적으로 변화 */
+    flex: 1;
+
+    /* 중앙 정렬 */
+    align-items: center;
+    display: flex;
+    justify-content: center;
 }
