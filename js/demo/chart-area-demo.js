@@ -116,3 +116,19 @@ var myLineChart = new Chart(ctx, {
     }
   }
 });
+
+setInterval(() => {
+  const newData = Math.floor(Math.random() * 100);
+  const dataValues5 = myLineChart.data.datasets.data;
+  const labels5 = myLineChart.data.labels;
+
+  dataValues5.shift();
+  labels5.shift();
+
+  dataValues5.push(newData);
+  labels5.push(labels5[labels5.length - 1] + 1);
+
+  myLineChart.data.labels = labels5;
+  myLineChart.data.datasets[0].data = dataValues5;
+  myLineChart.update();
+}, 1000);
