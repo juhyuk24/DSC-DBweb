@@ -10508,7 +10508,7 @@ a:focus {
 
 @media (min-width: 768px) {
   .sidebar {
-    width: 380px;
+    width: 220px;
   }
   .sidebar .nav-item .collapse {
     position: relative;

@@ -37,7 +37,7 @@ d.add(1000, 100, 'DM 데이터베이스');
 d.add(1001, 1000, 'tablespace별 사용량', 'index.html');
 d.add(1002, 1000, 'table별 사용량', 'index.html');
 d.add(1003, 1000, 'index별 사용량', 'index.html');
-d.add(1004, 1000, '접속자 정보', 'index.html');
+d.add(1004, 1000, '접속자 정보', 'table.html');
 d.add(1005, 1000, 'session 정보', 'index.html');
 d.add(1006, 1000, 'SQL 통계 정보', 'index.html');
 d.add(1007, 1000, '트랜잭션 정보', 'index.html');
