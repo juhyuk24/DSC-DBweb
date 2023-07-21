@@ -7,7 +7,7 @@ $(document).ready(function () {
         //검색
         searching: false,
         //정렬
-        ordering: false,
+        ordering: true,
         //정보 표시
         info: true,
         //페이징

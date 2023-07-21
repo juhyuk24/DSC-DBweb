@@ -256,7 +256,7 @@ dTree.prototype.node = function(node, nodeId) {
 
 		}
 
-		str += '<a id="i' + this.obj + nodeId + '" class="' + ((node._io) ? node.iconOpen : node.icon) + '" alt="" />';
+		str += '<a id="i' + this.obj + nodeId + '" class="' + ((node._io) ? node.iconOpen : node.icon) + '"/>';
 
 	}
 

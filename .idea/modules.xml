@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/sbadmin2_webproject.iml" filepath="$PROJECT_DIR$/.idea/sbadmin2_webproject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sbadmin2_webproject.iml" filepath="$PROJECT_DIR$/sbadmin2_webproject.iml" />
     </modules>
   </component>
 </project>
