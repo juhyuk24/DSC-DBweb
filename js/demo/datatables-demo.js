@@ -1,22 +1,19 @@
 // Call the dataTables jQuery plugin
 $(document).ready(function () {
+    const cols = document.getElementsByTagName('tr');
     $('#dataTable').DataTable({
         //표시 건수
         lengthChange: true,
         //검색
         searching: false,
         //정렬
-        ordering: true,
+        ordering: false,
         //정보 표시
         info: true,
         //페이징
         paging: true,
-        columns: [
-            {data: "dbname"},
-            {data: "username"},
-            {data: "clientip"},
-            {data: "clientport"},
-            {data: "reference"}
+        columnDefs: [
+            {targets: '_all', width: 'fit-content'}
         ],
         language : {
             emptyTable: "데이터가 없습니다.",
