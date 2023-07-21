@@ -27,67 +27,44 @@ document.addEventListener('mouseup', event => {
 });
 
 container = document.getElementById('dTreeview');
+
 d = new dTree('d');
 
-d.add(10, -1, '모니터링', 'index.html');
+d.add(0, -1, 'ETRI');
 
-d.add(100, 10, 'DB별 사용량', 'index.html');
+    d.add(10, 0, '사용량 모니터링');
+        d.add(100, 10, 'DB별 사용량', 'index.html');
+        d.add(101, 10, 'tablespace별 사용량', 'table.html');
+        d.add(102, 10, 'table별 사용량', 'table.html');
+        d.add(103, 10, 'index별 사용량', 'table.html');
 
-d.add(1000, 100, 'DM 데이터베이스');
-d.add(1001, 1000, 'tablespace별 사용량', 'index.html');
-d.add(1002, 1000, 'table별 사용량', 'index.html');
-d.add(1003, 1000, 'index별 사용량', 'index.html');
-d.add(1004, 1000, '접속자 정보', 'table.html');
-d.add(1005, 1000, 'session 정보', 'table.html');
-d.add(1006, 1000, 'SQL 통계 정보', 'table.html');
-d.add(1007, 1000, '트랜잭션 정보', 'table.html');
-d.add(1008, 1000, 'VACUUM정보', 'table.html');
-d.add(1009, 1000, '이중화 정보', 'table.html');
-d.add(1010, 1000, '스케줄링 정보', 'table.html');
+    d.add(20, 0, 'session 관리');
+        d.add(200, 20, '접속자 정보 확인', 'table.html');
+        d.add(201, 20, 'session 정보 확인', 'table.html');
 
-d.add(1100, 100, 'MS 데이터베이스');
-d.add(1101, 1100, 'tablespace별 사용량', 'index.html');
-d.add(1102, 1100, 'table별 사용량', 'index.html');
-d.add(1103, 1100, 'index별 사용량', 'index.html');
-d.add(1104, 1100, '접속자 정보', 'index.html');
-d.add(1105, 1100, 'session 정보', 'table.html');
-d.add(1106, 1100, 'SQL 통계 정보', 'table.html');
-d.add(1107, 1100, '트랜잭션 정보', 'table.html');
-d.add(1108, 1100, 'VACUUM정보', 'table.html');
-d.add(1109, 1100, '이중화 정보', 'table.html');
-d.add(1110, 1100, '스케줄링 정보', 'table.html');
+    d.add(30, 0, 'SQL 통계 정보');
+        d.add(300, 30, '디스크 사용량 기준', 'table.html');
+        d.add(301, 30, '실행시간 기준', 'table.html');
 
-d.add(1200, 100, 'SI 데이터베이스');
-d.add(1201, 1200, 'tablespace별 사용량', 'index.html');
-d.add(1202, 1200, 'table별 사용량', 'index.html');
-d.add(1203, 1200, 'index별 사용량', 'index.html');
-d.add(1204, 1200, '접속자 정보', 'index.html');
-d.add(1205, 1200, 'session 정보', 'table.html');
-d.add(1206, 1200, 'SQL 통계 정보', 'table.html');
-d.add(1207, 1200, '트랜잭션 정보', 'table.html');
-d.add(1208, 1200, 'VACUUM정보', 'table.html');
-d.add(1209, 1200, '이중화 정보', 'table.html');
-d.add(1210, 1200, '스케줄링 정보', 'table.html');
+    d.add(40, 0, 'DBMS object');
+        d.add(400, 40, '테이블 리스트');
+        d.add(4000, 400, '테이블 칼럼 정보', 'table.html');
 
-d.add(1300, 100, 'TM 데이터베이스');
-d.add(1301, 1300, 'tablespace별 사용량', 'index.html');
-d.add(1302, 1300, 'table별 사용량', 'index.html');
-d.add(1303, 1300, 'index별 사용량', 'index.html');
-d.add(1304, 1300, '접속자 정보', 'index.html');
-d.add(1305, 1300, 'session 정보', 'table.html');
-d.add(1306, 1300, 'SQL 통계 정보', 'table.html');
-d.add(1307, 1300, '트랜잭션 정보', 'table.html');
-d.add(1308, 1300, 'VACUUM정보', 'table.html');
-d.add(1309, 1300, '이중화 정보', 'table.html');
-d.add(1310, 1300, '스케줄링 정보', 'table.html');
+    d.add(50, 0, '트랜잭션 정보');
+        d.add(500, 50, '일정 시간 이상 실행되는 SQL 정보', 'table.html');
+        d.add(501, 50, 'wait 또는 blocking 되는 session', 'table.html');
+        d.add(502, 50, 'query block 사용자 확인', 'table.html');
+        d.add(503, 50, 'lock 발생 query 확인', 'table.html');
 
-d.add(20, -1, '사용자 권한 관리', 'index.html');
+    d.add(60, 0, 'VACUUM 정보');
+        d.add(600, 60, '현재 autovacuum 실행 상태', 'table.html');
 
-d.add(200, 20, 'DB별 권한관리');
+    d.add(70, 0, '이중화 정보');
+        d.add(700, 70, '이중화 설정 상태', 'table.html');
+        d.add(701, 70, '이중화 서비스 상태', 'table.html');
 
-d.add(2000, 200, 'DM 데이터베이스', 'authority.html');
-d.add(2001, 200, 'MS 데이터베이스', 'authority.html');
-d.add(2002, 200, 'SI 데이터베이스', 'authority.html');
-d.add(2003, 200, 'TM 데이터베이스', 'authority.html');
+    d.add(80, 0, '스케줄링 정보');
+        d.add(800, 80, 'job 정보', 'table.html');
+        d.add(801, 80, 'job 수행 로그 정보', 'table.html');
 
 container.innerHTML = d;
