@@ -1,17 +1,17 @@
-// Set new default font family and font color to mimic Bootstrap's default styling
-Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-Chart.defaults.global.defaultFontColor = '#858796';
+// 함수: 최소값과 최대값 사이의 난수 생성
+function getRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-// Pie Chart Example
 var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
-  type: 'doughnut',
+  type: 'pie',
   data: {
-    labels: ["Direct", "Referral", "Social"],
+    labels: ["DM 데이터베이스", "TM 데이터베이스", "SI 데이터베이스", "MS 데이터베이스"],
     datasets: [{
-      data: [55, 30, 15],
-      backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-      hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+      data: [55, 30, 15, 20],
+      backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
+      hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a'],
       hoverBorderColor: "rgba(234, 236, 244, 1)",
     }],
   },
@@ -30,6 +30,11 @@ var myPieChart = new Chart(ctx, {
     legend: {
       display: false
     },
-    cutoutPercentage: 80,
   },
 });
+
+setInterval(() => {
+  const newData = [getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30)];
+  myPieChart.data.datasets[0].data = newData;
+  myPieChart.update();
+}, 1000);

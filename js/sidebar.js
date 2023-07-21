@@ -33,7 +33,7 @@ d = new dTree('d');
 d.add(0, -1, 'ETRI');
 
     d.add(10, 0, '사용량 모니터링');
-        d.add(100, 10, 'DB별 사용량', 'index.html');
+        d.add(100, 10, 'DB별 사용량', 'charts.html');
         d.add(101, 10, 'tablespace별 사용량', 'table.html');
         d.add(102, 10, 'table별 사용량', 'table.html');
         d.add(103, 10, 'index별 사용량', 'table.html');
