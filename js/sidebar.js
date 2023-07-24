@@ -1,3 +1,4 @@
+//사이드바 크기조절
 const resizeData = {
     tracking: false,
     startCursorScreenX: null,
