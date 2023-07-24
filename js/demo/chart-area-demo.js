@@ -7,7 +7,7 @@ var ctx = document.getElementById("myAreaChart");
 var myLineChart = new Chart(ctx, {
   type: 'line',
   data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
     datasets: [{
       fill: 'start',
       lineTension: 0.3,
@@ -82,7 +82,7 @@ var myLineChart = new Chart(ctx, {
   }
 });
 
-var i = 1;
+var i = 13;
 setInterval(() => {
   const newData = Math.floor(Math.random() * 100);
   const dataValues = myLineChart.data.datasets[0].data;
