@@ -26,8 +26,6 @@ document.addEventListener('mouseup', event => {
     if (resizeData.tracking) resizeData.tracking = false
 });
 
-
-
 //트리뷰 생성
 container = document.getElementById('dTreeview');
 
