@@ -92,25 +92,25 @@ function dTree(objName) {
 
 		node				: 'fa fa-file',
 
-		empty				: 'img/empty.gif',
+		empty				: 'images/empty.gif',
 
-		line				: 'img/line.gif',
+		line				: 'images/line.gif',
 
-		join				: 'img/join.gif',
+		join				: 'images/join.gif',
 
-		joinBottom	: 'img/joinbottom.gif',
+		joinBottom	: 'images/joinbottom.gif',
 
-		plus				: 'img/plus.gif',
+		plus				: 'images/plus.gif',
 
-		plusBottom	: 'img/plusbottom.gif',
+		plusBottom	: 'images/plusbottom.gif',
 
-		minus				: 'img/minus.gif',
+		minus				: 'images/minus.gif',
 
-		minusBottom	: 'img/minusbottom.gif',
+		minusBottom	: 'images/minusbottom.gif',
 
-		nlPlus			: 'img/nolines_plus.gif',
+		nlPlus			: 'images/nolines_plus.gif',
 
-		nlMinus			: 'img/nolines_minus.gif'
+		nlMinus			: 'images/nolines_minus.gif'
 
 	};
 

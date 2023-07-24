@@ -65,7 +65,7 @@ d.add(0, -1, 'ETRI');
         d.add(701, 70, 'job 수행 로그 정보', 'joblog.html');
 
     d.add(80, 0, 'DBMS object');
-        d.add(800, 80, 'table1');
+        d.add(800, 80, 'table1','','table');
         d.add(8000, 800, 'column1');
         d.add(8001, 800, 'column2');
         d.add(8002, 800, 'column3');
