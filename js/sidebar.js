@@ -80,5 +80,8 @@ d.add(0, -1, 'ETRI');
         d.add(8010, 800, 'column11');
         d.add(8011, 800, 'column12');
         d.add(8012, 800, 'column13');
+        
+d.add(1, -1, '사용자 권한관리');
+    d.add(90, 1, 'DB별 권한관리', 'authority.html');
 
 container.innerHTML = d;
