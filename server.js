@@ -5,14 +5,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
 const port = 8080;
-
 const app = express();
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-
-app.use(express.static(__dirname));
-
-//1차 메인로그인용 db 연결
 const mainClient = new Client({
     user: "etri",
     host: "192.168.100.24",
@@ -22,22 +15,49 @@ const mainClient = new Client({
 });
 mainClient.connect();
 
-function ensureLoggedIn(req, res, next) {
-    if (!req.session.user) {
-        res.redirect('/mainLogin');
-    } else {
-        next();
-    }
-}
-
-//1차 메인 로그인
-app.get('/login.html', (req, res) => {
-    res.sendFile(__dirname + '/views/login/login.html');
-});
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(express.static(__dirname));
+app.use(express.urlencoded({extended: false}));
+app.use(
+    session({
+        secret: 'mysecret',
+        resave: false,
+        saveUninitialized: false
+    })
+);
 
 app.get('/index.html', (req, res) => {
     // HTML 파일을 반환합니다.
     res.sendFile(__dirname + '/views/index.html');
+});
+
+
+app.get('/login.html', (req, res) => {
+    res.sendFile(__dirname + '/views/login/login.html');
+});
+
+app.get('/info.html', (req, res) => {
+    res.sendFile(__dirname + '/views/login/info.html');
+});
+
+app.get('/register.html', (req, res) => {
+    res.sendFile(__dirname + '/views/login/register.html');
+});
+
+app.get('/forgot-password.html', (req, res) => {
+    res.sendFile(__dirname + '/views/login/forgot-password.html');
+});
+
+
+app.get('/db.html', (req, res) => {
+    // HTML 파일을 반환합니다.
+    res.sendFile(__dirname + '/views/db.html');
+});
+
+app.get('/tablespace.html', (req, res) => {
+    // HTML 파일을 반환합니다.
+    res.sendFile(__dirname + '/views/tablespace.html');
 });
 
 app.get('/table.html', (req, res) => {
@@ -45,9 +65,14 @@ app.get('/table.html', (req, res) => {
     res.sendFile(__dirname + '/views/table.html');
 });
 
-app.get('/db.html', (req, res) => {
+app.get('/indexusage.html', (req, res) => {
     // HTML 파일을 반환합니다.
-    res.sendFile(__dirname + '/views/db.html');
+    res.sendFile(__dirname + '/views/indexusage.html');
+});
+
+app.get('/indexusage.html', (req, res) => {
+    // HTML 파일을 반환합니다.
+    res.sendFile(__dirname + '/views/indexusage.html');
 });
 
 // 1차 메인 로그인 프로세스
@@ -71,16 +96,6 @@ app.post('/process/mainLogin', (req, res) => {
         }
     });
 });
-
-app.use(
-    session({
-        secret: 'mysecret',
-        resave: false,
-        saveUninitialized: false
-    })
-);
-
-app.use(express.urlencoded({extended: false}));
 
 //2차 db 로그인 페이지
 app.get('/dbLogin', (req, res) => {
