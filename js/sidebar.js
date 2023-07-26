@@ -38,8 +38,6 @@ container = document.getElementById('dTreeview');
 d = new dTree('d');
 fetchtree();
 
-container.innerHTML = d;
-
 function fetchtree() {
     d.add(0, -1, 'ETRI');
 
@@ -91,8 +89,9 @@ function fetchtree() {
                         console.error('오류 발생:', error);
                     })
 
-        d.add(1, -1, '사용자 권한관리');
-            d.add(90, 1, '전체 보기', 'authority.html');
-                d.add(900, 90, '사용자1');
+    d.add(1, -1, '사용자 권한관리');
+        d.add(90, 1, '전체 보기', 'authority.html');
+            d.add(900, 90, '사용자1');
 
+    container.innerHTML = d;
 }
