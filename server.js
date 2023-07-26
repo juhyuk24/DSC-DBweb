@@ -13,7 +13,13 @@ const mainClient = new Client({
     password: "etri1234!",
     port: 15432,
 });
-mainClient.connect();
+mainClient.connect((err) => {
+    if (err) {
+        console.error('DB 연결 오류:', err);
+    } else {
+        console.log('DB 연결 성공!');
+    }
+});
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -27,75 +33,19 @@ app.use(
     })
 );
 
-app.get('/index.html', (req, res) => {
-    // HTML 파일을 반환합니다.
-    res.sendFile(__dirname + '/views/index.html');
-});
-
-
-app.get('/login.html', (req, res) => {
-    res.sendFile(__dirname + '/views/login/login.html');
-});
-
-app.get('/info.html', (req, res) => {
-    res.sendFile(__dirname + '/views/login/info.html');
-});
-
-app.get('/register.html', (req, res) => {
-    res.sendFile(__dirname + '/views/login/register.html');
-});
-
-app.get('/forgot-password.html', (req, res) => {
-    res.sendFile(__dirname + '/views/login/forgot-password.html');
-});
-
-
-app.get('/db.html', (req, res) => {
-    // HTML 파일을 반환합니다.
-    res.sendFile(__dirname + '/views/db.html');
-});
-
-app.get('/tablespace.html', (req, res) => {
-    // HTML 파일을 반환합니다.
-    res.sendFile(__dirname + '/views/tablespace.html');
-});
-
-app.get('/table.html', (req, res) => {
-    // HTML 파일을 반환합니다.
-    res.sendFile(__dirname + '/views/table.html');
-});
-
-app.get('/indexusage.html', (req, res) => {
-    // HTML 파일을 반환합니다.
-    res.sendFile(__dirname + '/views/indexusage.html');
-});
-
-app.get('/indexusage.html', (req, res) => {
-    // HTML 파일을 반환합니다.
-    res.sendFile(__dirname + '/views/indexusage.html');
-});
-
-// 1차 메인 로그인 프로세스
-app.post('/process/mainLogin', (req, res) => {
-    const {inputMainid, inputMainPassword} = req.body;
-    const query = 'SELECT * FROM main_login WHERE id = $1 AND password = $2';
-
-
-    mainClient.query(query, [inputMainid, inputMainPassword], (error, result) => {
+app.get('/column/:table_name', (req, res) => {
+    const tableName = req.params.table_name;
+    const query = "SELECT column_name  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + "\'" + tableName + "\'";
+    mainClient.query(query, (error, result) => {
         if (error) {
             console.error('로그인 정보 조회 중 오류 발생:', error);
-            res.redirect('/login');
         } else {
-            if (result.rows.length === 1) {
-                // 로그인 성공 시 세션에 사용자 정보 저장
-                res.redirect('/dbLogin');
-            } else {
-                console.log('로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다.');
-                res.redirect('/mainLogin');
-            }
+            console.log('데이터 전송 선공');
+            res.json(result.rows);
         }
     });
 });
+
 
 //2차 db 로그인 페이지
 app.get('/dbLogin', (req, res) => {
@@ -184,6 +134,99 @@ app.put('/user/updateSession', (req, res) => {
     user.office = office;
 
     res.status(200).send('세션 정보가 업데이트되었습니다.');
+});
+
+app.get('/index.html', (req, res) => {
+    res.sendFile(__dirname + '/views/index.html');
+});
+
+
+app.get('/login.html', (req, res) => {
+    res.sendFile(__dirname + '/views/login/login.html');
+});
+
+app.get('/info.html', (req, res) => {
+    res.sendFile(__dirname + '/views/login/info.html');
+});
+
+app.get('/register.html', (req, res) => {
+    res.sendFile(__dirname + '/views/login/register.html');
+});
+
+app.get('/forgot-password.html', (req, res) => {
+    res.sendFile(__dirname + '/views/login/forgot-password.html');
+});
+
+
+app.get('/db.html', (req, res) => {
+    res.sendFile(__dirname + '/views/db.html');
+});
+
+app.get('/tablespace.html', (req, res) => {
+    res.sendFile(__dirname + '/views/tablespace.html');
+});
+
+app.get('/table.html', (req, res) => {
+    res.sendFile(__dirname + '/views/table.html');
+});
+
+app.get('/indexusage.html', (req, res) => {
+    res.sendFile(__dirname + '/views/indexusage.html');
+});
+
+app.get('/userinfo.html', (req, res) => {
+    res.sendFile(__dirname + '/views/userinfo.html');
+});
+
+app.get('/sessioninfo.html', (req, res) => {
+    res.sendFile(__dirname + '/views/sessioninfo.html');
+});
+
+app.get('/disk.html', (req, res) => {
+    res.sendFile(__dirname + '/views/disk.html');
+});
+
+app.get('/runtime.html', (req, res) => {
+    res.sendFile(__dirname + '/views/runtime.html');
+});
+
+app.get('/runsql.html', (req, res) => {
+    res.sendFile(__dirname + '/views/runsql.html');
+});
+
+app.get('/waitsession.html', (req, res) => {
+    res.sendFile(__dirname + '/views/waitsession.html');
+});
+
+app.get('/queryblock.html', (req, res) => {
+    res.sendFile(__dirname + '/views/queryblock.html');
+});
+
+app.get('/querylock.html', (req, res) => {
+    res.sendFile(__dirname + '/views/querylock.html');
+});
+
+app.get('/vacuuminfo.html', (req, res) => {
+    res.sendFile(__dirname + '/views/vacuuminfo.html');
+});
+
+app.get('/duplicationinfo.html', (req, res) => {
+    res.sendFile(__dirname + '/views/duplicationinfo.html');
+});
+
+app.get('/serviceinfo.html', (req, res) => {
+    res.sendFile(__dirname + '/views/serviceinfo.html');
+});
+
+app.get('/jobinfo.html', (req, res) => {
+    res.sendFile(__dirname + '/views/jobinfo.html');
+});
+
+app.get('/joblog.html', (req, res) => {
+    res.sendFile(__dirname + '/views/joblog.html');
+});
+app.get('/authority.html', (req, res) => {
+    res.sendFile(__dirname + '/views/authority.html');
 });
 
 app.listen(port, () => {
