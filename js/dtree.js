@@ -398,7 +398,7 @@ dTree.prototype.s = function(id) {
 
 		this.selectedNode = id;
 
-		if (this.config.useCookies) this.setCookie('cs' + this.obj, cn.id);
+		if (this.config.useCookies) this.setCookie('cs' + this.obj, cn.id,'','/');
 
 	}
 
@@ -568,9 +568,9 @@ dTree.prototype.clearCookie = function() {
 
 	var yesterday = new Date(now.getTime() - 1000 * 60 * 60 * 24);
 
-	this.setCookie('co'+this.obj, 'cookieValue', yesterday);
+	this.setCookie('co'+this.obj, 'cookieValue', yesterday, '/');
 
-	this.setCookie('cs'+this.obj, 'cookieValue', yesterday);
+	this.setCookie('cs'+this.obj, 'cookieValue', yesterday, '/');
 
 };
 
@@ -586,7 +586,7 @@ dTree.prototype.setCookie = function(cookieName, cookieValue, expires, path, dom
 
 		+ (expires ? '; expires=' + expires.toGMTString() : '')
 
-		+ (path ? '; path=' + path : '')
+		+ (path ? '; path=' + path : '/')
 
 		+ (domain ? '; domain=' + domain : '')
 
@@ -640,7 +640,7 @@ dTree.prototype.updateCookie = function() {
 
 	}
 
-	this.setCookie('co' + this.obj, str);
+	this.setCookie('co' + this.obj, str, '', '/');
 
 };
 
