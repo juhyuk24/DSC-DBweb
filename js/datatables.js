@@ -1,6 +1,4 @@
-// Call the dataTables jQuery plugin
 $(document).ready(function () {
-    const cols = document.getElementsByTagName('tr');
     $('#dataTable').DataTable({
         //표시 건수
         lengthChange: true,

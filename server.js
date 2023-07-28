@@ -78,17 +78,37 @@ app.put('/user/updateSession', (req, res) => {
 
     res.status(200).send('세션 정보가 업데이트되었습니다.');
 });
-app.get('/column/:table_name', (req, res) => {
+
+//특정 table의 모든 칼럼명 리턴
+app.get('/columnNames/:table_name', (req, res) => {
     const tableName = req.params.table_name;
-    const query = "SELECT column_name  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + "\'" + tableName + "\'";
-    mainClient.query(query, (error, result) => {
+    mainClient.query( "SELECT column_name  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + "\'" + tableName + "\'",
+        (error, result) => {
         if (error) {
-            console.error('로그인 정보 조회 중 오류 발생:', error);
+            console.error('칼럼 정보 조회 중 오류 발생:', error);
         } else {
-            console.log('데이터 전송 선공');
-            res.json(result.rows);
+            console.log('table 데이터 전송 선공: ' + tableName);
+            const columnNames = result.rows.map((row) => row.column_name);
+            res.json({ tables: columnNames });
         }
     });
+});
+
+//특정 db의 모든 테이블명 리턴
+app.get('/tableNames/:db_name', (req, res) => {
+    const dbName = req.params.db_name;
+    mainClient.query( "SELECT table_name FROM information_schema.tables WHERE table_schema = " + "\'" + dbName + "\'",
+        (err, result) => {
+            if (err) {
+                console.error('테이블 정보 조회 중 오류 발생:', err);
+            } else {
+                console.log('db 데이터 전송 선공: ' + dbName);
+                const tableNames = result.rows.map((row) => row.table_name);
+                res.json({ tables: tableNames });
+                console.log(tableNames);
+            }
+        }
+    );
 });
 
 app.get('/index', (req, res) => {
