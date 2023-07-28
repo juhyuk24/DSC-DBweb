@@ -65,12 +65,12 @@
                             <!-- 사용자 드롭다운 메뉴 -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                  aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     사용자 정보 조회
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     로그아웃
                                 </a>
@@ -116,6 +116,26 @@
                     </button>
                 </div>
                 <div class="modal-body">정말로 "로그아웃" 하시겠습니까?</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+                    <a class="btn btn-primary" href="/logout">로그아웃</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 테이블, 칼럼 정보 인터페이스 -->
+    <div class="modal fade" id="informationModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">테이블 정보</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">ㄹㄹㄹㄹㄹㄹㄹ</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
                     <a class="btn btn-primary" href="/logout">로그아웃</a>

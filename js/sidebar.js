@@ -83,7 +83,7 @@ $(document).ready(function sideTree() {
         .then((response) => response.json())
         .then((data) => {
             for (let i = 0; i < data.tables.length; i++) {
-                d.add(tableNum + i, 80, data.tables[i]);
+                d.add(tableNum + i, 80, data.tables[i], '#" data-toggle="modal" data-target="#informationModal');
             }
             document.getElementById('dTreeview').innerHTML = d;
             let copydata = data.tables;
@@ -93,7 +93,7 @@ $(document).ready(function sideTree() {
                     .then((response) => response.json())
                     .then((data) => {
                         for (let i = 0; i < data.tables.length; i++) {
-                            d.add(colNum + i, tableNum + i, data.tables[i]);
+                            d.add(colNum + i, tableNum + i, data.tables[i], );
                         }
                     })
             }
