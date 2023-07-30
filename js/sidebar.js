@@ -1,30 +1,36 @@
-//사이드바 크기조절
-const resizeData = {
-    tracking: false,
-    startCursorScreenX: null,
-    maxWidth: 900,
-    minWidth: 100
-};
-
-document.getElementById('resize-handle').addEventListener('mousedown', event => {
-    event.preventDefault();
-    event.stopPropagation();
-    resizeData.startWidth = document.getElementById('accordionSidebar').offsetWidth;
-    resizeData.startCursorScreenX = event.screenX;
-    resizeData.tracking = true;
-});
-
-document.addEventListener('mousemove', event => {
-    if (resizeData.tracking) {
-        const cursorScreenXDelta = event.screenX - resizeData.startCursorScreenX;
-        let newWidth = Math.min(resizeData.startWidth + cursorScreenXDelta, resizeData.maxWidth);
-        newWidth = Math.max(resizeData.minWidth, newWidth);
-        document.getElementById('accordionSidebar').style.width = newWidth + 'px';
+$(document).ready(function sideResize() {
+    let sidebarSize = localStorage.getItem('sidebarSize');
+    if (sidebarSize) {
+        document.getElementById('accordionSidebar').style.width = sidebarSize + 'px';
     }
-})
+    const resizeData = {
+        tracking: false,
+        startCursorScreenX: null,
+        maxWidth: 900,
+        minWidth: 100
+    };
 
-document.addEventListener('mouseup', event => {
-    if (resizeData.tracking) resizeData.tracking = false
+    document.getElementById('resize-handle').addEventListener('mousedown', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        resizeData.startWidth = document.getElementById('accordionSidebar').offsetWidth;
+        resizeData.startCursorScreenX = event.screenX;
+        resizeData.tracking = true;
+    });
+
+    document.addEventListener('mousemove', event => {
+        if (resizeData.tracking) {
+            const cursorScreenXDelta = event.screenX - resizeData.startCursorScreenX;
+            let newWidth = Math.min(resizeData.startWidth + cursorScreenXDelta, resizeData.maxWidth);
+            newWidth = Math.max(resizeData.minWidth, newWidth);
+            document.getElementById('accordionSidebar').style.width = newWidth + 'px';
+            localStorage.setItem('sidebarSize', newWidth);
+        }
+    })
+
+    document.addEventListener('mouseup', event => {
+        if (resizeData.tracking) resizeData.tracking = false
+    });
 });
 
 //트리뷰 생성
@@ -66,7 +72,7 @@ d.add(0, -1, 'ETRI');
         d.add(701, 70, 'job 수행 로그 정보', 'joblog.html');
 
     d.add(80, 0, 'DBMS object');
-        d.add(800, 80, 'table1');
+        d.add(800, 80, 'table1', '#" data-toggle="modal" data-target="#informationModal');
             d.add(8000, 800, 'column1');
             d.add(8001, 800, 'column2');
             d.add(8002, 800, 'column3');
@@ -80,7 +86,7 @@ d.add(0, -1, 'ETRI');
             d.add(8010, 800, 'column11');
             d.add(8011, 800, 'column12');
             d.add(8012, 800, 'column13');
-        d.add(810, 80, 'table2');
+        d.add(810, 80, 'table2', '#" data-toggle="modal" data-target="#informationModal');
             d.add(8100, 810, 'column1');
             d.add(8101, 810, 'column2');
             d.add(8102, 810, 'column3');
@@ -94,7 +100,7 @@ d.add(0, -1, 'ETRI');
             d.add(8110, 810, 'column11');
             d.add(8111, 810, 'column12');
             d.add(8112, 810, 'column13');
-        d.add(820, 80, 'table3');
+        d.add(820, 80, 'table3', '#" data-toggle="modal" data-target="#informationModal');
             d.add(8200, 820, 'column1');
             d.add(8201, 820, 'column2');
             d.add(8202, 820, 'column3');
