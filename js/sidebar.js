@@ -38,6 +38,10 @@ container = document.getElementById('dTreeview');
 
 d = new dTree('d');
 
+if (document.URL.endsWith('/index.html')) {
+    d.clearCookie();
+}
+
 d.add(0, -1, 'ETRI');
 
     d.add(10, 0, '사용량 모니터링');
