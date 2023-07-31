@@ -126,6 +126,17 @@
                             <script>
                                 document.getElementById('enddate').value = new Date().toISOString().substring(0, 10);;
                             </script>
+                            <span class="input-server">필터: </span>
+                            <select class="selectServer" data-style="btn-inverse">
+                                <option>작업 이름</option>
+                                <option>작업 설명</option>
+                                <option>작업을 실행할 호스트 에이전트의 이름</option>
+                                <option>작업 활성화 여부</option>
+                                <option>작업 생성 시간</option>
+                                <option>작업이 마지막으로 변경된 시간</option>
+                                <option>작업의 스케줄링을 시작할 일시</option>
+                                <option>작업의 스케줄링을 마지막으로 수행한 시간</option>
+                            </select>
                         </div>
 
                         <div class="table-responsive">

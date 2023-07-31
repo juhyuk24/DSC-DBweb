@@ -126,6 +126,14 @@
                             <script>
                                 document.getElementById('enddate').value = new Date().toISOString().substring(0, 10);;
                             </script>
+                            <span class="input-server">필터: </span>
+                            <select class="selectServer" data-style="btn-inverse">
+                                <option>일련 번호</option>
+                                <option>작업 ID</option>
+                                <option>작업 로그 상태</option>
+                                <option>작업 시작 시간</option>
+                                <option>작업 수행 시간(초)</option>
+                            </select>
                         </div>
 
                         <div class="table-responsive">

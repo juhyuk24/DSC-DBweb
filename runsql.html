@@ -125,6 +125,14 @@
                             <script>
                                 document.getElementById('enddate').value = new Date().toISOString().substring(0, 10);;
                             </script>
+                            <span class="input-server">필터: </span>
+                            <select class="selectServer" data-style="btn-inverse">
+                                <option>DB명</option>
+                                <option>사용자 이름</option>
+                                <option>query</option>
+                                <option>세션 상태</option>
+                                <option>실행 시간</option>
+                            </select>
                         </div>
 
                         <div class="table-responsive">
