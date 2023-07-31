@@ -33,8 +33,23 @@ var myPieChart = new Chart(ctx, {
     },
 });
 
-setInterval(() => {
+let pieintervalID;
+let pieintervalTime = document.getElementById('setInterval-bar').value * 1000;
+
+pieintervalID = setInterval(() => {
     const newData = [getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30)];
     myPieChart.data.datasets[0].data = newData;
     myPieChart.update();
-}, 1000);
+}, pieintervalTime);
+
+function changeInterval_pie() {
+    pieintervalTime = document.getElementById('setInterval-pie').value * 1000;
+    if(pieintervalTime >= 1000) {
+        clearInterval(pieintervalID);
+        pieintervalID = setInterval(() => {
+            const newData = [getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30)];
+            myPieChart.data.datasets[0].data = newData;
+            myPieChart.update();
+        }, pieintervalTime);
+    }
+}

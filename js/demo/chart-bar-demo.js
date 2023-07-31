@@ -73,8 +73,23 @@ var myBarChart = new Chart(ctx, {
     }
 });
 
-setInterval(() => {
+let barintervalID;
+let barintervalTime = document.getElementById('setInterval-bar').value * 1000;
+
+barintervalID = setInterval(() => {
     const newData = [getRandomNumber(30, 50), getRandomNumber(20, 30), getRandomNumber(70, 80), getRandomNumber(40, 45)];
     myBarChart.data.datasets[0].data = newData;
     myBarChart.update();
-}, 1000);
+}, barintervalTime);
+
+function changeInterval_bar() {
+    barintervalTime = document.getElementById('setInterval-bar').value * 1000;
+    if(barintervalTime >= 1000) {
+        clearInterval(barintervalID);
+        barintervalID = setInterval(() => {
+            const newData = [getRandomNumber(30, 50), getRandomNumber(20, 30), getRandomNumber(70, 80), getRandomNumber(40, 45)];
+            myBarChart.data.datasets[0].data = newData;
+            myBarChart.update();
+        }, barintervalTime);
+    }
+}

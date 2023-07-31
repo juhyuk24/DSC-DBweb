@@ -83,10 +83,10 @@ var myLineChart = new Chart(ctx, {
 });
 
 let i = 13;
-let intervalID;
-let intervalTime = document.getElementById('setInterval').value * 1000;
+let areaintervalID;
+let areaintervalTime = document.getElementById('setInterval-area').value * 1000;
 
-intervalID = setInterval(() => {
+areaintervalID = setInterval(() => {
     const newData = Math.floor(Math.random() * 100);
     const dataValues = myLineChart.data.datasets[0].data;
     const labels = myLineChart.data.labels;
@@ -100,13 +100,13 @@ intervalID = setInterval(() => {
     myLineChart.data.labels = labels;
     myLineChart.data.datasets[0].data = dataValues;
     myLineChart.update();
-}, intervalTime);
+}, areaintervalTime);
 
-function changeInterval() {
-    intervalTime = document.getElementById('setInterval').value * 1000;
-    if(intervalTime >= 1) {
-        clearInterval(intervalID);
-        intervalID = setInterval(() => {
+function changeInterval_area() {
+    areaintervalTime = document.getElementById('setInterval-area').value * 1000;
+    if(areaintervalTime >= 1000) {
+        clearInterval(areaintervalID);
+        areaintervalID = setInterval(() => {
             const newData = Math.floor(Math.random() * 100);
             const dataValues = myLineChart.data.datasets[0].data;
             const labels = myLineChart.data.labels;
@@ -120,7 +120,6 @@ function changeInterval() {
             myLineChart.data.labels = labels;
             myLineChart.data.datasets[0].data = dataValues;
             myLineChart.update();
-        }, intervalTime);
+        }, areaintervalTime);
     }
-    else{ }
 }

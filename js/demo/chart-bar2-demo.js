@@ -73,8 +73,23 @@ var myBarChart = new Chart(ctx, {
     }
 });
 
-setInterval(() => {
+let databarintervalID;
+let databarintervalTime = document.getElementById('setInterval-databar').value * 1000;
+
+databarintervalID = setInterval(() => {
     const newData = [getRandomNumber(70, 80), getRandomNumber(50, 60), getRandomNumber(30, 50), getRandomNumber(20, 30), getRandomNumber(10, 20), getRandomNumber(6, 14)];
     myBarChart.data.datasets[0].data = newData;
     myBarChart.update();
-}, 1000);
+}, databarintervalTime);
+
+function changeInterval_databar() {
+    databarintervalTime = document.getElementById('setInterval-databar').value * 1000;
+    if(databarintervalTime >= 1000) {
+        clearInterval(databarintervalID);
+        databarintervalID = setInterval(() => {
+            const newData = [getRandomNumber(70, 80), getRandomNumber(50, 60), getRandomNumber(30, 50), getRandomNumber(20, 30), getRandomNumber(10, 20), getRandomNumber(6, 14)];
+            myBarChart.data.datasets[0].data = newData;
+            myBarChart.update();
+        }, databarintervalTime);
+    }
+}
