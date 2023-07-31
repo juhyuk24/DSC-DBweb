@@ -121,11 +121,19 @@ d.add(0, -1, 'ETRI');
         
 d.add(1, -1, '사용자 권한관리');
     d.add(90, 1, '전체 보기', 'authority.html');
-        d.add(900, 90, 'RTT', 'authority.html');
+        d.add(900, 90, 'RTT', 'authority-group1.html');
             d.add(9000, 900, '김정훈', 'authority-user1.html');
             d.add(9001, 900, '김철수', 'authority-user2.html');
             d.add(9002, 900, '방주혁', 'authority-user3.html');
             d.add(9003, 900, '안유진', 'authority-user4.html');
             d.add(9004, 900, '황태식', 'authority-user5.html');
+
+        d.add(910, 90, 'ETRI', 'authority-group2.html');
+            d.add(9100, 910, 'user1');
+            d.add(9101, 910, 'user2');
+            d.add(9102, 910, 'user3');
+            d.add(9103, 910, 'user4');
+            d.add(9104, 910, 'user5');
+
 
 container.innerHTML = d;
