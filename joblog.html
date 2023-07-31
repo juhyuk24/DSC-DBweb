@@ -108,21 +108,12 @@
                 <div class="card shadow mb-4">
                     <div class="card-body">
                         <div class="logButtonContainer">
-                            <a class="btn btn-primary btn-refresh" href="db.html"><span class="button-content">차트로 보기</span></a>
                             <span class="input-server">DB선택: </span>
                             <select class="selectServer" data-style="btn-inverse">
                                 <option>DM DB</option>
                                 <option>MS DB</option>
                                 <option>SI DB</option>
                                 <option>TM DB</option>
-                            </select>
-
-                            <span class="input-table">테이블: </span>
-                            <select class="selectServer" data-style="btn-inverse">
-                                <option>Table1</option>
-                                <option>Table2</option>
-                                <option>Table3</option>
-                                <option>Table4</option>
                             </select>
 
                             <span>검색 기간: </span>
@@ -135,10 +126,6 @@
                             <script>
                                 document.getElementById('enddate').value = new Date().toISOString().substring(0, 10);;
                             </script>
-
-                            <span class="input-query">검색: </span>
-                            <input type="text" class="queryInsert">
-                            <span class="btn btn-primary btn-refresh" id="save-button1" onclick="save()"><span class="button-content">조회하기</span></span>
                         </div>
 
                         <div class="table-responsive">

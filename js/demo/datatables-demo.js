@@ -5,7 +5,7 @@ $(document).ready(function () {
         //표시 건수
         lengthChange: true,
         //검색
-        searching: false,
+        searching: true,
         //정렬
         ordering: true,
         //정보 표시
@@ -20,6 +20,7 @@ $(document).ready(function () {
             lengthMenu: "페이지에_MENU_건의 데이터 표시",
             info: "현재 _START_ - _END_ / 총 _TOTAL_건",
             infoEmpty: "데이터 없음",
+            search: "검색: ",
             infoFiltered: "( _MAX_건의 데이터에서 필터링됨 )",
             loadingRecords: "로딩중...",
             processing:     "잠시만 기다려 주세요...",

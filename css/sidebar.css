@@ -12,6 +12,7 @@
 }
 .logButtonContainer {
     text-align: end;
+    margin-bottom: 10px;
 }
 #resize-handle {
     background-color: #cbd5e0;
