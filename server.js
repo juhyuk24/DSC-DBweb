@@ -1,5 +1,4 @@
 const {Client} = require('pg');
-const {Pool} = require('pg');
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
@@ -13,49 +12,59 @@ const mainClient = new Client({
     password: "etri1234!",
     port: 15432,
 });
-const pool = new Pool(mainClient);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 app.use(express.urlencoded({extended: false}));
-app.use(
-    session({
+app.use(session({
         secret: 'mysecret',
         resave: false,
         saveUninitialized: false
-    })
-);
+}));
+
+//user가 요청하는 쿼리문 처리
+app.get('/query/:user_input', (req, res) => {
+    const userInput = req.params.user_input;
+    let query;
+
+    switch (userInput) {
+        case 'dbUsage':
+            query = "SELECT pg_database.datname, pg_size_pretty(pg_database_size(pg_database.datname)) AS size FROM pg_database;";
+            break;
+        case 'tablespaceUsage':
+            query = "SELECT tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) FROM pg_tables where schemaname NOT IN ('utl_file','information_schema','pg_catalog');";
+            break;
+    }
+
+    mainClient.query(query, (error, result) => {
+            if (error) {
+                console.error('db 사용량 정보 조회 중 오류 발생:', error);
+            } else {
+                console.log('db 사용량 데이터 전송 선공');
+                res.json({tables: result.rows});
+            }
+        });
+});
 
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/login/login.html'));
-    if(!mainClient.isConnected){
-        mainClient.connect((err) => {
-            if (err) {
-                console.error('DB 연결 오류:', err);
-            } else {
-                console.log('DB 연결 성공!');
-            }
-        });
-    }
+    connectDB();
 });
 
 app.get('/logout', (req, res) => {
-    if(req.session.isCreated) {
+    if (req.session.isCreated) {
         req.session.destroy((err) => {
             if (err) {
                 console.log(err);
             }
         });
     }
-    if(mainClient.isConnected) {
-        req.mainClient.end((err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
-    }
     res.redirect('/login');
+});
+
+app.get('/info', (req, res) => {
+    res.sendFile(__dirname + '/views/login/info.html')
 });
 
 app.get('/register', (req, res) => {
@@ -79,36 +88,35 @@ app.put('/user/updateSession', (req, res) => {
     res.status(200).send('세션 정보가 업데이트되었습니다.');
 });
 
-//특정 table의 모든 칼럼명 리턴
-app.get('/columnNames/:table_name', (req, res) => {
-    const tableName = req.params.table_name;
-    mainClient.query( "SELECT column_name  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + "\'" + tableName + "\'",
-        (error, result) => {
-        if (error) {
-            console.error('칼럼 정보 조회 중 오류 발생:', error);
-        } else {
-            console.log('table 데이터 전송 선공: ' + tableName);
-            const columnNames = result.rows.map((row) => row.column_name);
-            res.json({ tables: columnNames });
-        }
-    });
-});
-
 //특정 db의 모든 테이블명 리턴
 app.get('/tableNames/:db_name', (req, res) => {
     const dbName = req.params.db_name;
-    mainClient.query( "SELECT table_name FROM information_schema.tables WHERE table_schema = " + "\'" + dbName + "\'",
+    mainClient.query("SELECT table_name FROM information_schema.tables WHERE table_schema = " + "\'" + dbName + "\'",
         (err, result) => {
             if (err) {
                 console.error('테이블 정보 조회 중 오류 발생:', err);
             } else {
-                console.log('db 데이터 전송 선공: ' + dbName);
+                console.log('테이블 데이터 전송 선공');
                 const tableNames = result.rows.map((row) => row.table_name);
-                res.json({ tables: tableNames });
-                console.log(tableNames);
+                res.json({tables: tableNames});
             }
         }
     );
+});
+
+//특정 table의 모든 칼럼명 리턴
+app.get('/columnNames/:table_name', (req, res) => {
+    const tableName = req.params.table_name;
+    mainClient.query("SELECT column_name  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + "\'" + tableName + "\'",
+        (error, result) => {
+            if (error) {
+                console.error('칼럼 정보 조회 중 오류 발생:', error);
+            } else {
+                console.log('칼럼 데이터 전송 선공');
+                const columnNames = result.rows.map((row) => row.column_name);
+                res.json({tables: columnNames});
+            }
+        });
 });
 
 app.get('/index', (req, res) => {
@@ -188,3 +196,13 @@ app.get('/authority/authority-all', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });
+
+function connectDB() {
+    mainClient.connect((err) => {
+        if (err) {
+            console.error('DB 연결 오류:', err);
+        } else {
+            console.log('DB 연결 성공!');
+        }
+    });
+}

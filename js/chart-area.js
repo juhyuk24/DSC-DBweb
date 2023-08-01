@@ -1,4 +1,3 @@
-// Set new default font family and font color to mimic Bootstrap's default styling
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
@@ -81,8 +80,11 @@ var myLineChart = new Chart(ctx, {
     }
 });
 
-var i = 13;
-setInterval(() => {
+let i = 13;
+let areaintervalID;
+let areaintervalTime = document.getElementById('setInterval-area').value * 1000;
+
+areaintervalID = setInterval(() => {
     const newData = Math.floor(Math.random() * 100);
     const dataValues = myLineChart.data.datasets[0].data;
     const labels = myLineChart.data.labels;
@@ -96,4 +98,26 @@ setInterval(() => {
     myLineChart.data.labels = labels;
     myLineChart.data.datasets[0].data = dataValues;
     myLineChart.update();
-}, 1000);
+}, areaintervalTime);
+
+function changeInterval_area() {
+    areaintervalTime = document.getElementById('setInterval-area').value * 1000;
+    if(areaintervalTime >= 1000) {
+        clearInterval(areaintervalID);
+        areaintervalID = setInterval(() => {
+            const newData = Math.floor(Math.random() * 100);
+            const dataValues = myLineChart.data.datasets[0].data;
+            const labels = myLineChart.data.labels;
+
+            dataValues.shift();
+            labels.shift();
+
+            dataValues.push(newData);
+            labels.push(i++);
+
+            myLineChart.data.labels = labels;
+            myLineChart.data.datasets[0].data = dataValues;
+            myLineChart.update();
+        }, areaintervalTime);
+    }
+}

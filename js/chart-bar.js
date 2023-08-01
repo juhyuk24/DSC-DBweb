@@ -1,4 +1,3 @@
-// Set new default font family and font color to mimic Bootstrap's default styling
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
@@ -8,7 +7,7 @@ var myBarChart = new Chart(ctx, {
     data: {
         labels: ["DM 데이터베이스", "TM 데이터베이스", "SI 데이터베이스", "MS 데이터베이스"],
         datasets: [{
-            label: "Revenue",
+            data: [30, 20, 70, 40],
             backgroundColor: "#4e73df",
             hoverBackgroundColor: "#2e59d9",
             borderColor: "#4e73df",
@@ -73,8 +72,27 @@ var myBarChart = new Chart(ctx, {
     }
 });
 
-setInterval(() => {
+let barintervalID;
+let barintervalTime = document.getElementById('setInterval-bar').value * 1000;
+
+barintervalID = setInterval(() => {
     const newData = [getRandomNumber(30, 50), getRandomNumber(20, 30), getRandomNumber(70, 80), getRandomNumber(40, 45)];
     myBarChart.data.datasets[0].data = newData;
     myBarChart.update();
-}, 1000);
+}, barintervalTime);
+
+function changeInterval_bar() {
+    barintervalTime = document.getElementById('setInterval-bar').value * 1000;
+    if(barintervalTime >= 1000) {
+        clearInterval(barintervalID);
+        barintervalID = setInterval(() => {
+            const newData = [getRandomNumber(30, 50), getRandomNumber(20, 30), getRandomNumber(70, 80), getRandomNumber(40, 45)];
+            myBarChart.data.datasets[0].data = newData;
+            myBarChart.update();
+        }, barintervalTime);
+    }
+}
+
+function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}

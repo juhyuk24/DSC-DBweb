@@ -37,8 +37,6 @@ $(document).ready(function sideTree() {
     d = new dTree('d');
     let tableNum = 800;
     let colNum = 8000;
-    let stringTables;
-    let stringCols;
 
     if (document.URL.endsWith('/index')) {
         d.clearCookie();
@@ -85,7 +83,6 @@ $(document).ready(function sideTree() {
             for (let i = 0; i < data.tables.length; i++) {
                 d.add(tableNum + i, 80, data.tables[i], '#" data-toggle="modal" data-target="#informationModal');
             }
-            document.getElementById('dTreeview').innerHTML = d;
             let copydata = data.tables;
 
             for (let i = 0; i < copydata.length; i++) {
@@ -106,4 +103,5 @@ $(document).ready(function sideTree() {
     d.add(90, 1, '전체 보기', '/authority/authority-all');
     d.add(900, 90, '사용자1');
 
+    document.getElementById('dTreeview').innerHTML = d;
 });
