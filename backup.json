@@ -1,0 +1,94 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "24 master",
+            "Group": "Servers",
+            "Host": "192.168.100.24",
+            "Port": 15432,
+            "MaintenanceDB": "postgres",
+            "Username": "etri",
+            "UseSSHTunnel": 0,
+            "TunnelPort": "22",
+            "TunnelAuthentication": 0,
+            "KerberosAuthentication": false,
+            "ConnectionParameters": {
+                "sslmode": "prefer",
+                "connect_timeout": 10,
+                "sslcert": "<STORAGE_DIR>/.postgresql/postgresql.crt",
+                "sslkey": "<STORAGE_DIR>/.postgresql/postgresql.key"
+            }
+        },
+        "2": {
+            "Name": "30 slave",
+            "Group": "Servers",
+            "Host": "192.168.100.30",
+            "Port": 15432,
+            "MaintenanceDB": "postgres",
+            "Username": "etri",
+            "UseSSHTunnel": 0,
+            "TunnelPort": "22",
+            "TunnelAuthentication": 0,
+            "KerberosAuthentication": false,
+            "ConnectionParameters": {
+                "sslmode": "prefer",
+                "connect_timeout": 10,
+                "sslcert": "<STORAGE_DIR>/.postgresql/postgresql.crt",
+                "sslkey": "<STORAGE_DIR>/.postgresql/postgresql.key"
+            }
+        },
+        "3": {
+            "Name": "u_irmm(w(dmdb))",
+            "Group": "user\uc811\uc18d",
+            "Host": "192.168.100.24",
+            "Port": 15432,
+            "MaintenanceDB": "dmdb",
+            "Username": "u_irmm",
+            "UseSSHTunnel": 0,
+            "TunnelPort": "22",
+            "TunnelAuthentication": 0,
+            "KerberosAuthentication": false,
+            "ConnectionParameters": {
+                "sslmode": "prefer",
+                "connect_timeout": 10,
+                "sslcert": "<STORAGE_DIR>/.postgresql/postgresql.crt",
+                "sslkey": "<STORAGE_DIR>/.postgresql/postgresql.key"
+            }
+        },
+        "4": {
+            "Name": "u_epmm(w(sidb, tmdb), r(msdb, dmdb))",
+            "Group": "user\uc811\uc18d",
+            "Host": "192.168.100.24",
+            "Port": 15432,
+            "MaintenanceDB": "sidb",
+            "Username": "u_epmm",
+            "UseSSHTunnel": 0,
+            "TunnelPort": "22",
+            "TunnelAuthentication": 0,
+            "KerberosAuthentication": false,
+            "ConnectionParameters": {
+                "sslmode": "prefer",
+                "connect_timeout": 10,
+                "sslcert": "<STORAGE_DIR>/.postgresql/postgresql.crt",
+                "sslkey": "<STORAGE_DIR>/.postgresql/postgresql.key"
+            }
+        },
+        "5": {
+            "Name": "u_dvim(w(sidb))",
+            "Group": "user\uc811\uc18d",
+            "Host": "192.168.100.24",
+            "Port": 15432,
+            "MaintenanceDB": "sidb",
+            "Username": "u_dvim",
+            "UseSSHTunnel": 0,
+            "TunnelPort": "22",
+            "TunnelAuthentication": 0,
+            "KerberosAuthentication": false,
+            "ConnectionParameters": {
+                "sslmode": "prefer",
+                "connect_timeout": 10,
+                "sslcert": "<STORAGE_DIR>/.postgresql/postgresql.crt",
+                "sslkey": "<STORAGE_DIR>/.postgresql/postgresql.key"
+            }
+        }
+    }
+}

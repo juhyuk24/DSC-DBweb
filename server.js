@@ -26,22 +26,13 @@ app.use(session({
 //user가 요청하는 쿼리문 처리
 app.get('/query/:user_input', (req, res) => {
     const userInput = req.params.user_input;
-    let query;
-
-    switch (userInput) {
-        case 'dbUsage':
-            query = "SELECT pg_database.datname, pg_size_pretty(pg_database_size(pg_database.datname)) AS size FROM pg_database;";
-            break;
-        case 'tablespaceUsage':
-            query = "SELECT tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) FROM pg_tables where schemaname NOT IN ('utl_file','information_schema','pg_catalog');";
-            break;
-    }
+    let query = setQuery(userInput);
 
     mainClient.query(query, (error, result) => {
             if (error) {
-                console.error('db 사용량 정보 조회 중 오류 발생:', error);
+                console.error('쿼리문 처리 중 오류 발생:', error);
             } else {
-                console.log('db 사용량 데이터 전송 선공');
+                console.log('쿼리문 요청 데이터 전송 선공');
                 res.json({tables: result.rows});
             }
         });
@@ -205,4 +196,45 @@ function connectDB() {
             console.log('DB 연결 성공!');
         }
     });
+}
+
+function setQuery(userInput) {
+    let query;
+    switch (userInput) {
+        //사용량 관리
+        case 'dbUsage':
+            query = "SELECT pg_database.datname, pg_size_pretty(pg_database_size(pg_database.datname)) AS size FROM pg_database;";
+            break;
+        case 'tablespaceUsage':
+            query = "select spcname, pg_size_pretty(pg_tablespace_size(spcname)) from pg_tablespace;";
+            break;
+        case 'tableUsage':
+            query = "SELECT tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) FROM pg_tables where schemaname NOT IN ('utl_file','information_schema','pg_catalog');";
+            break;
+        case 'indexUsage':
+            query = "SELECT indexrelid::regclass,  pg_size_pretty(pg_relation_size(indexrelid::regclass))  FROM pg_index where indexrelid > 16000;";
+            break;
+
+        //session 관리
+        case 'userSession':
+            query = "SELECT datname, usename, client_addr, client_port, application_name FROM pg_stat_activity;";
+            break;
+        case 'infoSession':
+            query = "SELECT datname, usename, state, query FROM pg_stat_activity WHERE state = 'active';";
+            break;
+
+        //sql 통계 정보
+        case 'diskTop':
+            query = "select * from pg_stat_statements order by local_blks_read,local_blks_written,shared_blks_read,shared_blks_written desc limit 50;";
+            break;
+        case 'runtimeTop':
+            query = "select * from pg_stat_statements order by total_exec_time,min_exec_time,max_exec_time,blk_read_time,blk_write_time desc limit 50;";
+            break;
+
+        //트랜잭션 정보
+        case 'certaintimeSQL':
+            query = "SELECT pid, now() - a.query_start AS duration, usename, query, state FROM pg_stat_activity a WHERE state = 'active' And now() - a.query_start > interval '1 minutes';";
+            break;
+    }
+    return query;
 }
