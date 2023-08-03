@@ -34,7 +34,7 @@
 	<script src="../js/sidebar.js" type="text/javascript"></script>
 </head>
 
-<body id="page-top" onload="setTable('/query/userSession')">
+<body id="page-top">
 	<div id="wrapper">
 
 		<!-- 사이드바 -->
@@ -99,7 +99,424 @@
 
 							<div class="table-responsive">
 								<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+									<thead>
+									</thead>
+									<tbody>
+									</tbody>
+									<tfoot>
+									</tfoot>
+									<script>
+										let dataSet;
+										fetch("/query/authority")
+												.then(response => response.json())
+												.then(data => {
+															dataSet = data;
 
+															// for (let i = 0; i < dataSet.length; i++) {
+															// 	if (dataSet[i].type === "admin") {
+															// 		dataSet.splice(i, 1);
+															// 	}
+															// }
+															const tableAuthority = document.getElementById('dataTable');
+															const tableBodyAuthority = tableAuthority.querySelector('tbody');
+
+															const dbRowAuthority = document.createElement('tr');
+															tableBodyAuthority.appendChild(dbRowAuthority);
+
+															const emptyCellAuthority = document.createElement('td');
+															emptyCellAuthority.className = 'title-user user-cell';
+															emptyCellAuthority.textContent = '사용자';
+															emptyCellAuthority.setAttribute('colspan', '2');
+															emptyCellAuthority.setAttribute('rowspan', '2');
+															dbRowAuthority.appendChild(emptyCellAuthority);
+
+															const dbText = ['sidb', 'msdb', 'tmdb', 'dmdb'];
+															for (let i = 0; i < 4; i++) {
+																const dbCell = document.createElement('td');
+																dbCell.className = 'title-user db-cell';
+																dbCell.textContent = dbText[i];
+																dbCell.setAttribute('colspan', '2');
+																dbRowAuthority.appendChild(dbCell);
+															}
+
+															const modifyCell = document.createElement('td');
+															modifyCell.className = 'title-user modify-cell';
+															modifyCell.textContent = '저장';
+															modifyCell.setAttribute('colspan', '2');
+															modifyCell.setAttribute('rowspan', '2');
+															dbRowAuthority.appendChild(modifyCell);
+
+															const rwRowAuthority = document.createElement('tr');
+															tableBodyAuthority.appendChild(rwRowAuthority);
+
+															for (let i = 0; i < 4; i++) {
+																const readCell = document.createElement('td');
+																readCell.className = 'title-user';
+																readCell.textContent = '읽기 권한';
+																rwRowAuthority.appendChild(readCell);
+
+
+																const writeCell = document.createElement('td');
+																writeCell.className = 'title-user';
+																writeCell.textContent = '쓰기 권한';
+																rwRowAuthority.appendChild(writeCell);
+															}
+
+															const emptyRowAuthority = document.createElement('tr');
+															tableBodyAuthority.appendChild(emptyRowAuthority);
+
+															const infoCellAuthority = document.createElement('td');
+															infoCellAuthority.className = 'info-cell';
+															infoCellAuthority.setAttribute('colspan', '11');
+															emptyRowAuthority.appendChild(infoCellAuthority);
+
+															const infoPart = document.createElement('div');
+															infoPart.className = 'info-part';
+															infoPart.append('사용자 이름을 검색해주세요.');
+															infoCellAuthority.appendChild(infoPart);
+
+															function filterRowsByNameAuthority(name) {
+																var trElements = tableBodyAuthority.querySelectorAll('tr');
+
+
+																for (let i = 2; i < trElements.length; i++) {
+																	tableBodyAuthority.removeChild(trElements[i]);
+																}
+
+																for (let i = 0; i < dataSet.length; i++) {
+																	trElements = tableBodyAuthority.querySelectorAll('tr');
+
+																	if (name == '') {
+																		const emptyRowAuthority = document.createElement('tr');
+																		tableBodyAuthority.appendChild(emptyRowAuthority);
+
+																		const infoCellAuthority = document.createElement('td');
+																		infoCellAuthority.className = 'info-cell';
+																		infoCellAuthority.setAttribute('colspan', '11');
+																		emptyRowAuthority.appendChild(infoCellAuthority);
+
+																		const infoPart = document.createElement('div');
+																		infoPart.className = 'info-part';
+																		infoPart.append('사용자 이름을 검색해주세요.');
+																		infoCellAuthority.appendChild(infoPart);
+
+																		break;
+																	}
+																	else if (dataSet[i].name.includes(name)) {
+																		const dataRow = document.createElement('tr');
+																		tableBodyAuthority.appendChild(dataRow);
+
+																		const nameCell = document.createElement('td');
+																		nameCell.className = 'title-user';
+																		nameCell.textContent = dataSet[i].name;
+																		nameCell.setAttribute('colspan', '2');
+																		dataRow.appendChild(nameCell);
+
+																		for (let j = 0; j < 4; j++) {
+																			const readAuthorityCell = document.createElement('td');
+																			dataRow.appendChild(readAuthorityCell);
+
+																			const readCheckbox = document.createElement('input');
+																			readCheckbox.type = 'checkbox';
+																			readCheckbox.className = 'authority';
+																			readAuthorityCell.appendChild(readCheckbox);
+
+																			const readAuthority = `readauthority${j+1}`;
+
+																			if (dataSet[i][readAuthority] === 'o') {
+																				readCheckbox.checked = true;
+																			} else if (dataSet[i][readAuthority] === 'x') {
+																				readCheckbox.checked = false;
+																			}
+
+																			readCheckbox.addEventListener('change', function() {
+																				if (readCheckbox.checked) {
+																					dataAuthority[readAuthority] = 'o';
+																					dataSet[i][readAuthority] = 'o';
+																				}
+																				else if (!readCheckbox.checked) {
+																					dataAuthority[readAuthority] = 'x';
+																					dataSet[i][readAuthority] = 'x';
+																				}
+																			});
+
+																			const writeAuthorityCell = document.createElement('td');
+																			dataRow.appendChild(writeAuthorityCell);
+
+																			const writeCheckbox = document.createElement('input');
+																			writeCheckbox.type = 'checkbox';
+																			writeCheckbox.className = 'authority';
+																			writeAuthorityCell.appendChild(writeCheckbox);
+
+																			const writeAuthority = `writeauthority${j+1}`;
+
+																			if (dataSet[i][writeAuthority] === 'o') {
+																				writeCheckbox.checked = true;
+																			} else if (dataSet[i][writeAuthority] === 'x') {
+																				writeCheckbox.checked = false;
+																			}
+
+																			writeCheckbox.addEventListener('change', function() {
+																				if (writeCheckbox.checked) {
+																					dataAuthority[writeAuthority] = 'o';
+																					dataSet[i][writeAuthority] = 'o';
+																				}
+																				else if (!writeCheckbox.checked) {
+																					dataAuthority[writeAuthority] = 'x';
+																					dataSet[i][writeAuthority] = 'x';
+																				}
+																			});
+																		}
+
+																		const dataAuthority = {
+																			readauthority1: dataSet[i].readauthority1,
+																			writeauthority1: dataSet[i].writeauthority1,
+																			readauthority2: dataSet[i].readauthority2,
+																			writeauthority2: dataSet[i].writeauthority2,
+																			readauthority3: dataSet[i].readauthority3,
+																			writeauthority3: dataSet[i].writeauthority3,
+																			readauthority4: dataSet[i].readauthority4,
+																			writeauthority4: dataSet[i].writeauthority4,
+																			id: dataSet[i].id
+																		};
+
+																		const buttonCell = document.createElement('td');
+																		buttonCell.setAttribute('colspan', '2');
+																		dataRow.appendChild(buttonCell);
+
+																		const modifyButton = document.createElement('div');
+																		modifyButton.className = 'modify-button';
+																		modifyButton.append('변경 사항 저장');
+																		modifyButton.addEventListener('click', function() {
+																			fetch("/user/updateAuthority", {
+																				method: "PUT",
+																				headers: {
+																					"Content-Type": "application/json"
+																				},
+																				body: JSON.stringify(dataAuthority)
+																			})
+																					.then(response => response.text())
+																					.then(result => {
+																						console.log(result);
+																						window.alert("변경 사항이 저장됐습니다.")
+																					})
+																					.catch(error => {
+																						console.error("수정 요청 중 오류 발생:", error);
+																					});
+																		});
+
+																		buttonCell.appendChild(modifyButton);
+																	}
+																	else if (i == dataSet.length - 1 && trElements.length == 2) {
+																		const emptyRowAuthority = document.createElement('tr');
+																		tableBodyAuthority.appendChild(emptyRowAuthority);
+
+																		const infoCellAuthority = document.createElement('td');
+																		infoCellAuthority.className = 'info-cell';
+																		infoCellAuthority.setAttribute('colspan', '11');
+																		emptyRowAuthority.appendChild(infoCellAuthority);
+
+																		const infoPart = document.createElement('div');
+																		infoPart.className = 'info-part';
+																		infoPart.append('검색 결과가 없습니다.');
+																		infoCellAuthority.appendChild(infoPart);
+																	}
+																}
+																trElements = tableBodyAuthority.querySelectorAll('tr');
+
+																if (trElements.length <= 3) {
+																	const saveButton = document.getElementById('save-button');
+																	saveButton.style.display = 'none';
+																}
+																else if (trElements.length > 3) {
+																	const saveButton = document.getElementById('save-button');
+																	saveButton.style.display = 'block';
+																}
+															}
+
+															const searchPart = document.createElement('div');
+															searchPart.className = 'search-part';
+
+															const mainTitleAuthority = document.getElementById('authority');
+															mainTitleAuthority.insertAdjacentElement('afterend',searchPart);
+
+															const searchInputAuthority = document.createElement('input');
+															searchInputAuthority.className = 'user-search-center';
+															searchInputAuthority.type = 'text';
+															searchInputAuthority.placeholder = '사용자 이름 검색';
+
+															const searchButton = document.createElement('div');
+															searchButton.className = 'search-button';
+															searchButton.append('검색');
+
+															searchButton.addEventListener('click', function() {
+																const searchValue = searchInputAuthority.value;
+																filterRowsByNameAuthority(searchValue);
+															});
+
+															searchInputAuthority.addEventListener('keydown', function(event) {
+																if (event.key === 'Enter') {
+																	searchButton.click();
+																}
+															});
+
+															searchPart.appendChild(searchInputAuthority);
+															searchPart.appendChild(searchButton);
+
+															const buttonPart = document.createElement('div');
+															buttonPart.className = 'button-part';
+															const allFindButton = document.createElement('div');
+															allFindButton.className = 'all-find-button';
+															allFindButton.append('전체 사용자 조회');
+															allFindButton.addEventListener('click', function() {
+																const trElements = tableBodyAuthority.querySelectorAll('tr');
+
+																const tdElements = trElements[2].querySelectorAll('td')
+
+																if (trElements.length - 2 == dataSet.length && tdElements.length != 1) {
+																	return ;
+																}
+
+																for (let i = 2; i < trElements.length; i++) {
+																	tableBodyAuthority.removeChild(trElements[i]);
+																}
+
+																if (dataSet.length == 0) {
+																	const emptyRowAuthority = document.createElement('tr');
+																	tableBodyAuthority.appendChild(emptyRowAuthority);
+
+																	const infoCellAuthority = document.createElement('td');
+																	infoCellAuthority.className = 'info-cell';
+																	infoCellAuthority.setAttribute('colspan', '11');
+																	emptyRowAuthority.appendChild(infoCellAuthority);
+
+																	const infoPart = document.createElement('div');
+																	infoPart.className = 'info-part';
+																	infoPart.append('등록된 사용자가 없습니다.');
+																	infoCellAuthority.appendChild(infoPart);
+																	return;
+																}
+
+																for (let i = 0; i < dataSet.length; i++) {
+																	const trElementsUpdate = tableBodyAuthority.querySelectorAll('tr');
+
+																	const dataRow = document.createElement('tr');
+																	tableBodyAuthority.appendChild(dataRow);
+
+																	const nameCell = document.createElement('td');
+																	nameCell.className = 'title-user';
+																	nameCell.textContent = dataSet[i].name;
+																	nameCell.setAttribute('colspan', '2');
+																	dataRow.appendChild(nameCell);
+
+																	for (let j = 0; j < 4; j++) {
+																		const readAuthorityCell = document.createElement('td');
+																		dataRow.appendChild(readAuthorityCell);
+
+																		const readCheckbox = document.createElement('input');
+																		readCheckbox.type = 'checkbox';
+																		readCheckbox.className = 'authority';
+																		readAuthorityCell.appendChild(readCheckbox);
+
+																		const readAuthority = `readauthority${j+1}`;
+
+																		if (dataSet[i][readAuthority] === 'o') {
+																			readCheckbox.checked = true;
+																		} else if (dataSet[i][readAuthority] === 'x') {
+																			readCheckbox.checked = false;
+																		}
+
+																		readCheckbox.addEventListener('change', function() {
+																			if (readCheckbox.checked) {
+																				dataAuthority[readAuthority] = 'o';
+																				dataSet[i][readAuthority] = 'o';
+																			}
+																			else if (!readCheckbox.checked) {
+																				dataAuthority[readAuthority] = 'x';
+																				dataSet[i][readAuthority] = 'x';
+																			}
+																		});
+
+																		const writeAuthorityCell = document.createElement('td');
+																		dataRow.appendChild(writeAuthorityCell);
+
+																		const writeCheckbox = document.createElement('input');
+																		writeCheckbox.type = 'checkbox';
+																		writeCheckbox.className = 'authority';
+																		writeAuthorityCell.appendChild(writeCheckbox);
+
+																		const writeAuthority = `writeauthority${j+1}`;
+
+																		if (dataSet[i][writeAuthority] === 'o') {
+																			writeCheckbox.checked = true;
+																		} else if (dataSet[i][writeAuthority] === 'x') {
+																			writeCheckbox.checked = false;
+																		}
+
+																		writeCheckbox.addEventListener('change', function() {
+																			if (writeCheckbox.checked) {
+																				dataAuthority[writeAuthority] = 'o';
+																				dataSet[i][writeAuthority] = 'o';
+																			}
+																			else if (!writeCheckbox.checked) {
+																				dataAuthority[writeAuthority] = 'x';
+																				dataSet[i][writeAuthority] = 'x';
+																			}
+																		});
+																	}
+
+																	const dataAuthority = {
+																		readauthority1: dataSet[i].readauthority1,
+																		writeauthority1: dataSet[i].writeauthority1,
+																		readauthority2: dataSet[i].readauthority2,
+																		writeauthority2: dataSet[i].writeauthority2,
+																		readauthority3: dataSet[i].readauthority3,
+																		writeauthority3: dataSet[i].writeauthority3,
+																		readauthority4: dataSet[i].readauthority4,
+																		writeauthority4: dataSet[i].writeauthority4,
+																		id: dataSet[i].id
+																	};
+
+																	const buttonCell = document.createElement('td');
+																	buttonCell.setAttribute('colspan', '2');
+																	dataRow.appendChild(buttonCell);
+
+																	const modifyButton = document.createElement('div');
+																	modifyButton.className = 'modify-button';
+																	modifyButton.append('변경 사항 저장');
+																	modifyButton.addEventListener('click', function() {
+																		fetch("/user/updateAuthority", {
+																			method: "PUT",
+																			headers: {
+																				"Content-Type": "application/json"
+																			},
+																			body: JSON.stringify(dataAuthority)
+																		})
+																				.then(response => response.text())
+																				.then(result => {
+																					console.log(result);
+																					window.alert("변경 사항이 저장됐습니다.")
+																				})
+																				.catch(error => {
+																					console.error("수정 요청 중 오류 발생:", error);
+																				});
+																	});
+
+																	buttonCell.appendChild(modifyButton);
+																}
+																if(dataSet.length != 1) {
+																	const saveButton = document.getElementById('save-button');
+																	saveButton.style.display = 'block';
+																}
+															});
+															searchPart.insertAdjacentElement('afterend',buttonPart);
+															buttonPart.appendChild(allFindButton);
+														}
+												)
+												.catch(error => {
+													console.error("사용자 정보 조회 중 오류 발생:", error);
+												});
+									</script>
 								</table>
 							</div>
 						</div>

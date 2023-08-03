@@ -8,7 +8,7 @@ const app = express();
 const mainClient = new Client({
     user: "etri",
     host: "192.168.100.24",
-    database: "dmdb",
+    database: "postgres",
     password: "etri1234!",
     port: 15432,
 });
@@ -234,6 +234,9 @@ function setQuery(userInput) {
             break;
 
         //사용자 권한관리
+        case 'authority':
+            query = "SELECT * FROM public.authority;";
+            break;
     }
     return query;
 }
