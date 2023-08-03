@@ -10,9 +10,6 @@
     object-fit: cover;
     overflow: auto;
 }
-.logButtonContainer {
-    text-align: end;
-}
 #resize-handle {
     background-color: #cbd5e0;
     cursor: ew-resize;

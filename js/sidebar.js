@@ -35,8 +35,9 @@ $(document).ready(function sideResize() {
 
 $(document).ready(function sideTree() {
     d = new dTree('d');
-    let tableNum = 800;
-    let colNum = 8000;
+    let dbNum = 800;
+    let schemaNum = 8000;
+    let tableNum = 80000;
 
     if (document.URL.endsWith('/index')) {
         d.clearCookie();
@@ -55,8 +56,8 @@ $(document).ready(function sideTree() {
     d.add(201, 20, 'session 정보 확인', '/session/sessioninfo');
 
     d.add(30, 0, 'SQL 통계 정보');
-    d.add(300, 30, '디스크 사용량 기준', '/sql/disk');
-    d.add(301, 30, '실행시간 기준', '/sql/runtime');
+    d.add(300, 30, '디스크 사용량 기준 TOP 50', '/sql/disk');
+    d.add(301, 30, '실행시간 기준 TOP 50', '/sql/runtime');
 
     d.add(40, 0, '트랜잭션 정보');
     d.add(400, 40, '일정 시간 이상 실행되는 SQL 정보', '/transaction/certaintime-sql');
@@ -77,31 +78,36 @@ $(document).ready(function sideTree() {
 
     d.add(80, 0, 'DBMS object');
 
-    fetch('/tableNames/dsec')
-        .then((response) => response.json())
-        .then((data) => {
-            for (let i = 0; i < data.tables.length; i++) {
-                d.add(tableNum + i, 80, data.tables[i], '#" data-toggle="modal" data-target="#informationModal');
-            }
-            let copydata = data.tables;
+    const request1 = fetch('/query/dbList');
+    const request2 = fetch('/query/schemaList');
+    const request3 = fetch('/query/tableList');
 
-            for (let i = 0; i < copydata.length; i++) {
-                fetch('/columnNames/' + copydata[i])
-                    .then((response) => response.json())
-                    .then((data) => {
-                        for (let i = 0; i < data.tables.length; i++) {
-                            d.add(colNum + i, tableNum + i, data.tables[i], );
+    Promise.all([request1, request2, request3])
+        .then(responses => Promise.all(responses.map(response => response.json())))
+        .then(data => {
+            // console.log(data[0].data);
+            // console.log(data[1].data);
+            // console.log(data[2].data);
+
+            for (let i = 0;i < data[0].data.length;i++) {
+                d.add(++dbNum, 80, data[0].data[i].datname);
+
+                for (let j = 0; j < data[1].data.length; j++) {
+                    d.add(++schemaNum, dbNum, data[1].data[j].nspname);
+
+                    for (let k = 0; k < data[2].data.length; k++) {
+                        if (data[2].data[k].schemaname == data[1].data[j].nspname) {
+                            d.add(++tableNum, schemaNum, data[2].data[k].relname, '#" data-toggle="modal" data-target="#informationModal');
                         }
-                    })
+                    }
+                }
             }
+            document.getElementById('dTreeview').innerHTML = d;
         })
-        .catch((error) => {
-            console.error('오류 발생:', error);
-        });
+        .catch(error => console.error(error));
 
     d.add(1, -1, '사용자 권한관리');
     d.add(90, 1, '전체 보기', '/authority/authority-all');
     d.add(900, 90, '사용자1');
 
-    document.getElementById('dTreeview').innerHTML = d;
 });

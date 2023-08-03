@@ -11,12 +11,14 @@
     <title>ETRI</title>
 
     <!-- sbadmin2 템플릿 css, font -->
-    <link href="../css/sidebar.css" rel="stylesheet" type="text/css">
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <link href="../css/dtree.css" rel="StyleSheet" type="text/css"/>
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!-- 커스텀 css -->
+    <link href="../css/sidebar.css" rel="stylesheet" type="text/css">
+    <link href="../css/mainContainer.css" rel="stylesheet" type="text/css">
 
     <!-- bootstrap, chart.js, datatables 자바스크립트 -->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -32,7 +34,7 @@
     <script src="../js/sidebar.js" type="text/javascript"></script>
 </head>
 
-<body id="page-top">
+<body id="page-top" onload="setTable('/query/diskTop')">
     <div id="wrapper">
 
         <!-- 사이드바 -->
@@ -74,12 +76,12 @@
                             <!-- 사용자 드롭다운 메뉴 -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                  aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="/info">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     사용자 정보 조회
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="/logout">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     로그아웃
                                 </a>
@@ -91,8 +93,7 @@
                 <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <div class="logButtonContainer">
-                                <a class="btn btn-primary btn-refresh" href="db.html"><span class="button-content">차트로 보기</span></a>
+                            <div class="optionButtonContainer">
                                 <span class="input-server">DB선택: </span>
                                 <select class="selectServer" data-style="btn-inverse">
                                     <option>DM DB</option>
@@ -101,80 +102,21 @@
                                     <option>TM DB</option>
                                 </select>
 
-                                <span class="input-table">테이블: </span>
-                                <select class="selectServer" data-style="btn-inverse">
-                                    <option>Table1</option>
-                                    <option>Table2</option>
-                                    <option>Table3</option>
-                                    <option>Table4</option>
-                                </select>
-
                                 <span>검색 기간: </span>
-                                <input type="date" id="startdate">
+                                <input type="datetime-local" id="startdate">
                                 <script>
                                     document.getElementById('startdate').value = new Date().toISOString().substring(0, 10);;
                                 </script>
                                 <span> - </span>
-                                <input type="date" id="enddate">
+                                <input type="datetime-local" id="enddate">
                                 <script>
                                     document.getElementById('enddate').value = new Date().toISOString().substring(0, 10);;
                                 </script>
-
-                                <span class="input-query">검색: </span>
-                                <input type="text" class="queryInsert">
-                                <span class="btn btn-primary btn-refresh" id="save-button1" onclick="save()"><span class="button-content">조회하기</span></span>
                             </div>
 
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                    <tr>
-                                        <th>DB명</th>
-                                        <th>query</th>
-                                        <th>query문 실행 횟수</th>
-                                        <th>query문 실행 총 시간</th>
-                                    </tr>
-                                    </thead>
-                                    <tfoot>
-                                    </tfoot>
-                                    <tbody>
-                                    <tr>
-                                        <td>DM DB</td>
-                                        <td>SELECT</td>
-                                        <td>10000000</td>
-                                        <td>12:40:00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>SI DB</td>
-                                        <td>SELECT</td>
-                                        <td>1000040</td>
-                                        <td>07:10:00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>TM DB</td>
-                                        <td>SELECT</td>
-                                        <td>400000</td>
-                                        <td>03:40:00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>TM DB</td>
-                                        <td>UPDATE</td>
-                                        <td>1000</td>
-                                        <td>00:40:00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>MS DB</td>
-                                        <td>SELECT</td>
-                                        <td>1000</td>
-                                        <td>00:10:00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>DM DB</td>
-                                        <td>INSERT</td>
-                                        <td>355500</td>
-                                        <td>2:30:00</td>
-                                    </tr>
-                                    </tbody>
+
                                 </table>
                             </div>
                         </div>
@@ -196,25 +138,5 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
-    <!-- 로그아웃 알림 -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">로그아웃 확인</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">정말로 "로그아웃" 하시겠습니까?</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
-                    <a class="btn btn-primary" href="/logout">로그아웃</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>

@@ -11,12 +11,14 @@
     <title>ETRI</title>
 
     <!-- sbadmin2 템플릿 css, font -->
-    <link href="../css/sidebar.css" rel="stylesheet" type="text/css">
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
     <link href="../css/dtree.css" rel="StyleSheet" type="text/css"/>
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!-- 커스텀 css -->
+    <link href="../css/sidebar.css" rel="stylesheet" type="text/css">
+    <link href="../css/mainContainer.css" rel="stylesheet" type="text/css">
 
     <!-- bootstrap, chart.js, datatables 자바스크립트 -->
     <script src="../vendor/jquery/jquery.min.js"></script>
@@ -32,7 +34,7 @@
     <script src="../js/sidebar.js" type="text/javascript"></script>
 </head>
 
-<body id="page-top">
+<body id="page-top" onload="setTable('/query/indexUsage')">
     <div id="wrapper">
 
         <!-- 사이드바 -->
@@ -91,10 +93,8 @@
                 <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-body">
-
-                            <!-- 버튼 공간 -->
-                            <div class="logButtonContainer">
-                                <a class="btn btn-primary btn-refresh"><span class="button-content">차트로 보기</span></a>
+                            <div class="optionButtonContainer">
+                                <a class="btn btn-primary btn-refresh" href="db.html"><span class="button-content">차트로 보기</span></a>
                                 <span class="input-server">DB선택: </span>
                                 <select class="selectServer" data-style="btn-inverse">
                                     <option>DM DB</option>
@@ -102,78 +102,13 @@
                                     <option>SI DB</option>
                                     <option>TM DB</option>
                                 </select>
-
-                                <span class="input-table">테이블: </span>
-                                <select class="selectServer" data-style="btn-inverse">
-                                    <option>Table1</option>
-                                    <option>Table2</option>
-                                    <option>Table3</option>
-                                    <option>Table4</option>
-                                </select>
-
-                                <span>검색 기간: </span>
-                                <input type="date" id="startdate">
-                                <script>
-                                    document.getElementById('startdate').value = new Date().toISOString().substring(0, 10);;
-                                </script>
-                                <span> - </span>
-                                <input type="date" id="enddate">
-                                <script>
-                                    document.getElementById('enddate').value = new Date().toISOString().substring(0, 10);;
-                                </script>
-
-                                <span class="input-query">검색: </span>
-                                <input type="text" class="queryInsert">
-                                <span class="btn btn-primary btn-refresh" id="save-button1" onclick="save()"><span class="button-content">조회하기</span></span>
                             </div>
 
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                    <tr>
-                                        <th>index명</th>
-                                        <th>사용량</th>
-                                    </tr>
-                                    </thead>
-                                    <tfoot>
-                                    </tfoot>
-                                    <tbody>
-                                    <tr>
-                                        <td>index24</td>
-                                        <td>33</td>
-                                    </tr>
-                                    <tr>
-                                        <td>index234</td>
-                                        <td>4</td>
-                                    </tr>
-                                    <tr>
-                                        <td>index14</td>
-                                        <td>6</td>
-                                    </tr>
-                                    <tr>
-                                        <td>index534</td>
-                                        <td>25</td>
-                                    </tr>
-                                    <tr>
-                                        <td>index7</td>
-                                        <td>1</td>
-                                    </tr>
-                                    <tr>
-                                        <td>index25</td>
-                                        <td>7</td>
-                                    </tr>
-                                    <tr>
-                                        <td>index1</td>
-                                        <td>35</td>
-                                    </tr>
-                                    <tr>
-                                        <td>index2</td>
-                                        <td>2</td>
-                                    </tr>
-                                    </tbody>
+
                                 </table>
                             </div>
-
                         </div>
                     </div>
                 </div>

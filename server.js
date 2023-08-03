@@ -23,7 +23,7 @@ app.use(session({
         saveUninitialized: false
 }));
 
-//user가 요청하는 쿼리문 처리
+//user가 요청하는 쿼리문 처리 - result: {data:[{key:value}]}
 app.get('/query/:user_input', (req, res) => {
     const userInput = req.params.user_input;
     let query = setQuery(userInput);
@@ -32,15 +32,14 @@ app.get('/query/:user_input', (req, res) => {
             if (error) {
                 console.error('쿼리문 처리 중 오류 발생:', error);
             } else {
-                console.log('쿼리문 요청 데이터 전송 선공');
-                res.json({tables: result.rows});
+                console.log('쿼리문 요청 데이터 전송 선공: ', query);
+                res.json({data: result.rows});
             }
         });
 });
 
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/login/login.html'));
-    connectDB();
 });
 
 app.get('/logout', (req, res) => {
@@ -79,42 +78,14 @@ app.put('/user/updateSession', (req, res) => {
     res.status(200).send('세션 정보가 업데이트되었습니다.');
 });
 
-//특정 db의 모든 테이블명 리턴
-app.get('/tableNames/:db_name', (req, res) => {
-    const dbName = req.params.db_name;
-    mainClient.query("SELECT table_name FROM information_schema.tables WHERE table_schema = " + "\'" + dbName + "\'",
-        (err, result) => {
-            if (err) {
-                console.error('테이블 정보 조회 중 오류 발생:', err);
-            } else {
-                console.log('테이블 데이터 전송 선공');
-                const tableNames = result.rows.map((row) => row.table_name);
-                res.json({tables: tableNames});
-            }
-        }
-    );
-});
-
-//특정 table의 모든 칼럼명 리턴
-app.get('/columnNames/:table_name', (req, res) => {
-    const tableName = req.params.table_name;
-    mainClient.query("SELECT column_name  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + "\'" + tableName + "\'",
-        (error, result) => {
-            if (error) {
-                console.error('칼럼 정보 조회 중 오류 발생:', error);
-            } else {
-                console.log('칼럼 데이터 전송 선공');
-                const columnNames = result.rows.map((row) => row.column_name);
-                res.json({tables: columnNames});
-            }
-        });
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+    connectDB();
 });
 
 app.get('/index', (req, res) => {
     res.sendFile(__dirname + '/views/index.html');
 });
-
-
 app.get('/monitoring/db', (req, res) => {
     res.sendFile(__dirname + '/views/monitoring/db.html');
 });
@@ -127,24 +98,18 @@ app.get('/monitoring/table', (req, res) => {
 app.get('/monitoring/indexusage', (req, res) => {
     res.sendFile(__dirname + '/views/monitoring/indexusage.html');
 });
-
-
 app.get('/session/userinfo', (req, res) => {
     res.sendFile(__dirname + '/views/session/user-info.html');
 });
 app.get('/session/sessioninfo', (req, res) => {
     res.sendFile(__dirname + '/views/session/session-info.html');
 });
-
-
 app.get('/sql/disk', (req, res) => {
     res.sendFile(__dirname + '/views/sql/disk.html');
 });
 app.get('/sql/runtime', (req, res) => {
     res.sendFile(__dirname + '/views/sql/runtime.html');
 });
-
-
 app.get('/transaction/certaintime-sql', (req, res) => {
     res.sendFile(__dirname + '/views/transaction/certaintime-sql.html');
 });
@@ -157,35 +122,23 @@ app.get('/transaction/queryblock-user', (req, res) => {
 app.get('/transaction/lock-query', (req, res) => {
     res.sendFile(__dirname + '/views/transaction/lock-query.html');
 });
-
-
 app.get('/vacuum/run-state', (req, res) => {
     res.sendFile(__dirname + '/views/vacuum/run-state.html');
 });
-
-
 app.get('/duplication/setting-info', (req, res) => {
     res.sendFile(__dirname + '/views/duplication/setting-info.html');
 });
 app.get('/duplication/serviceinfo', (req, res) => {
     res.sendFile(__dirname + '/views/duplication/service-info.html');
 });
-
-
 app.get('/scheduling/job', (req, res) => {
     res.sendFile(__dirname + '/views/scheduling/job.html');
 });
 app.get('/scheduling/job-log', (req, res) => {
     res.sendFile(__dirname + '/views/scheduling/job-log.html');
 });
-
-
 app.get('/authority/authority-all', (req, res) => {
     res.sendFile(__dirname + '/views/authority/authority-all.html');
-});
-
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
 });
 
 function connectDB() {
@@ -197,7 +150,6 @@ function connectDB() {
         }
     });
 }
-
 function setQuery(userInput) {
     let query;
     switch (userInput) {
@@ -235,6 +187,53 @@ function setQuery(userInput) {
         case 'certaintimeSQL':
             query = "SELECT pid, now() - a.query_start AS duration, usename, query, state FROM pg_stat_activity a WHERE state = 'active' And now() - a.query_start > interval '1 minutes';";
             break;
+        case 'waitblockSession':    //postgresql 버전 확인 (9.3.5)
+            query = "SELECT datname, usename, query FROM pg_stat_activity WHERE waiting = true;";
+            break;
+        case 'queryblockUser':      //postgresql 버전 확인 (9.3.5)
+            query = "SELECT w.query AS waiting_query, w.pid AS waiting_pid, w.usename AS waiting_user, l.query AS locking_query, l.pid AS locking_pid, l.usename AS locking_user, t.schemaname || '.' || t.relname AS tablename " +
+                "FROM pg_stat_activity w JOIN pg_locks l1 ON w.pid = l1.pid AND NOT l1.granted JOIN pg_locks l2 ON l1.relation = l2.relation AND l2.granted JOIN pg_stat_activity l ON l2.pid = l.pid JOIN pg_stat_user_tables t ON l1.relation = t.relid WHERE w.waiting;";
+            break;
+        case 'lockQuery':
+            query = "SELECT lock1.pid AS locked_pid, stat1.usename AS locked_user, stat1.query AS locked_statement, stat1.state AS state, stat2.query AS locking_statement, stat2.state AS state, now()- stat1.query_start AS locking_duration, lock2.pid AS locking_pid, stat2.usename AS locking_user " +
+                "FROM pg_locks lock1 JOIN pg_stat_activity stat1 ON lock1.pid = stat1.pid JOIN pg_locks lock2 ON (lock1.locktype, lock1.database, lock1.relation, lock1.page, lock1.tuple, lock1.virtualxid, lock1.transactionid, lock1.classid, lock1.objid, lock1.objsubid) IS NOT DISTINCT " +
+                "FROM (lock2.locktype, lock2.DATABASE, lock2.relation, lock2.page, lock2.tuple, lock2.virtualxid, lock2.transactionid, lock2.classid, lock2.objid, lock2.objsubid) " +
+                "JOIN pg_stat_activity stat2 ON lock2.pid = stat2.pid WHERE NOT lock1.granted AND lock2.granted;";
+            break;
+
+        //vacuum 정보
+        case 'stateVacuum':
+            query = "SELECT  datname, usename, pid, wait_event, current_timestamp - xact_start AS xact_runtime, query FROM pg_stat_activity WHERE upper(query) like '%VACUUM%' ORDER BY xact_start;";
+            break;
+
+        //이중화 정보 (master에서만, 결과가 없는 경우 slave와 이중화가 끊어지거나 중지된 경우)
+        case 'settingsDuplication':
+            query = "SELECT application_name, state, sync_state FROM pg_stat_replication;";
+            break;
+        case 'servicesDuplication':
+            query = "SELECT slot_name, active, restart_lsn FROM pg_replication_slots;";
+            break;
+
+        //스케줄링 정보 ("postgre" DB에 접근 후 질의 수행해야 함)
+        case 'infoJob':
+            query = "SELECT * FROM pgagent.pga_job;";
+            break;
+        case 'logJob':
+            query = "SELECT * FROM pgagent.pga_joblog;";
+            break;
+
+        //DBMS object
+        case 'dbList':
+            query = "SELECT datname FROM pg_database WHERE datistemplate = false;";
+            break;
+        case 'schemaList':
+            query = "SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'information_schema' AND nspname NOT LIKE 'pg_%';";
+            break;
+        case 'tableList':
+            query = "SELECT schemaname, relname FROM PG_STAT_USER_TABLES;";
+            break;
+
+        //사용자 권한관리
     }
     return query;
 }

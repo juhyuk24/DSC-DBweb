@@ -11,17 +11,22 @@
     <title>ETRI</title>
 
     <!-- sbadmin2 템플릿 css, font -->
-    <link href="css/sidebar.css" rel="stylesheet" type="text/css">
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <link href="css/dtree.css" rel="StyleSheet" type="text/css"/>
+
+    <!-- 커스텀 css -->
+    <link href="../css/sidebar.css" rel="stylesheet" type="text/css">
 
     <!-- bootstrap, chart.js, datatables 자바스크립트 -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- 페이지에 적용되는 자바스크립트 -->
+    <script src="js/dtree.js" type="text/javascript"></script>
+    <script src="js/sidebar.js" type="text/javascript"></script>
 </head>
 
 <body id="page-top">
@@ -97,9 +102,101 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
-    <!-- 페이지에 적용되는 자바스크립트 -->
-    <script src="js/dtree.js" type="text/javascript"></script>
-    <script src="js/sidebar.js" type="text/javascript"></script>
+    
+    <!-- 테이블, 칼럼 정보 인터페이스 -->
+    <div class="modal fade" id="informationModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">테이블 정보</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>칼럼 명</th>
+                            <th>타입</th>
+                            <th>PK</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="title">column1</td>
+                            <td>varchar(100)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column2</td>
+                            <td>smallint</td>
+                            <td>O</td>
+                        </tr>
+                        <tr>
+                            <td class="title">column3</td>
+                            <td>integer</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column4</td>
+                            <td>decimal</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column5</td>
+                            <td>varchar(10)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column6</td>
+                            <td>double precision</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column7</td>
+                            <td>timestamp</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column8</td>
+                            <td>text</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column9</td>
+                            <td>text</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column10</td>
+                            <td>date</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column11</td>
+                            <td>date</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column12</td>
+                            <td>boolean</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column13</td>
+                            <td>boolean</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" data-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

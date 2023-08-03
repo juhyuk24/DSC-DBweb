@@ -1,5 +1,14 @@
-$(document).ready(function () {
+function setTable (query) {
+    $.getJSON(query, function(data) {
+        var columns = [];
+
+        for (var key in data.data[0]) {
+            columns.push({ "data": key, "title": key });
+        }
+
     $('#dataTable').DataTable({
+        columns: columns,
+        data: data.data,
         //표시 건수
         lengthChange: true,
         //검색
@@ -32,3 +41,4 @@ $(document).ready(function () {
         }
     });
 });
+}
