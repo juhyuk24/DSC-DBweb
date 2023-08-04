@@ -5,6 +5,7 @@ function setTable (query) {
         for (var key in data.data[0]) {
             columns.push({ "data": key, "title": key });
         }
+        if(document.URL.endsWith('/authority/authority-all')) columns.push({ "data": "module_name", "title": "저장" });
 
     var table = $('#dataTable').DataTable({
         columns: columns,
@@ -21,7 +22,8 @@ function setTable (query) {
         info: true,
         //페이징
         paging: true,
-        scroller: true,
+        scrollX: true,
+        lengthMenu: [[-1, 5, 10, 25, 50, 100], ["전체", "5개", "10개", "25개", "50개", "100개"]],
         columnDefs: [
             {targets: '_all', width: 'fit-content'}
         ],
@@ -43,11 +45,34 @@ function setTable (query) {
             }
         }
     });
-        if(document.url == '/authority/authority-all') {
-            $('#dataTable tbody td').each(function () {
+        if(document.URL.endsWith('/authority/authority-all')) {
+            $('#dataTable tbody td').each(function() {
                 var auth = $(this).text();
-                var auth_str ='<option value="' + auth + '">' + auth + '</option>';
+                switch (auth) {
+                    case 'o':
+                        this.innerHTML = '<input type="checkbox" checked>';
+                        break;
+                    case 'O':
+                        this.innerHTML = '<input type="checkbox" checked>';
+                        break;
+                    case 'x':
+                        this.innerHTML = '<input type="checkbox">';
+                        break;
+                    case 'X':
+                        this.innerHTML = '<input type="checkbox">';
+                        break;
+                    default:
+                        break;
+                }
             });
+            var rows = $('#dataTable tbody tr');
+
+            for(let i=0;i< rows.length;i++) {
+                var row = $(rows[i]);
+                var lastCellText = row.find('td:last-child').text();
+                var save_str = '<a id="' + lastCellText + '" class="btn btn-primary btn-refresh" href=""><span class="button-content">저장</span></a>';
+                row.find('td:last-child').html(save_str);
+            }
         }
 
         var selectDB_str = '<a>DB선택: </a><select style="margin-right: 5px;"><option value="all">전체 선택</option>';
