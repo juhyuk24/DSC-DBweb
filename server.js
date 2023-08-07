@@ -8,7 +8,7 @@ const app = express();
 const mainClient = new Client({
     user: "etri",
     host: "192.168.100.24",
-    database: "postgres",
+    database: "dmdb",
     password: "etri1234!",
     port: 15432,
 });
@@ -158,29 +158,29 @@ function setQuery(userInput) {
             query = "SELECT pg_database.datname, pg_size_pretty(pg_database_size(pg_database.datname)) AS size FROM pg_database;";
             break;
         case 'tablespaceUsage':
-            query = "select spcname, pg_size_pretty(pg_tablespace_size(spcname)) from pg_tablespace;";
+            query = "select spcname AS tablespace명, pg_size_pretty(pg_tablespace_size(spcname)) AS 사용량 from pg_tablespace;";
             break;
         case 'tableUsage':
-            query = "SELECT tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) FROM pg_tables where schemaname NOT IN ('utl_file','information_schema','pg_catalog');";
+            query = "SELECT tablename AS table명, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS 사용량 FROM pg_tables where schemaname NOT IN ('utl_file','information_schema','pg_catalog');";
             break;
         case 'indexUsage':
-            query = "SELECT indexrelid::regclass,  pg_size_pretty(pg_relation_size(indexrelid::regclass))  FROM pg_index where indexrelid > 16000;";
+            query = "SELECT indexrelid::regclass AS index명,  pg_size_pretty(pg_relation_size(indexrelid::regclass)) AS 사용량 FROM pg_index where indexrelid > 16000;";
             break;
 
         //session 관리
         case 'userSession':
-            query = "SELECT datname, usename, client_addr, client_port, application_name FROM pg_stat_activity;";
+            query = "SELECT datname AS DB명, usename AS 사용자명, client_addr AS \"클라이언트 IP\", client_port AS \"클라이언트 PORT\", application_name AS 응용명 FROM pg_stat_activity;";
             break;
         case 'infoSession':
-            query = "SELECT datname, usename, state, query FROM pg_stat_activity WHERE state = 'active';";
+            query = "SELECT datname AS DB명, usename AS \"세션을 시작한 사용자명\", state AS \"세션 상태 정보\", backend_start AS \"세션 시작 시간\" FROM pg_stat_activity WHERE state = 'active';";
             break;
 
         //sql 통계 정보
         case 'diskTop':
-            query = "select * from pg_stat_statements order by local_blks_read,local_blks_written,shared_blks_read,shared_blks_written desc limit 50;";
+            query = "select dbid AS DB명, query, calls AS \"query문 실행 횟수\", total_exec_time AS \"query문 실행 총 시간\" from pg_stat_statements order by local_blks_read,local_blks_written,shared_blks_read,shared_blks_written desc limit 50;";
             break;
         case 'runtimeTop':
-            query = "select * from pg_stat_statements order by total_exec_time,min_exec_time,max_exec_time,blk_read_time,blk_write_time desc limit 50;";
+            query = "select dbid AS DB명, query, calls AS \"query문 실행 횟수\", total_exec_time AS \"query문 실행 총 시간\" from pg_stat_statements order by total_exec_time,min_exec_time,max_exec_time,blk_read_time,blk_write_time desc limit 50;";
             break;
 
         //트랜잭션 정보

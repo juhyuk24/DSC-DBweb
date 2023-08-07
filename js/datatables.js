@@ -25,7 +25,7 @@ function setTable (query) {
         scrollX: true,
         lengthMenu: [[-1, 5, 10, 25, 50, 100], ["전체", "5개", "10개", "25개", "50개", "100개"]],
         columnDefs: [
-            {targets: '_all', width: 'fit-content'}
+            //{targets: '_all', width: 'fit-content'}
         ],
         language : {
             emptyTable: "데이터가 없습니다.",
