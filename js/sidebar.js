@@ -1,11 +1,13 @@
 $(document).ready(function sideResize() {
     let sidebarSize = localStorage.getItem('sidebarSize');
-    if (sidebarSize) {
-        document.getElementById('accordionSidebar').style.width = sidebarSize + 'px';
-    }
+
+    if(sidebarSize) document.getElementById('accordionSidebar').style.width = sidebarSize + 'px';
+    else document.getElementById('accordionSidebar').style.width = '220px';
+
     const resizeData = {
         tracking: false,
-        startCursorScreenX: null,
+        startWidth: null,
+        startCursorX: null,
         maxWidth: 900,
         minWidth: 100
     };
@@ -13,23 +15,26 @@ $(document).ready(function sideResize() {
     document.getElementById('resize-handle').addEventListener('mousedown', event => {
         event.preventDefault();
         event.stopPropagation();
-        resizeData.startWidth = document.getElementById('accordionSidebar').offsetWidth;
-        resizeData.startCursorScreenX = event.screenX;
+        resizeData.startWidth = document.getElementById('accordionSidebar').clientWidth;
+        resizeData.startCursorX = event.clientX;
         resizeData.tracking = true;
+        console.log(event.clientX);
     });
 
     document.addEventListener('mousemove', event => {
         if (resizeData.tracking) {
-            const cursorScreenXDelta = event.screenX - resizeData.startCursorScreenX;
-            let newWidth = Math.min(resizeData.startWidth + cursorScreenXDelta, resizeData.maxWidth);
-            newWidth = Math.max(resizeData.minWidth, newWidth);
+            const cursorXDelta = event.clientX - resizeData.startCursorX;
+            let newWidth = resizeData.startWidth + cursorXDelta;
+            newWidth = Math.min(resizeData.maxWidth, Math.max(resizeData.minWidth, newWidth));
             document.getElementById('accordionSidebar').style.width = newWidth + 'px';
             localStorage.setItem('sidebarSize', newWidth);
+            document.body.style.cursor = 'ew-resize';
         }
-    })
+    });
 
     document.addEventListener('mouseup', event => {
-        if (resizeData.tracking) resizeData.tracking = false
+        if (resizeData.tracking) resizeData.tracking = false;
+        document.body.style.cursor = 'auto';
     });
 });
 
