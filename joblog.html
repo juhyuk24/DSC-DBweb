@@ -107,36 +107,6 @@
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-body">
-                        <div class="logButtonContainer">
-                            <span class="input-server">DB선택: </span>
-                            <select class="selectServer" data-style="btn-inverse">
-                                <option>전체 보기</option>
-                                <option>dmdb</option>
-                                <option>tmdb</option>
-                                <option>sidb</option>
-                                <option>msdb</option>
-                            </select>
-
-                            <span>검색 기간: </span>
-                            <input type="date" id="startdate">
-                            <script>
-                                document.getElementById('startdate').value = new Date().toISOString().substring(0, 10);;
-                            </script>
-                            <span> - </span>
-                            <input type="date" id="enddate">
-                            <script>
-                                document.getElementById('enddate').value = new Date().toISOString().substring(0, 10);;
-                            </script>
-                            <span class="input-server">필터: </span>
-                            <select class="selectServer" data-style="btn-inverse">
-                                <option>일련 번호</option>
-                                <option>작업 ID</option>
-                                <option>작업 로그 상태</option>
-                                <option>작업 시작 시간</option>
-                                <option>작업 수행 시간(초)</option>
-                            </select>
-                        </div>
-
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>

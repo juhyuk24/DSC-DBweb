@@ -37,7 +37,7 @@ let pieintervalID;
 let pieintervalTime = document.getElementById('setInterval-bar').value * 1000;
 
 pieintervalID = setInterval(() => {
-    const newData = [getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30)];
+    const newData = [getRandomNumber(55, 57), getRandomNumber(30, 34), getRandomNumber(15, 18), getRandomNumber(20, 24)];
     myPieChart.data.datasets[0].data = newData;
     myPieChart.update();
 }, pieintervalTime);
@@ -47,7 +47,7 @@ function changeInterval_pie() {
     if(pieintervalTime >= 1000) {
         clearInterval(pieintervalID);
         pieintervalID = setInterval(() => {
-            const newData = [getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30), getRandomNumber(15, 30)];
+            const newData = [getRandomNumber(55, 57), getRandomNumber(30, 34), getRandomNumber(15, 18), getRandomNumber(20, 24)];
             myPieChart.data.datasets[0].data = newData;
             myPieChart.update();
         }, pieintervalTime);

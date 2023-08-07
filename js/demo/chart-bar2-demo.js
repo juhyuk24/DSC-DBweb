@@ -8,7 +8,7 @@ var myBarChart = new Chart(ctx, {
     data: {
         labels: ["value1", "value2", "value3", "value4", "value5", "value6"],
         datasets: [{
-            label: "Revenue",
+            data: [70, 50, 30, 20, 10, 6],
             backgroundColor: "#4e73df",
             hoverBackgroundColor: "#2e59d9",
             borderColor: "#4e73df",
