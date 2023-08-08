@@ -57,14 +57,21 @@ $(document).ready(function () {
         }
     });
 
-    var selectDB_str = '<span>DB선택: </span><select style="margin-right: 5px;"><option value="all">전체 선택</option></span>';
-    selectDB_str += '<option value="sidb">sidb</option>';
-    selectDB_str += '<option value="tmdb">tmdb</option>';
-    selectDB_str += '<option value="dmdb">dmdb</option>';
-    selectDB_str += '<option value="msdb">msdb</option>';
+    if(document.URL.endsWith('/authority.html') || document.URL.endsWith('/authority-group1.html') || document.URL.endsWith('/authority-group2.html') || document.URL.endsWith('/authority-group3.html') || document.URL.endsWith('/authority-group4.html') || document.URL.endsWith('/authority-group5.html')
+        || document.URL.endsWith('/authority-group6.html') || document.URL.endsWith('/authority-group7.html') || document.URL.endsWith('/authority-group8.html') || document.URL.endsWith('/authority-group9.html') || document.URL.endsWith('/authority-group10.html') || document.URL.endsWith('/authority-group11.html')) {
+        var save_str = '<a class="btn btn-primary btn-refresh" href="" style="margin-right: 5px;">변경사항 일괄 저장하기</span></a>';
+        $('#dataTable_filter').prepend(save_str);
+    }
+    else {
+        var selectDB_str = '<span>DB선택: </span><select style="margin-right: 5px;"><option value="all">전체 선택</option></span>';
+        selectDB_str += '<option value="sidb">sidb</option>';
+        selectDB_str += '<option value="tmdb">tmdb</option>';
+        selectDB_str += '<option value="dmdb">dmdb</option>';
+        selectDB_str += '<option value="msdb">msdb</option>';
 
-    selectDB_str += '</select>'
-    $('#dataTable_filter').prepend(selectDB_str);
+        selectDB_str += '</select>'
+        $('#dataTable_filter').prepend(selectDB_str);
+    }
 
     if(document.URL.endsWith('/tablespace.html') || document.URL.endsWith('/table.html') || document.URL.endsWith('/indexusage.html')) {
         var showChart_str = '<a class="btn btn-primary btn-refresh" href="chart-showtable.html" style="margin-right: 5px;">차트로 보기</a>';

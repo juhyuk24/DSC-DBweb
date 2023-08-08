@@ -47,6 +47,10 @@ $(document).ready(function sideTree() {
 
     d.add(0, -1, 'ETRI');
 
+    d.add(11, 0, '서버 관리');
+    d.add(110, 11, 'master','manageConnection-master.html');
+    d.add(111, 11, 'slave','manageConnection-slave.html');
+
     d.add(10, 0, '사용량 모니터링');
     d.add(100, 10, 'DB별 사용량', 'db.html');
     d.add(101, 10, 'tablespace별 사용량', 'tablespace.html');
@@ -98,19 +102,51 @@ $(document).ready(function sideTree() {
 
     d.add(1, -1, '사용자 권한관리');
     d.add(90, 1, '전체 보기', 'authority.html');
-    d.add(900, 90, 'RTT', 'authority-group1.html');
-    d.add(9000, 900, '김정훈', 'authority-user1.html');
-    d.add(9001, 900, '김철수', 'authority-user2.html');
-    d.add(9002, 900, '방주혁', 'authority-user3.html');
-    d.add(9003, 900, '안유진', 'authority-user4.html');
-    d.add(9004, 900, '황태식', 'authority-user5.html');
 
-    d.add(910, 90, 'ETRI', 'authority-group2.html');
-    d.add(9100, 910, 'user1');
-    d.add(9101, 910, 'user2');
-    d.add(9102, 910, 'user3');
-    d.add(9103, 910, 'user4');
-    d.add(9104, 910, 'user5');
+    d.add(900, 90, 'ETRI', 'authority-group1.html');
+    d.add(9000, 900, 'IRMM', 'authority-user1.html');
+    d.add(9001, 900, 'DVIM', 'authority-user2.html');
+    d.add(9002, 900, 'DPAM', 'authority-user3.html');
+
+    d.add(901, 90, 'VAIV(ETRI)', 'authority-group2.html');
+    d.add(9003, 901, 'EPMM(SEDU)', 'authority-user4.html');
+
+    d.add(902, 90, 'VAIV', 'authority-group3.html');
+    d.add(9004, 902, 'TMCM', 'authority-user5.html');
+    d.add(9005, 902, 'DRMM', 'authority-user6.html');
+
+    d.add(903, 90, '스탠스', 'authority-group4.html');
+    d.add(9006, 903, 'TMTM', 'authority-user7.html');
+
+    d.add(904, 90, '안양대학교', 'authority-group5.html');
+    d.add(9007, 904, 'SDDM', 'authority-user8.html');
+
+    d.add(905, 90, 'KITV', 'authority-group6.html');
+    d.add(9008, 905, 'DMSB (SARM)', 'authority-user9.html');
+    d.add(9009, 905, 'DMSB (DESM)', 'authority-user10.html');
+    d.add(9010, 905, 'DMSB (DASM)', 'authority-user11.html');
+
+    d.add(906, 90, 'KICT', 'authority-group7.html');
+    d.add(9011, 906, 'FEDM', 'authority-user12.html');
+
+    d.add(907, 90, 'IANSIT', 'authority-group8.html');
+    d.add(9012, 907, 'SDCM', 'authority-user13.html');
+    d.add(9013, 907, 'SEMM', 'authority-user14.html');
+    d.add(9014, 907, 'CPAM', 'authority-user15.html');
+    d.add(9015, 907, 'DTGM', 'authority-user16.html');
+    d.add(9016, 907, 'SDRM', 'authority-user17.html');
+    d.add(9017, 907, 'DTSM', 'authority-user18.html');
+
+    d.add(908, 90, 'CMWORLD', 'authority-group9.html');
+    d.add(9018, 908, 'SGMM', 'authority-user19.html');
+    d.add(9019, 908, 'TGMM', 'authority-user20.html');
+    d.add(9020, 908, 'GRSM', 'authority-user21.html');
+
+    d.add(909, 90, '나모웹비즈', 'authority-group10.html');
+    d.add(9021, 909, 'VDCM', 'authority-user22.html');
+
+    d.add(910, 90, '위니텍', 'authority-group11.html');
+    d.add(9022, 910, 'UTSM', 'authority-user23.html');
 
     document.getElementById('dTreeview').innerHTML = d;
 });
