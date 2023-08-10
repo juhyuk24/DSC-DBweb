@@ -5,7 +5,7 @@ var ctx = document.getElementById("myBarChart");
 var myBarChart = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: ["DM 데이터베이스", "TM 데이터베이스", "SI 데이터베이스", "MS 데이터베이스"],
+        labels: ["dmdb", "tmdb", "sidb", "msdb"],
         datasets: [{
             data: [30, 20, 70, 40],
             backgroundColor: "#4e73df",

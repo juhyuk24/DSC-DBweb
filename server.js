@@ -5,37 +5,54 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const port = 8080;
 const app = express();
-const mainClient = new Client({
-    user: "etri",
-    host: "192.168.100.24",
-    database: "dmdb",
-    password: "etri1234!",
-    port: 15432,
-});
-
+const dbConnections = [
+    {user: "etri", host: "192.168.100.24", database: "dmdb", password: "etri1234!", port: 15432},
+    {user: "etri", host: "192.168.100.24", database: "sidb", password: "etri1234!", port: 15432},
+    {user: "etri", host: "192.168.100.24", database: "tmdb", password: "etri1234!", port: 15432},
+    {user: "etri", host: "192.168.100.24", database: "msdb", password: "etri1234!", port: 15432},
+    {user: "etri", host: "192.168.100.24", database: "postgres", password: "etri1234!", port: 15432}
+];
+let dbNum = 0;
+const clients = [];
+for (const config of dbConnections) {
+    const client = new Client(config);
+    client.connect(); // 데이터베이스 연결
+    clients.push(client);
+}
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 app.use(express.urlencoded({extended: false}));
 app.use(session({
-        secret: 'mysecret',
-        resave: false,
-        saveUninitialized: false
+    secret: 'mysecret',
+    resave: false,
+    saveUninitialized: false
 }));
 
-//user가 요청하는 쿼리문 처리 - result: {data:[{key:value}]}
+
+//sql 쿼리문 처리 - result: {data:[{key:value}]}
 app.get('/query/:user_input', (req, res) => {
     const userInput = req.params.user_input;
     let query = setQuery(userInput);
 
-    mainClient.query(query, (error, result) => {
-            if (error) {
-                console.error('쿼리문 처리 중 오류 발생:', error);
-            } else {
-                console.log('쿼리문 요청 데이터 전송 선공: ', query);
-                res.json({data: result.rows});
-            }
-        });
+    clients[dbNum].query(query, (error, result) => {
+        if (error) {
+            console.error('쿼리문 처리 중 오류 발생:', error);
+            res.json({"data": [{"쿼리문 오류 발생" : null}]});
+        } else {
+            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
+            if (result.rows.length == 0)
+                res.json({"data": [{"테이블 데이터 없음" : null}]});
+            else
+                res.json({"data": result.rows});
+        }
+    });
+});
+
+app.get('/setDB/:user_input', (req, res) => {
+    const userInput = req.params.user_input;
+    setDataBase(userInput);
+    console.log(userInput + "변경 성공");
 });
 
 app.get('/login', (req, res) => {
@@ -80,7 +97,9 @@ app.put('/user/updateSession', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
-    connectDB();
+    for (let i = 0; i < clients.length; i++) {
+        connectDB(clients[i]);
+    }
 });
 
 app.get('/index', (req, res) => {
@@ -141,15 +160,38 @@ app.get('/authority/authority-all', (req, res) => {
     res.sendFile(__dirname + '/views/authority/authority-all.html');
 });
 
-function connectDB() {
-    mainClient.connect((err) => {
-        if (err) {
-            console.error('DB 연결 오류:', err);
-        } else {
-            console.log('DB 연결 성공!');
-        }
-    });
+function connectDB(client) {
+    client.connect()
+        .then(() => console.log(`${client.database} database 연결 성공`))
+        .catch(err => console.error(`${client.database} database 연결 중 에러 발생:`, err));
 }
+
+function setDataBase(userInput) {
+    switch (userInput) {
+        case 'dmdb':
+            dbNum = 0;
+            break;
+        case 'sidb':
+            dbNum = 1;
+            break;
+        case 'tmdb':
+            dbNum = 2;
+            break;
+        case 'msdb':
+            dbNum = 3;
+            break;
+        case 'postgres':
+            dbNum = 4;
+            break;
+        case 'all':
+            dbNum = 5;
+            break;
+        default:
+            console.log("db설정 오류: ", userInput);
+            break;
+    }
+}
+
 function setQuery(userInput) {
     let query;
     switch (userInput) {
@@ -214,7 +256,7 @@ function setQuery(userInput) {
             query = "SELECT slot_name, active, restart_lsn FROM pg_replication_slots;";
             break;
 
-        //스케줄링 정보 ("postgre" DB에 접근 후 질의 수행해야 함)
+        //스케줄링 정보 ("postgres" DB에 접근 후 질의 수행해야 함)
         case 'infoJob':
             query = "SELECT * FROM pgagent.pga_job;";
             break;
@@ -235,6 +277,7 @@ function setQuery(userInput) {
 
         //사용자 권한관리
         case 'authority':
+            setDataBase("postgres");
             query = "SELECT * FROM public.authority;";
             break;
     }

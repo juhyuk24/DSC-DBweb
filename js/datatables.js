@@ -1,108 +1,181 @@
-function setTable (query) {
-    $.getJSON(query, function(data) {
+function setTable(query) {
+    if (localStorage.getItem("DB_VALUE"))
+        fetch('/setDB/' + localStorage.getItem("DB_VALUE"));
+
+    $.getJSON(query, function (data) {
         var columns = [];
-
-        for (var key in data.data[0]) {
-            columns.push({ "data": key, "title": key });
+        for (var val in data.data[0]) {
+            columns.push({"data": val, "title": val});
         }
-        if(document.URL.endsWith('/authority/authority-all')) columns.push({ "data": "module_name", "title": "저장" });
+        if (document.URL.endsWith('/authority/authority-all')) columns.push({"data": "module_name", "title": "저장"});
 
-    var table = $('#dataTable').DataTable({
-        columns: columns,
-        data: data.data,
-        //표시 건수
-        lengthChange: true,
-        //검색
-        searching: {
-            return: true
-        },
-        //정렬
-        ordering: true,
-        //정보 표시
-        info: true,
-        //페이징
-        paging: true,
-        scrollX: true,
-        lengthMenu: [[-1, 5, 10, 25, 50, 100], ["전체", "5개", "10개", "25개", "50개", "100개"]],
-        columnDefs: [
-            //{targets: '_all', width: 'fit-content'}
-        ],
-        language : {
-            emptyTable: "데이터가 없습니다.",
-            lengthMenu: "페이지에_MENU_건의 데이터 표시",
-            search: "검색:",
-            info: "현재 _START_ - _END_ / 총 _TOTAL_건",
-            infoEmpty: "데이터 없음",
-            infoFiltered: "( _MAX_건의 데이터에서 필터링됨 )",
-            loadingRecords: "로딩중...",
-            processing:     "잠시만 기다려 주세요...",
-            paginate: {
-                "next": "다음",
-                "previous": "이전"
+        var table = $('#dataTable').DataTable({
+            columns: columns,
+            data: data.data,
+            //표시 건수
+            lengthChange: true,
+            //검색
+            searching: {
+                return: true
             },
-            select: {
-                rows: ""
+            //정렬
+            ordering: true,
+            //정보 표시
+            info: true,
+            //페이징
+            paging: true,
+            scrollX: true,
+            lengthMenu: [[-1, 5, 10, 25, 50, 100], ["전체", "5개", "10개", "25개", "50개", "100개"]],
+            columnDefs: [
+                {targets: '_all', width: 'fit-content'}
+            ],
+            language: {
+                emptyTable: "데이터가 없습니다.",
+                lengthMenu: "페이지에_MENU_건의 데이터 표시",
+                search: "검색:",
+                info: "현재 _START_ - _END_ / 총 _TOTAL_건",
+                infoEmpty: "데이터 없음",
+                infoFiltered: "( _MAX_건의 데이터에서 필터링됨 )",
+                loadingRecords: "로딩중...",
+                processing: "잠시만 기다려 주세요...",
+                paginate: {
+                    "next": "다음",
+                    "previous": "이전"
+                },
+                select: {
+                    rows: ""
+                }
             }
+        });
+        setTableBtns();
+    });
+}
+
+function setTableBtns() {
+    // 검색 필터
+    setFilter();
+
+    if (document.URL.endsWith('/authority-all')) { //권한관리 페이지면 체크박스 넣기
+        setCheckbox();
+        setSaveAllBtn();
+    } else {
+        setDBselectBtn();
+    }
+
+    if (document.URL.endsWith('/tablespace') || document.URL.endsWith('/table') || document.URL.endsWith('/indexusage')) {
+        var showChart_str = '<a class="btn btn-primary btn-refresh" href="chart-showtable.html" style="margin: 5px;">차트로 보기</a>';
+        $('#dataTable_filter').prepend(showChart_str);
+    }
+
+    if (document.URL.endsWith('/serviceinfo')) {
+        var selectDate_str = '<span>검색 기간: </span><input type=\"datetime-local\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"datetime-local\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+    }
+
+    if (document.URL.endsWith('/infoJob')) {
+        var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+        var showChart_str = '<span>활성화 상태: </span><select style="margin: 5px;"><option>전체</option><option>t</option><option>f</option></select>';
+        $('#dataTable_filter').prepend(showChart_str);
+    }
+
+    if (document.URL.endsWith('/logJob')) {
+        var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+    }
+
+    if (document.URL.endsWith('/runtime')) {
+        var selectDate_str = '<span>검색 시간: </span><input type=\"time\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"time\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+    }
+
+    if (document.URL.endsWith('/sessioninfo')) {
+        var showChart_str = '<span>세션 상태: </span><select style="margin: 5px;"><option>전체</option><option>active</option><option>idle</option></select>';
+        $('#dataTable_filter').prepend(showChart_str);
+    }
+}
+
+function setCheckbox() {
+    $('#dataTable tbody td').each(function () {
+        var auth = $(this).text();
+        switch (auth) {
+            case 'o':
+                this.innerHTML = '<input type="checkbox" checked>';
+                break;
+            case 'O':
+                this.innerHTML = '<input type="checkbox" checked>';
+                break;
+            case 'x':
+                this.innerHTML = '<input type="checkbox">';
+                break;
+            case 'X':
+                this.innerHTML = '<input type="checkbox">';
+                break;
+            default:
+                break;
         }
     });
-        if(document.URL.endsWith('/authority/authority-all')) {
-            $('#dataTable tbody td').each(function() {
-                var auth = $(this).text();
-                switch (auth) {
-                    case 'o':
-                        this.innerHTML = '<input type="checkbox" checked>';
-                        break;
-                    case 'O':
-                        this.innerHTML = '<input type="checkbox" checked>';
-                        break;
-                    case 'x':
-                        this.innerHTML = '<input type="checkbox">';
-                        break;
-                    case 'X':
-                        this.innerHTML = '<input type="checkbox">';
-                        break;
-                    default:
-                        break;
-                }
+    var rows = $('#dataTable tbody tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        var row = $(rows[i]);
+        var lastCellText = row.find('td:last-child').text();
+        var save_str = '<a id="' + lastCellText + '" class="btn btn-primary btn-refresh" href=""><span class="button-content">저장</span></a>';
+        row.find('td:last-child').html(save_str);
+    }
+}
+
+function setFilter() {
+    var filter_str = '<span style="white-space: nowrap;">필터: <select style="margin: 5px;"><option value="all">전체 검색</option></span>';
+
+    $('#dataTable thead th').each(function () {
+        var title = $(this).text();
+        filter_str += '<option value="' + title + '">' + title + '</option>';
+    });
+
+    filter_str += '</select>';
+    $('#dataTable_filter').prepend(filter_str);
+
+    $('#dataTable_filter').on('change', function () {
+        var selectedColumn = $(this).val();
+        table.columns().search('').draw();
+        if (selectedColumn) {
+            table.columns().header().to$().filter(':contains(' + selectedColumn + ')').each(function () {
+                var columnIndex = $(this).index();
+                table.columns(columnIndex).search(selectedColumn).draw();
             });
-            var rows = $('#dataTable tbody tr');
-
-            for(let i=0;i< rows.length;i++) {
-                var row = $(rows[i]);
-                var lastCellText = row.find('td:last-child').text();
-                var save_str = '<a id="' + lastCellText + '" class="btn btn-primary btn-refresh" href=""><span class="button-content">저장</span></a>';
-                row.find('td:last-child').html(save_str);
-            }
         }
+    });
+}
 
-        var selectDB_str = '<a>DB선택: </a><select style="margin-right: 5px;"><option value="all">전체 선택</option>';
-        $.getJSON('/query/dbList', function (data) {
-            for(let i=0;i<data.data.length;i++) {
-                selectDB_str += '<option value="' + data.data[i].datname + '">' + data.data[i].datname + '</option>';
-            }
-            selectDB_str += '</select>'
-            $('#dataTable_filter').prepend(selectDB_str);
-        });
+function setSaveAllBtn() {
+    var save_str = '<a class="btn btn-primary btn-refresh" href="" style="margin: 5px;">변경사항 일괄 저장</span></a>';
+    $('#dataTable_filter').prepend(save_str);
+}
 
-        var filter_str = '<a>필터: </a><select style="margin-right: 5px;"><option value="all">전체 검색</option>';
+function setDBselectBtn() {
+    var selectDB_str = '<span>DB선택: </span><select class="select-db" style="margin: 5px;" onchange="changeTable(this)">';
+    selectDB_str += '<option value="all">전체 선택</option>'
+    selectDB_str += '<option value="sidb">sidb</option>';
+    selectDB_str += '<option value="tmdb">tmdb</option>';
+    selectDB_str += '<option value="dmdb">dmdb</option>';
+    selectDB_str += '<option value="msdb">msdb</option>';
+    selectDB_str += '<option value="postgres">postgres</option>';
+    selectDB_str += '</select>'
+    $('#dataTable_filter').prepend(selectDB_str);
 
-        $('#dataTable thead th').each(function () {
-            var title = $(this).text();
-            filter_str +='<option value="' + title + '">' + title + '</option>';
-        });
+    const select = document.querySelector(".select-db");
+    const dbValue = localStorage.getItem("DB_VALUE");
 
-        filter_str += '</select style="margin-right: 2px">';
-        $('#dataTable_filter').prepend(filter_str);
+    if (dbValue) {
+        select.value = dbValue;
+    }
+}
 
-        $('#dataTable_filter').on('change', function () {
-            var selectedColumn = $(this).val();
-            table.columns().search('').draw();
-            if (selectedColumn) {
-                table.columns().header().to$().filter(':contains(' + selectedColumn + ')').each(function () {
-                    var columnIndex = $(this).index();
-                    table.columns(columnIndex).search(selectedColumn).draw();
-                });
-            }
-        });
-});
+function changeTable(obj) {
+    var selectVal = $(obj).val();
+
+    fetch('/setDB/' + selectVal);
+    localStorage.setItem("DB_VALUE", selectVal);
+    location.reload();
 }

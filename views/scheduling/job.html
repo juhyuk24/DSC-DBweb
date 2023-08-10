@@ -47,8 +47,6 @@
             <hr class="sidebar-divider my-0">
             <!-- 트리 뷰 -->
             <div class="dtree">
-                <!-- 모두 펼치기 / 모두 접기 -->
-                <p><a href="javascript: d.openAll();">모두 펼치기</a> | <a href="javascript: d.closeAll();">모두 접기</a></p>
                 <!-- 트리 뷰 들어갈 div -->
                 <div id="dTreeview"></div>
             </div>
@@ -93,27 +91,6 @@
                 <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            <div class="optionButtonContainer">
-                                <span class="input-server">DB선택: </span>
-                                <select class="selectServer" data-style="btn-inverse">
-                                    <option>DM DB</option>
-                                    <option>MS DB</option>
-                                    <option>SI DB</option>
-                                    <option>TM DB</option>
-                                </select>
-
-                                <span>검색 기간: </span>
-                                <input type="datetime-local" id="startdate">
-                                <script>
-                                    document.getElementById('startdate').value = new Date().toISOString().substring(0, 10);;
-                                </script>
-                                <span> - </span>
-                                <input type="datetime-local" id="enddate">
-                                <script>
-                                    document.getElementById('enddate').value = new Date().toISOString().substring(0, 10);;
-                                </script>
-                            </div>
-
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
 
