@@ -32,6 +32,7 @@ function setTable(query) {
             language: {
                 emptyTable: "데이터가 없습니다.",
                 lengthMenu: "페이지에_MENU_건의 데이터 표시",
+                zeroRecords: "검색 결과 없음",
                 search: "검색:",
                 info: "현재 _START_ - _END_ / 총 _TOTAL_건",
                 infoEmpty: "데이터 없음",
@@ -47,51 +48,54 @@ function setTable(query) {
                 }
             }
         });
-        setTableBtns();
+        setTableBtns(table);
     });
 }
 
-function setTableBtns() {
-    // 검색 필터
-    setFilter();
+function setTableBtns(table) {
+    setFilter(table);
 
-    if (document.URL.endsWith('/authority-all')) { //권한관리 페이지면 체크박스 넣기
+    if (document.URL.endsWith('/authority-all')) {
+        //권한관리 페이지면 체크박스 넣기
         setCheckbox();
         setSaveAllBtn();
     } else {
+        //권한관리 페이지는 DB선택버튼 필요없음
         setDBselectBtn();
     }
+    setAdditionalBtn();
+}
 
-    if (document.URL.endsWith('/tablespace') || document.URL.endsWith('/table') || document.URL.endsWith('/indexusage')) {
-        var showChart_str = '<a class="btn btn-primary btn-refresh" href="chart-showtable.html" style="margin: 5px;">차트로 보기</a>';
-        $('#dataTable_filter').prepend(showChart_str);
-    }
+function setFilter(table) {
+    var filter_str = '<span style="white-space: nowrap;">필터: <select id="search-filter" style="margin: 5px;"><option value="all">전체 검색</option></span>';
+    var selectedColumn = -1;
+    var searchValue;
 
-    if (document.URL.endsWith('/serviceinfo')) {
-        var selectDate_str = '<span>검색 기간: </span><input type=\"datetime-local\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"datetime-local\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
-        $('#dataTable_filter').prepend(selectDate_str);
-    }
+    $('#dataTable thead th').each(function () {
+        var title = $(this).text();
+        filter_str += '<option value="' + title + '">' + title + '</option>';
+    });
+    filter_str += '</select>';
+    $('#dataTable_filter').prepend(filter_str);
 
-    if (document.URL.endsWith('/infoJob')) {
-        var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
-        $('#dataTable_filter').prepend(selectDate_str);
-        var showChart_str = '<span>활성화 상태: </span><select style="margin: 5px;"><option>전체</option><option>t</option><option>f</option></select>';
-        $('#dataTable_filter').prepend(showChart_str);
-    }
+    $('#search-filter').on('change', function () {
+        selectedColumn = document.querySelector('#search-filter').selectedIndex - 1;
+        searchColumn();
+    });
 
-    if (document.URL.endsWith('/logJob')) {
-        var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
-        $('#dataTable_filter').prepend(selectDate_str);
-    }
+    $('#dataTable_filter input[type="search"]').on('input', function() {
+        searchColumn();
+    });
 
-    if (document.URL.endsWith('/runtime')) {
-        var selectDate_str = '<span>검색 시간: </span><input type=\"time\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"time\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
-        $('#dataTable_filter').prepend(selectDate_str);
-    }
+    function searchColumn() {
+        searchValue = $('#dataTable_filter input[type="search"]').val();
+        table.columns().search('').draw(); //칼럼 필터 초기화
 
-    if (document.URL.endsWith('/sessioninfo')) {
-        var showChart_str = '<span>세션 상태: </span><select style="margin: 5px;"><option>전체</option><option>active</option><option>idle</option></select>';
-        $('#dataTable_filter').prepend(showChart_str);
+        if (selectedColumn === -1) {
+            table.search(searchValue).draw();
+        } else {
+            table.column(selectedColumn).search(searchValue).draw(); //칼럼 인덱스로 지정하여 검색하기
+        }
     }
 }
 
@@ -125,29 +129,6 @@ function setCheckbox() {
     }
 }
 
-function setFilter() {
-    var filter_str = '<span style="white-space: nowrap;">필터: <select style="margin: 5px;"><option value="all">전체 검색</option></span>';
-
-    $('#dataTable thead th').each(function () {
-        var title = $(this).text();
-        filter_str += '<option value="' + title + '">' + title + '</option>';
-    });
-
-    filter_str += '</select>';
-    $('#dataTable_filter').prepend(filter_str);
-
-    $('#dataTable_filter').on('change', function () {
-        var selectedColumn = $(this).val();
-        table.columns().search('').draw();
-        if (selectedColumn) {
-            table.columns().header().to$().filter(':contains(' + selectedColumn + ')').each(function () {
-                var columnIndex = $(this).index();
-                table.columns(columnIndex).search(selectedColumn).draw();
-            });
-        }
-    });
-}
-
 function setSaveAllBtn() {
     var save_str = '<a class="btn btn-primary btn-refresh" href="" style="margin: 5px;">변경사항 일괄 저장</span></a>';
     $('#dataTable_filter').prepend(save_str);
@@ -169,6 +150,40 @@ function setDBselectBtn() {
 
     if (dbValue) {
         select.value = dbValue;
+    }
+}
+
+function setAdditionalBtn() {
+    if (document.URL.endsWith('/tablespace') || document.URL.endsWith('/table') || document.URL.endsWith('/indexusage')) {
+        var showChart_str = '<a class="btn btn-primary btn-refresh" href="chart-showtable.html" style="margin: 5px;">차트로 보기</a>';
+        $('#dataTable_filter').prepend(showChart_str);
+    }
+
+    if (document.URL.endsWith('/serviceinfo')) {
+        var selectDate_str = '<span>검색 기간: </span><input type=\"datetime-local\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"datetime-local\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+    }
+
+    if (document.URL.endsWith('/infoJob')) {
+        var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+        var showChart_str = '<span>활성화 상태: </span><select style="margin: 5px;"><option>전체</option><option>t</option><option>f</option></select>';
+        $('#dataTable_filter').prepend(showChart_str);
+    }
+
+    if (document.URL.endsWith('/logJob')) {
+        var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+    }
+
+    if (document.URL.endsWith('/runtime')) {
+        var selectDate_str = '<span>검색 시간: </span><input type=\"time\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"time\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+    }
+
+    if (document.URL.endsWith('/sessioninfo')) {
+        var showChart_str = '<span>세션 상태: </span><select style="margin: 5px;"><option>전체</option><option>active</option><option>idle</option></select>';
+        $('#dataTable_filter').prepend(showChart_str);
     }
 }
 

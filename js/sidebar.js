@@ -44,9 +44,6 @@ $(document).ready(function sideTree() {
     }
 
     mydtree.add(++a, -1, 'ETRI');
-        mydtree.add(++b, a, '서버 관리');
-            mydtree.add(++c, b, 'master');
-            mydtree.add(++c, b, 'slave');
 
         mydtree.add(++b, a, '사용량 모니터링');
             mydtree.add(++c, b, 'DB별 사용량', '/monitoring/db');
@@ -79,22 +76,25 @@ $(document).ready(function sideTree() {
             mydtree.add(++c, b, 'job 정보', '/scheduling/job');
             mydtree.add(++c, b, 'job 수행 로그 정보', '/scheduling/job-log');
 
-        mydtree.add(++b, a, 'DBMS object');
-            setDBMSobjects();
-
     mydtree.add(++a, -1, '사용자 권한관리');
         mydtree.add(++b, a, '전체 보기', '/authority/authority-all');
             mydtree.add(++c, b, '사용자1');
 
+        mydtree.add(++b, a, '서버 관리');
+            mydtree.add(++c, b, 'master');
+            mydtree.add(++c, b, 'slave');
 
-    function setDBMSobjects() {
+        mydtree.add(++b, a, 'DBMS object');
+            setDBMSobjects(b);
+
+    function setDBMSobjects(b) {
         const request1 = fetch('/query/dbList');
         const request2 = fetch('/query/tableList');
         request1
             .then(response => response.json())
             .then(data => {
                 for (let i = 0; i < data.data.length; i++) {
-                    mydtree.add(++c, 18, data.data[i].datname);
+                    mydtree.add(++c, b, data.data[i].datname);
 
                 }
                 document.getElementById('dTreeview').innerHTML = mydtree;

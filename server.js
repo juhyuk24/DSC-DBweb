@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const port = 8080;
 const app = express();
+let dbNum = 0;
 const dbConnections = [
     {user: "etri", host: "192.168.100.24", database: "dmdb", password: "etri1234!", port: 15432},
     {user: "etri", host: "192.168.100.24", database: "sidb", password: "etri1234!", port: 15432},
@@ -12,11 +13,9 @@ const dbConnections = [
     {user: "etri", host: "192.168.100.24", database: "msdb", password: "etri1234!", port: 15432},
     {user: "etri", host: "192.168.100.24", database: "postgres", password: "etri1234!", port: 15432}
 ];
-let dbNum = 0;
 const clients = [];
 for (const config of dbConnections) {
     const client = new Client(config);
-    client.connect(); // 데이터베이스 연결
     clients.push(client);
 }
 app.use(bodyParser.urlencoded({extended: true}));
