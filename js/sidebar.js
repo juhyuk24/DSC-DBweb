@@ -26,7 +26,7 @@ $(document).ready(function sideResize() {
             document.getElementById('accordionSidebar').style.width = newWidth + 'px';
             localStorage.setItem('sidebarSize', newWidth);
         }
-    })
+    });
 
     document.addEventListener('mouseup', event => {
         if (resizeData.tracking) resizeData.tracking = false
@@ -88,14 +88,22 @@ $(document).ready(function sideTree() {
             setDBMSobjects(b);
 
     function setDBMSobjects(b) {
-        const request1 = fetch('/query/dbList');
-        const request2 = fetch('/query/tableList');
-        request1
+        fetch('/query/dbList')
             .then(response => response.json())
             .then(data => {
                 for (let i = 0; i < data.data.length; i++) {
                     mydtree.add(++c, b, data.data[i].datname);
+                    fetchTable(data.data[i].datname, c);
+                }
+            });
+    }
 
+    function fetchTable(datname, c) {
+        fetch('/query/tableList/' + datname)
+            .then(response => response.json())
+            .then(data => {
+                for (let i = 0; i < data.data.length; i++) {
+                    mydtree.add(++d, c, data.data[i].relname);
                 }
                 document.getElementById('dTreeview').innerHTML = mydtree;
             });

@@ -386,7 +386,7 @@ dTree.prototype.s = function(id) {
 
 		if (this.selectedNode || this.selectedNode==0) {
 
-			eOld = document.getElementById("s" + this.obj + this.selectedNode);
+			eOld = document.getElementById("s" + this.obj + id);
 
 			eOld.className = "node";
 

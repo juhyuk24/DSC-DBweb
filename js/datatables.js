@@ -20,6 +20,7 @@ function setTable(query) {
             },
             //정렬
             ordering: true,
+            order: [],
             //정보 표시
             info: true,
             //페이징
@@ -27,7 +28,7 @@ function setTable(query) {
             scrollX: true,
             lengthMenu: [[-1, 5, 10, 25, 50, 100], ["전체", "5개", "10개", "25개", "50개", "100개"]],
             columnDefs: [
-                {targets: '_all', width: 'fit-content'}
+                {targets: '_all', width: '200px'}
             ],
             language: {
                 emptyTable: "데이터가 없습니다.",
@@ -69,7 +70,6 @@ function setTableBtns(table) {
 function setFilter(table) {
     var filter_str = '<span style="white-space: nowrap;">필터: <select id="search-filter" style="margin: 5px;"><option value="all">전체 검색</option></span>';
     var selectedColumn = -1;
-    var searchValue;
 
     $('#dataTable thead th').each(function () {
         var title = $(this).text();
@@ -88,7 +88,7 @@ function setFilter(table) {
     });
 
     function searchColumn() {
-        searchValue = $('#dataTable_filter input[type="search"]').val();
+        var searchValue = $('#dataTable_filter input[type="search"]').val();
         table.columns().search('').draw(); //칼럼 필터 초기화
 
         if (selectedColumn === -1) {
@@ -135,7 +135,7 @@ function setSaveAllBtn() {
 }
 
 function setDBselectBtn() {
-    var selectDB_str = '<span>DB선택: </span><select class="select-db" style="margin: 5px;" onchange="changeTable(this)">';
+    var selectDB_str = '<span>DB선택: </span><select id="select-db" style="margin: 5px;" onchange="changeDB(this)">';
     selectDB_str += '<option value="all">전체 선택</option>'
     selectDB_str += '<option value="sidb">sidb</option>';
     selectDB_str += '<option value="tmdb">tmdb</option>';
@@ -145,7 +145,7 @@ function setDBselectBtn() {
     selectDB_str += '</select>'
     $('#dataTable_filter').prepend(selectDB_str);
 
-    const select = document.querySelector(".select-db");
+    const select = document.querySelector("#select-db");
     const dbValue = localStorage.getItem("DB_VALUE");
 
     if (dbValue) {
@@ -187,10 +187,8 @@ function setAdditionalBtn() {
     }
 }
 
-function changeTable(obj) {
+function changeDB(obj) {
     var selectVal = $(obj).val();
-
-    fetch('/setDB/' + selectVal);
     localStorage.setItem("DB_VALUE", selectVal);
     location.reload();
 }

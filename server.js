@@ -11,7 +11,8 @@ const dbConnections = [
     {user: "etri", host: "192.168.100.24", database: "sidb", password: "etri1234!", port: 15432},
     {user: "etri", host: "192.168.100.24", database: "tmdb", password: "etri1234!", port: 15432},
     {user: "etri", host: "192.168.100.24", database: "msdb", password: "etri1234!", port: 15432},
-    {user: "etri", host: "192.168.100.24", database: "postgres", password: "etri1234!", port: 15432}
+    {user: "etri", host: "192.168.100.24", database: "postgres", password: "etri1234!", port: 15432},
+    {user: "etri", host: "192.168.100.24", database: "test", password: "etri1234!", port: 15432}
 ];
 const clients = [];
 for (const config of dbConnections) {
@@ -33,6 +34,27 @@ app.use(session({
 app.get('/query/:user_input', (req, res) => {
     const userInput = req.params.user_input;
     let query = setQuery(userInput);
+
+    clients[dbNum].query(query, (error, result) => {
+        if (error) {
+            console.error('쿼리문 처리 중 오류 발생:', error);
+            res.json({"data": [{"쿼리문 오류 발생" : null}]});
+        } else {
+            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
+            if (result.rows.length == 0)
+                res.json({"data": [{"테이블 데이터 없음" : null}]});
+            else
+                res.json({"data": result.rows});
+        }
+    });
+});
+
+//특정 db에 대한 sql 쿼리문 처리 - result: {data:[{key:value}]}
+app.get('/query/:user_input/:db_input', (req, res) => {
+    const userInput = req.params.user_input;
+    const dbInput = req.params.db_input;
+    let query = setQuery(userInput);
+    setDataBase(dbInput);
 
     clients[dbNum].query(query, (error, result) => {
         if (error) {
@@ -182,7 +204,7 @@ function setDataBase(userInput) {
         case 'postgres':
             dbNum = 4;
             break;
-        case 'all':
+        case 'test':
             dbNum = 5;
             break;
         default:
@@ -271,7 +293,7 @@ function setQuery(userInput) {
             query = "SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'information_schema' AND nspname NOT LIKE 'pg_%';";
             break;
         case 'tableList':
-            query = "SELECT schemaname, relname FROM PG_STAT_USER_TABLES;";
+            query = "SELECT relname FROM PG_STAT_USER_TABLES;";
             break;
 
         //사용자 권한관리
