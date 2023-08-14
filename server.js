@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const port = 8080;
 const app = express();
-let dbNum = 0;
 const dbConnections = [
     {user: "etri", host: "192.168.100.24", database: "dmdb", password: "etri1234!", port: 15432},
     {user: "etri", host: "192.168.100.24", database: "sidb", password: "etri1234!", port: 15432},
@@ -29,53 +28,6 @@ app.use(session({
     saveUninitialized: false
 }));
 
-
-//sql 쿼리문 처리 - result: {data:[{key:value}]}
-app.get('/query/:user_input', (req, res) => {
-    const userInput = req.params.user_input;
-    let query = setQuery(userInput);
-
-    clients[dbNum].query(query, (error, result) => {
-        if (error) {
-            console.error('쿼리문 처리 중 오류 발생:', error);
-            res.json({"data": [{"쿼리문 오류 발생" : null}]});
-        } else {
-            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
-            if (result.rows.length == 0)
-                res.json({"data": [{"테이블 데이터 없음" : null}]});
-            else
-                res.json({"data": result.rows});
-        }
-    });
-});
-
-//특정 db에 대한 sql 쿼리문 처리 - result: {data:[{key:value}]}
-app.get('/query/:user_input/:db_input', (req, res) => {
-    const userInput = req.params.user_input;
-    const dbInput = req.params.db_input;
-    let query = setQuery(userInput);
-    setDataBase(dbInput);
-
-    clients[dbNum].query(query, (error, result) => {
-        if (error) {
-            console.error('쿼리문 처리 중 오류 발생:', error);
-            res.json({"data": [{"쿼리문 오류 발생" : null}]});
-        } else {
-            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
-            if (result.rows.length == 0)
-                res.json({"data": [{"테이블 데이터 없음" : null}]});
-            else
-                res.json({"data": result.rows});
-        }
-    });
-});
-
-app.get('/setDB/:user_input', (req, res) => {
-    const userInput = req.params.user_input;
-    setDataBase(userInput);
-    console.log(userInput + "변경 성공");
-});
-
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/login/login.html'));
 });
@@ -95,14 +47,6 @@ app.get('/info', (req, res) => {
     res.sendFile(__dirname + '/views/login/info.html')
 });
 
-app.get('/register', (req, res) => {
-    res.sendFile(__dirname + '/views/login/register.html')
-});
-
-app.get('/forgot-password', (req, res) => {
-    res.sendFile(__dirname + '/views/login/forgot-password.html')
-});
-
 app.put('/user/updateSession', (req, res) => {
     const {id, password, name, email, phone, office} = req.body;
     const user = req.session.user;
@@ -116,69 +60,36 @@ app.put('/user/updateSession', (req, res) => {
     res.status(200).send('세션 정보가 업데이트되었습니다.');
 });
 
+//sql 쿼리문 처리 - result: {data:[{key:value}]}
+app.get('/query/:user_input/:db_input', (req, res) => {
+    const userInput = req.params.user_input;
+    const dbInput = req.params.db_input;
+    let dbNum;
+    let query = setQuery(userInput);
+    if(userInput == 'authority')
+        dbNum = 4;
+    else
+        dbNum = setDataBase(dbInput);
+
+    clients[dbNum].query(query, (error, result) => {
+        if (error) {
+            console.error('쿼리문 처리 중 오류 발생:', error);
+            res.json({"data": [{"쿼리문 오류 발생" : null}]});
+        } else {
+            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
+            if (result.rows.length == 0)
+                res.json({"data": [{"테이블 데이터 없음" : null}]});
+            else
+                res.json({"data": result.rows});
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
     for (let i = 0; i < clients.length; i++) {
         connectDB(clients[i]);
     }
-});
-
-app.get('/index', (req, res) => {
-    res.sendFile(__dirname + '/views/index.html');
-});
-app.get('/monitoring/db', (req, res) => {
-    res.sendFile(__dirname + '/views/monitoring/db.html');
-});
-app.get('/monitoring/tablespace', (req, res) => {
-    res.sendFile(__dirname + '/views/monitoring/tablespace.html');
-});
-app.get('/monitoring/table', (req, res) => {
-    res.sendFile(__dirname + '/views/monitoring/table.html');
-});
-app.get('/monitoring/indexusage', (req, res) => {
-    res.sendFile(__dirname + '/views/monitoring/indexusage.html');
-});
-app.get('/session/userinfo', (req, res) => {
-    res.sendFile(__dirname + '/views/session/user-info.html');
-});
-app.get('/session/sessioninfo', (req, res) => {
-    res.sendFile(__dirname + '/views/session/session-info.html');
-});
-app.get('/sql/disk', (req, res) => {
-    res.sendFile(__dirname + '/views/sql/disk.html');
-});
-app.get('/sql/runtime', (req, res) => {
-    res.sendFile(__dirname + '/views/sql/runtime.html');
-});
-app.get('/transaction/certaintime-sql', (req, res) => {
-    res.sendFile(__dirname + '/views/transaction/certaintime-sql.html');
-});
-app.get('/transaction/wait-block', (req, res) => {
-    res.sendFile(__dirname + '/views/transaction/wait-block.html');
-});
-app.get('/transaction/queryblock-user', (req, res) => {
-    res.sendFile(__dirname + '/views/transaction/queryblock-user.html');
-});
-app.get('/transaction/lock-query', (req, res) => {
-    res.sendFile(__dirname + '/views/transaction/lock-query.html');
-});
-app.get('/vacuum/run-state', (req, res) => {
-    res.sendFile(__dirname + '/views/vacuum/run-state.html');
-});
-app.get('/duplication/setting-info', (req, res) => {
-    res.sendFile(__dirname + '/views/duplication/setting-info.html');
-});
-app.get('/duplication/serviceinfo', (req, res) => {
-    res.sendFile(__dirname + '/views/duplication/service-info.html');
-});
-app.get('/scheduling/job', (req, res) => {
-    res.sendFile(__dirname + '/views/scheduling/job.html');
-});
-app.get('/scheduling/job-log', (req, res) => {
-    res.sendFile(__dirname + '/views/scheduling/job-log.html');
-});
-app.get('/authority/authority-all', (req, res) => {
-    res.sendFile(__dirname + '/views/authority/authority-all.html');
 });
 
 function connectDB(client) {
@@ -187,28 +98,24 @@ function connectDB(client) {
         .catch(err => console.error(`${client.database} database 연결 중 에러 발생:`, err));
 }
 
-function setDataBase(userInput) {
-    switch (userInput) {
+function setDataBase(dbInput) {
+    switch (dbInput) {
         case 'dmdb':
-            dbNum = 0;
-            break;
+            return 0;
         case 'sidb':
-            dbNum = 1;
-            break;
+            return 1;
         case 'tmdb':
-            dbNum = 2;
-            break;
+            return 2;
         case 'msdb':
-            dbNum = 3;
-            break;
+            return 3;
         case 'postgres':
-            dbNum = 4;
-            break;
+            return 4;
         case 'test':
-            dbNum = 5;
-            break;
+            return 5;
+        case 'all':
+            return 0;
         default:
-            console.log("db설정 오류: ", userInput);
+            console.log("db설정 오류: ", dbInput);
             break;
     }
 }
@@ -298,9 +205,66 @@ function setQuery(userInput) {
 
         //사용자 권한관리
         case 'authority':
-            setDataBase("postgres");
             query = "SELECT * FROM public.authority;";
             break;
     }
     return query;
 }
+
+app.get('/index', (req, res) => {
+    res.sendFile(__dirname + '/views/index.html');
+});
+app.get('/monitoring/db', (req, res) => {
+    res.sendFile(__dirname + '/views/monitoring/db.html');
+});
+app.get('/monitoring/tablespace', (req, res) => {
+    res.sendFile(__dirname + '/views/monitoring/tablespace.html');
+});
+app.get('/monitoring/table', (req, res) => {
+    res.sendFile(__dirname + '/views/monitoring/table.html');
+});
+app.get('/monitoring/indexusage', (req, res) => {
+    res.sendFile(__dirname + '/views/monitoring/indexusage.html');
+});
+app.get('/session/userinfo', (req, res) => {
+    res.sendFile(__dirname + '/views/session/user-info.html');
+});
+app.get('/session/sessioninfo', (req, res) => {
+    res.sendFile(__dirname + '/views/session/session-info.html');
+});
+app.get('/sql/disk', (req, res) => {
+    res.sendFile(__dirname + '/views/sql/disk.html');
+});
+app.get('/sql/runtime', (req, res) => {
+    res.sendFile(__dirname + '/views/sql/runtime.html');
+});
+app.get('/transaction/certaintime-sql', (req, res) => {
+    res.sendFile(__dirname + '/views/transaction/certaintime-sql.html');
+});
+app.get('/transaction/wait-block', (req, res) => {
+    res.sendFile(__dirname + '/views/transaction/wait-block.html');
+});
+app.get('/transaction/queryblock-user', (req, res) => {
+    res.sendFile(__dirname + '/views/transaction/queryblock-user.html');
+});
+app.get('/transaction/lock-query', (req, res) => {
+    res.sendFile(__dirname + '/views/transaction/lock-query.html');
+});
+app.get('/vacuum/run-state', (req, res) => {
+    res.sendFile(__dirname + '/views/vacuum/run-state.html');
+});
+app.get('/duplication/setting-info', (req, res) => {
+    res.sendFile(__dirname + '/views/duplication/setting-info.html');
+});
+app.get('/duplication/serviceinfo', (req, res) => {
+    res.sendFile(__dirname + '/views/duplication/service-info.html');
+});
+app.get('/scheduling/job', (req, res) => {
+    res.sendFile(__dirname + '/views/scheduling/job.html');
+});
+app.get('/scheduling/job-log', (req, res) => {
+    res.sendFile(__dirname + '/views/scheduling/job-log.html');
+});
+app.get('/authority/authority-all', (req, res) => {
+    res.sendFile(__dirname + '/views/authority/authority-all.html');
+});

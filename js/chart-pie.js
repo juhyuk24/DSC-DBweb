@@ -11,6 +11,7 @@ var myPieChart = new Chart(ctx, {
             hoverBorderColor: "rgba(234, 236, 244, 1)",
         }],
     },
+    formatter: 'kB',
     options: {
         maintainAspectRatio: false,
         tooltips: {
@@ -51,7 +52,7 @@ function fetchData() {
     let newLabels = [];
     let newDatas = [];
 
-    fetch('/query/dbUsage')
+    fetch('/query/dbUsage/postgres')
         .then((response) => response.json())
         .then((data) => {
             for(let i=0;i<data.data.length;i++){
@@ -60,7 +61,7 @@ function fetchData() {
                         newDatas.push(data.data[i].size.slice(0, -2));
                         break;
                     case "MB":
-                        newDatas.push(data.data[i].size.slice(0, -2) * 1024 );
+                        newDatas.push(data.data[i].size.slice(0, -2) * 1024);
                         break;
                 }
                 newLabels.push(data.data[i].datname);

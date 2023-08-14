@@ -84,7 +84,7 @@ function dTree(objName) {
 
 	this.icon = {
 
-		root				: 'fa fa-database',
+		root				: 'fa fa-desktop',
 
 		folder			: 'fa fa-folder',
 
@@ -248,7 +248,7 @@ dTree.prototype.node = function(node, nodeId) {
 
 		if (!node.iconOpen) node.iconOpen = (node._hc) ? this.icon.folderOpen : this.icon.node;
 
-		if (this.root.id == node.pid) {
+		if (this.root.id == node.pid && node.icon == this.icon.root) {
 
 			node.icon = this.icon.root;
 
@@ -542,7 +542,7 @@ dTree.prototype.nodeStatus = function(status, id, bottom) {
 
 		eIcon	= document.getElementById('i' + this.obj + id);
 
-		eIcon.src = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
+		eIcon.className = (status) ? this.aNodes[id].iconOpen : this.aNodes[id].icon;
 
 	}
 

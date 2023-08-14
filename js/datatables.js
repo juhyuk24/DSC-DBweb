@@ -1,8 +1,10 @@
-function setTable(query) {
+function setTable(req) {
     if (localStorage.getItem("DB_VALUE"))
-        fetch('/setDB/' + localStorage.getItem("DB_VALUE"));
+        req += "/" + localStorage.getItem("DB_VALUE");
+    else
+        req += "/all";
 
-    $.getJSON(query, function (data) {
+    $.getJSON(req, function (data) {
         var columns = [];
         for (var val in data.data[0]) {
             columns.push({"data": val, "title": val});
@@ -141,8 +143,7 @@ function setDBselectBtn() {
     selectDB_str += '<option value="tmdb">tmdb</option>';
     selectDB_str += '<option value="dmdb">dmdb</option>';
     selectDB_str += '<option value="msdb">msdb</option>';
-    selectDB_str += '<option value="postgres">postgres</option>';
-    selectDB_str += '</select>'
+    selectDB_str += '<option value="postgres">postgres</option></select>';
     $('#dataTable_filter').prepend(selectDB_str);
 
     const select = document.querySelector("#select-db");

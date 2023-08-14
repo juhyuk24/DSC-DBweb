@@ -1,3 +1,8 @@
+$(document).ready(function setLogo() {
+    const logo_str = '<a class="sidebar-brand d-flex align-items-center" href="/index"><h3>DAS 모니터링 도구</h3></a><hr class="sidebar-divider my-0">';
+    $('#accordionSidebar').prepend(logo_str);
+});
+
 $(document).ready(function sideResize() {
     let sidebarSize = localStorage.getItem('sidebarSize');
     if (sidebarSize) {
@@ -33,7 +38,7 @@ $(document).ready(function sideResize() {
     });
 });
 
-$(document).ready(function sideTree() {
+$(document).ready(function setSideTree() {
     $('.dtree').prepend('<p><a href="javascript: mydtree.openAll();">모두 펼치기</a> | <a href="javascript: mydtree.closeAll();">모두 접기</a></p>');
     let a = -1, b = 9, c = 99, d = 999;   // a가 최상위 메뉴, 마지막 알파벳이 최하위 메뉴
     mydtree = new dTree('mydtree');
@@ -43,69 +48,69 @@ $(document).ready(function sideTree() {
         mydtree.clearCookie();
     }
 
-    mydtree.add(++a, -1, 'ETRI');
+    mydtree.add(++a, -1, ' ETRI');
 
-        mydtree.add(++b, a, '사용량 모니터링');
-            mydtree.add(++c, b, 'DB별 사용량', '/monitoring/db');
-            mydtree.add(++c, b, 'tablespace별 사용량', '/monitoring/tablespace');
-            mydtree.add(++c, b, 'table별 사용량', '/monitoring/table');
-            mydtree.add(++c, b, 'index별 사용량', '/monitoring/indexusage');
+        mydtree.add(++b, a, ' 사용량 모니터링');
+            mydtree.add(++c, b, ' DB별 사용량', '/monitoring/db');
+            mydtree.add(++c, b, ' tablespace별 사용량', '/monitoring/tablespace');
+            mydtree.add(++c, b, ' table별 사용량', '/monitoring/table');
+            mydtree.add(++c, b, ' index별 사용량', '/monitoring/indexusage');
 
-        mydtree.add(++b, a, 'session 관리');
-            mydtree.add(++c, b, '접속자 정보 확인', '/session/userinfo');
-            mydtree.add(++c, b, 'session 정보 확인', '/session/sessioninfo');
+        mydtree.add(++b, a, ' session 관리');
+            mydtree.add(++c, b, ' 접속자 정보 확인', '/session/userinfo');
+            mydtree.add(++c, b, ' session 정보 확인', '/session/sessioninfo');
 
-        mydtree.add(++b, a, 'SQL 통계 정보');
-            mydtree.add(++c, b, '디스크 사용량 기준 TOP 50', '/sql/disk');
-            mydtree.add(++c, b, '실행시간 기준 TOP 50', '/sql/runtime');
+        mydtree.add(++b, a, ' SQL 통계 정보');
+            mydtree.add(++c, b, ' 디스크 사용량 기준 TOP 50', '/sql/disk');
+            mydtree.add(++c, b, ' 실행시간 기준 TOP 50', '/sql/runtime');
 
-        mydtree.add(++b, a, '트랜잭션 정보');
-            mydtree.add(++c, b, '일정 시간 이상 실행되는 SQL 정보', '/transaction/certaintime-sql');
-            mydtree.add(++c, b, 'wait 또는 blocking 되는 session', '/transaction/wait-block');
-            mydtree.add(++c, b, 'query block 사용자 확인', '/transaction/queryblock-user');
-            mydtree.add(++c, b, 'lock 발생 query 확인', '/transaction/lock-query');
+        mydtree.add(++b, a, ' 트랜잭션 정보');
+            mydtree.add(++c, b, ' 일정 시간 이상 실행되는 SQL 정보', '/transaction/certaintime-sql');
+            mydtree.add(++c, b, ' wait 또는 blocking 되는 session', '/transaction/wait-block');
+            mydtree.add(++c, b, ' query block 사용자 확인', '/transaction/queryblock-user');
+            mydtree.add(++c, b, ' lock 발생 query 확인', '/transaction/lock-query');
 
-        mydtree.add(++b, a, 'VACUUM 정보');
-            mydtree.add(++c, b, '현재 autovacuum 실행 상태', '/vacuum/run-state');
+        mydtree.add(++b, a, ' VACUUM 정보');
+            mydtree.add(++c, b, ' 현재 autovacuum 실행 상태', '/vacuum/run-state');
 
-        mydtree.add(++b, a, '이중화 정보');
-            mydtree.add(++c, b, '이중화 설정 상태', '/duplication/setting-info');
-            mydtree.add(++c, b, '이중화 서비스 상태', '/duplication/serviceinfo');
+        mydtree.add(++b, a, ' 이중화 정보');
+            mydtree.add(++c, b, ' 이중화 설정 상태', '/duplication/setting-info');
+            mydtree.add(++c, b, ' 이중화 서비스 상태', '/duplication/serviceinfo');
 
-        mydtree.add(++b, a, '스케줄링 정보');
-            mydtree.add(++c, b, 'job 정보', '/scheduling/job');
-            mydtree.add(++c, b, 'job 수행 로그 정보', '/scheduling/job-log');
+        mydtree.add(++b, a, ' 스케줄링 정보');
+            mydtree.add(++c, b, ' job 정보', '/scheduling/job');
+            mydtree.add(++c, b, ' job 수행 로그 정보', '/scheduling/job-log');
 
-    mydtree.add(++a, -1, '사용자 권한관리');
-        mydtree.add(++b, a, '전체 보기', '/authority/authority-all');
-            mydtree.add(++c, b, '사용자1');
+    mydtree.add(++a, -1, ' 사용자 권한관리', '', '', '', 'fa fa-users', 'fa fa-users');
+        mydtree.add(++b, a, ' 전체 보기', '/authority/authority-all', '', '', 'fa fa-users', 'fa fa-users');
+            mydtree.add(++c, b, ' 사용자1');
 
-        mydtree.add(++b, a, '서버 관리');
-            mydtree.add(++c, b, 'master');
-            mydtree.add(++c, b, 'slave');
+        mydtree.add(++b, a, ' 서버 관리');
+            mydtree.add(++c, b, ' master');
+            mydtree.add(++c, b, ' slave');
 
-        mydtree.add(++b, a, 'DBMS object');
+        mydtree.add(++b, a, ' DBMS object');
             setDBMSobjects(b);
 
-    function setDBMSobjects(b) {
-        fetch('/query/dbList')
+    async function setDBMSobjects(b) {
+        await fetch('/query/dbList/dmdb')
             .then(response => response.json())
             .then(data => {
                 for (let i = 0; i < data.data.length; i++) {
-                    mydtree.add(++c, b, data.data[i].datname);
+                    mydtree.add(++c, b, " " + data.data[i].datname);
                     fetchTable(data.data[i].datname, c);
                 }
             });
     }
 
-    function fetchTable(datname, c) {
-        fetch('/query/tableList/' + datname)
+    async function fetchTable(datname, c) {
+        await fetch('/query/tableList/' + datname)
             .then(response => response.json())
             .then(data => {
                 for (let i = 0; i < data.data.length; i++) {
-                    mydtree.add(++d, c, data.data[i].relname);
+                    mydtree.add(++d, c, " " + data.data[i].relname);
                 }
-                document.getElementById('dTreeview').innerHTML = mydtree;
             });
+        document.getElementById('dTreeview').innerHTML = mydtree;
     }
 });
