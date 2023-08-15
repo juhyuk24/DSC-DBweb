@@ -85,6 +85,13 @@ app.get('/query/:user_input/:db_input', (req, res) => {
     });
 });
 
+app.get('/infoTable/:user_input/:db_input', (req, res) => {
+    const userInput = req.params.user_input;
+    const dbInput = req.params.db_input;
+    const query = "SELECT column_name, data_type, CASE WHEN column_name IN (SELECT column_name FROM information_schema.key_column_usage WHERE table_name = 'change_history' AND constraint_name = 'change_history_pkey') THEN 'PK' ELSE '' END AS primary_key FROM information_schema.columns WHERE table_name = 'change_history';";
+
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
     for (let i = 0; i < clients.length; i++) {
@@ -267,4 +274,10 @@ app.get('/scheduling/job-log', (req, res) => {
 });
 app.get('/authority/authority-all', (req, res) => {
     res.sendFile(__dirname + '/views/authority/authority-all.html');
+});
+app.get('/connect/master', (req, res) => {
+    res.sendFile(__dirname + '/views/connect/master.html');
+});
+app.get('/connect/slave', (req, res) => {
+    res.sendFile(__dirname + '/views/connect/slave.html');
 });
