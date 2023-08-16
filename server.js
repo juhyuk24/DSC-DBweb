@@ -64,12 +64,11 @@ app.put('/user/updateSession', (req, res) => {
 app.get('/query/:user_input/:db_input', (req, res) => {
     const userInput = req.params.user_input;
     const dbInput = req.params.db_input;
-    let dbNum;
+    let dbNum = setDataBase(dbInput);
     let query = setQuery(userInput);
+
     if(userInput == 'authority')
-        dbNum = 4;
-    else
-        dbNum = setDataBase(dbInput);
+        dbNum = 4
 
     clients[dbNum].query(query, (error, result) => {
         if (error) {
@@ -88,8 +87,21 @@ app.get('/query/:user_input/:db_input', (req, res) => {
 app.get('/infoTable/:user_input/:db_input', (req, res) => {
     const userInput = req.params.user_input;
     const dbInput = req.params.db_input;
-    const query = "SELECT column_name, data_type, CASE WHEN column_name IN (SELECT column_name FROM information_schema.key_column_usage WHERE table_name = 'change_history' AND constraint_name = 'change_history_pkey') THEN 'PK' ELSE '' END AS primary_key FROM information_schema.columns WHERE table_name = 'change_history';";
+    const query = "SELECT column_name, data_type, CASE WHEN column_name IN (SELECT column_name FROM information_schema.key_column_usage WHERE table_name = \'" + userInput + "\' AND constraint_name = \'" + userInput + "_pkey\') THEN \'PK\' ELSE \'\' END AS primary_key FROM information_schema.columns WHERE table_name = \'" + userInput + "\'\;";
+    let dbNum = setDataBase(dbInput);
 
+    clients[dbNum].query(query, (error, result) => {
+        if (error) {
+            console.error('쿼리문 처리 중 오류 발생:', error);
+            res.json({"data": [{"쿼리문 오류 발생" : null}]});
+        } else {
+            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
+            if (result.rows.length == 0)
+                res.json({"data": [{"테이블 데이터 없음" : null}]});
+            else
+                res.json({"data": result.rows});
+        }
+    });
 });
 
 app.listen(port, () => {
