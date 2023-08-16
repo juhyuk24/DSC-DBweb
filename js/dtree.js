@@ -124,6 +124,8 @@ function dTree(objName) {
 
 	this.selectedNode = null;
 
+	this.selectedNodeId = null;
+
 	this.selectedFound = false;
 
 	this.completed = false;
@@ -212,7 +214,7 @@ dTree.prototype.addNode = function(pNode) {
 
 			if (!this.config.folderLinks && cn._hc) cn.url = null;
 
-			if (this.config.useSelection && cn.id == this.selectedNode && !this.selectedFound) {
+			if (this.config.useSelection && n == this.selectedNode && !this.selectedFound) {
 
 					cn._is = true;
 
@@ -386,7 +388,7 @@ dTree.prototype.s = function(id) {
 
 		if (this.selectedNode || this.selectedNode==0) {
 
-			eOld = document.getElementById("s" + this.obj + id);
+			eOld = document.getElementById("s" + this.obj + this.selectedNode);
 
 			eOld.className = "node";
 
@@ -398,8 +400,7 @@ dTree.prototype.s = function(id) {
 
 		this.selectedNode = id;
 
-		if (this.config.useCookies) this.setCookie('cs' + this.obj, cn.id,'','/');
-
+		if (this.config.useCookies) this.setCookie('cs' + this.obj, id,'','/');
 	}
 
 };

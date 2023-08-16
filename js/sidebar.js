@@ -96,7 +96,7 @@ $(document).ready(function setSideTree() {
             setDBMSobjects(b);
 
     async function setDBMSobjects(b) {
-        await fetch('/query/dbList/dmdb')
+        await fetch('/query/dbList/postgres')
             .then(response => response.json())
             .then(data => {
                 for (let i = 0; i < data.data.length; i++) {
@@ -111,9 +111,14 @@ $(document).ready(function setSideTree() {
             .then(response => response.json())
             .then(data => {
                 for (let i = 0; i < data.data.length; i++) {
-                    mydtree.add(++d, c, data.data[i].relname);
+                    mydtree.add(++d, c, data.data[i].relname, '" data-toggle="modal" data-target="#informationModal');
                 }
             });
         document.getElementById('dTreeview').innerHTML = mydtree;
     }
+});
+
+$(document).ready(function setObjectTable() {
+    table_str = "<div class=\"modal fade\" id=\"informationModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog modal-lg\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><h5 class=\"modal-title\" id=\"ModalLabel\">테이블 정보</h5><button class=\"close\" type=\"button\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button></div><div class=\"modal-body\"><table id=\"modal-Table\" class=\"table table-bordered\"><thead><tr><th>칼럼 명</th><th>타입</th><th>PK</th></tr></thead><tbody></tbody></table></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" type=\"button\" data-dismiss=\"modal\">확인</button></div></div></div></div>";
+    $(document.body).append(table_str);
 });
