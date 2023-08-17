@@ -28,6 +28,7 @@ app.use(session({
     saveUninitialized: false
 }));
 
+//UPDATE public.authority SET sidb_read = 'o', sidb_write = 'x', msdb_read = 'x', msdb_write = 'o', tmdb_read = 'o', tmdb_write = 'x', dmdb_read = 'o', dmdb_write = 'x' WHERE module_name = 'IRMM';
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/login/login.html'));
 });
@@ -67,8 +68,25 @@ app.get('/query/:user_input/:db_input', (req, res) => {
     let dbNum = setDataBase(dbInput);
     let query = setQuery(userInput);
 
-    if(userInput == 'authority')
-        dbNum = 4
+    clients[dbNum].query(query, (error, result) => {
+        if (error) {
+            console.error('쿼리문 처리 중 오류 발생:', error);
+            res.json({"data": [{"쿼리문 오류 발생" : null}]});
+        } else {
+            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
+            if (result.rows.length == 0)
+                res.json({"data": [{"테이블 데이터 없음" : null}]});
+            else
+                res.json({"data": result.rows});
+        }
+    });
+});
+
+//권한 관련 쿼리문 처리
+app.get('/authority/authGroup/:user_input', (req, res) => {
+    const userInput = req.params.user_input;
+    let dbNum = 4;
+    var query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority WHERE company_name = \'" + userInput + "\';";
 
     clients[dbNum].query(query, (error, result) => {
         if (error) {
@@ -84,6 +102,26 @@ app.get('/query/:user_input/:db_input', (req, res) => {
     });
 });
 
+app.get('/authority/authUser/:user_input', (req, res) => {
+    const userInput = req.params.user_input;
+    let dbNum = 4;
+    var query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority WHERE module_name = \'" + userInput + "\';"
+
+    clients[dbNum].query(query, (error, result) => {
+        if (error) {
+            console.error('쿼리문 처리 중 오류 발생:', error);
+            res.json({"data": [{"쿼리문 오류 발생" : null}]});
+        } else {
+            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
+            if (result.rows.length == 0)
+                res.json({"data": [{"테이블 데이터 없음" : null}]});
+            else
+                res.json({"data": result.rows});
+        }
+    });
+});
+
+//테이블 정보 쿼리문 처리
 app.get('/infoTable/:user_input/:db_input', (req, res) => {
     const userInput = req.params.user_input;
     const dbInput = req.params.db_input;
@@ -140,7 +178,7 @@ function setDataBase(dbInput) {
 }
 
 function setQuery(userInput) {
-    let query;
+    var query;
     switch (userInput) {
         //사용량 관리
         case 'dbUsage':
@@ -222,9 +260,9 @@ function setQuery(userInput) {
             query = "SELECT relname FROM PG_STAT_USER_TABLES;";
             break;
 
-        //사용자 권한관리
-        case 'authority':
-            query = "SELECT * FROM public.authority;";
+        //사용자 권한 관리
+        case 'authority-all':
+            query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority;";
             break;
     }
     return query;
@@ -286,6 +324,12 @@ app.get('/scheduling/job-log', (req, res) => {
 });
 app.get('/authority/authority-all', (req, res) => {
     res.sendFile(__dirname + '/views/authority/authority-all.html');
+});
+app.get('/authority/authority-group/:user_input', (req, res) => {
+    res.sendFile(__dirname + '/views/authority/authority-group.html');
+});
+app.get('/authority/authority-user/:user_input', (req, res) => {
+    res.sendFile(__dirname + '/views/authority/authority-user.html');
 });
 app.get('/connect/master', (req, res) => {
     res.sendFile(__dirname + '/views/connect/master.html');

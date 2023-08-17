@@ -1,15 +1,17 @@
 function setTable(req) {
-    if (localStorage.getItem("DB_VALUE"))
-        req += "/" + localStorage.getItem("DB_VALUE");
-    else
-        req += "/all";
+    if(!document.URL.includes('/authority')) {
+        if(localStorage.getItem("DB_VALUE"))
+            req += "/" + localStorage.getItem("DB_VALUE");
+        else
+            req += "/all";
+    }
 
     $.getJSON(req, function (data) {
         var columns = [];
         for (var val in data.data[0]) {
             columns.push({"data": val, "title": val});
         }
-        if (document.URL.endsWith('/authority/authority-all')) columns.push({"data": "module_name", "title": "저장"});
+        if (document.URL.includes('/authority')) columns.push({"data": "모듈명", "title": "저장"});
 
         var table = $('#dataTable').DataTable({
             columns: columns,
@@ -29,9 +31,6 @@ function setTable(req) {
             paging: true,
             scrollX: true,
             lengthMenu: [[-1, 5, 10, 25, 50, 100], ["전체", "5개", "10개", "25개", "50개", "100개"]],
-            columnDefs: [
-                {targets: '_all', width: '200px'}
-            ],
             language: {
                 emptyTable: "데이터가 없습니다.",
                 lengthMenu: "페이지에_MENU_건의 데이터 표시",
@@ -58,7 +57,7 @@ function setTable(req) {
 function setTableBtns(table) {
     setFilter(table);
 
-    if (document.URL.endsWith('/authority-all')) {
+    if (document.URL.includes('/authority')) {
         //권한관리 페이지면 체크박스 넣기
         setCheckbox();
         setSaveAllBtn();
@@ -126,7 +125,7 @@ function setCheckbox() {
     for (let i = 0; i < rows.length; i++) {
         var row = $(rows[i]);
         var lastCellText = row.find('td:last-child').text();
-        var save_str = '<a id="' + lastCellText + '" class="btn btn-primary btn-refresh" href=""><span class="button-content">저장</span></a>';
+        var save_str = '<a id=\"' + lastCellText + '\" class=\"btn btn-primary btn-refresh\"><span class=\"button-content\">저장</span></a>';
         row.find('td:last-child').html(save_str);
     }
 }
