@@ -96,6 +96,8 @@ $(document).ready(function setSideTree() {
         mySubdtree.add(++b, a, 'master', '/connect/master');
         mySubdtree.add(++b, a, 'slave', '/connect/slave');
 
+    showmenu();
+
     async function setAuthority(a) {
         myMaindtree.add(++b, a, '전체 보기', '/authority/authority-all', '', '', 'fa fa-users', 'fa fa-users');
         await fetchAuthority(b);
