@@ -28,7 +28,6 @@ app.use(session({
     saveUninitialized: false
 }));
 
-//UPDATE public.authority SET sidb_read = 'o', sidb_write = 'x', msdb_read = 'x', msdb_write = 'o', tmdb_read = 'o', tmdb_write = 'x', dmdb_read = 'o', dmdb_write = 'x' WHERE module_name = 'IRMM';
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/login/login.html'));
 });
@@ -117,6 +116,24 @@ app.get('/authority/authUser/:user_input', (req, res) => {
                 res.json({"data": [{"테이블 데이터 없음" : null}]});
             else
                 res.json({"data": result.rows});
+        }
+    });
+});
+
+app.post('/authority/updateAuth', (req, res) => {
+    const rowData = req.body;
+    let dbNum = 4;
+    const query = `UPDATE public.authority SET sidb_read = $1, sidb_write = $2, msdb_read = $3, msdb_write = $4, tmdb_read = $5, tmdb_write = $6, dmdb_read = $7, dmdb_write = $8 WHERE module_name = $9;`;
+
+    const values = [rowData.checkbox1, rowData.checkbox2, rowData.checkbox3, rowData.checkbox4, rowData.checkbox5, rowData.checkbox6, rowData.checkbox7, rowData.checkbox8, rowData.name];
+
+    clients[dbNum].query(query, values, (error, result) => {
+        if (error) {
+            console.error('권한 수정 처리 중 오류 발생:', error);
+            res.json('권한 수정 처리 중 오류 발생:' + error);
+        } else {
+            console.log(clients[dbNum].database, ' 권한 수정 성공: ', rowData.name);
+            res.json('권한 수정 성공: ' + rowData.name);
         }
     });
 });
@@ -262,7 +279,7 @@ function setQuery(userInput) {
 
         //사용자 권한 관리
         case 'authority-all':
-            query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority;";
+            query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority ORDER BY company_name, module_name;";
             break;
     }
     return query;

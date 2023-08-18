@@ -14,10 +14,14 @@
 #resize-handle {
     background-color: #cbd5e0;
     cursor: ew-resize;
-    width: 5px;
+    width: 8px;
 }
-
+#switchBtn {
+    color: #4e73df;
+    font-size: 20px;
+    border-radius: 3px 3px 3px 3px;
+}
 @font-face {
     font-family: 'LogoFont';
-    src: url('../fonts/BlackHanSans-Regular.ttf') format('truetype');
+    src: url('/fonts/BlackHanSans-Regular.ttf') format('truetype');
 }

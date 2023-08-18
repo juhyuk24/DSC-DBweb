@@ -54,6 +54,53 @@ function setTable(req) {
     });
 }
 
+function setUserTable(req) {
+    $.getJSON(req, function (data) {
+        var columns = [];
+        for (var val in data.data[0]) {
+            columns.push({"data": val, "title": val});
+        }
+        if (document.URL.includes('/authority')) columns.push({"data": "모듈명", "title": "저장"});
+
+        var table = $('#dataTable').DataTable({
+            columns: columns,
+            data: data.data,
+            //표시 건수
+            lengthChange: false,
+            //검색
+            searching: false,
+            //정렬
+            ordering: false,
+            order: [],
+            //정보 표시
+            info: false,
+            //페이징
+            paging: false,
+            scrollX: true,
+            lengthMenu: [[-1, 5, 10, 25, 50, 100], ["전체", "5개", "10개", "25개", "50개", "100개"]],
+            language: {
+                emptyTable: "데이터가 없습니다.",
+                lengthMenu: "페이지에_MENU_건의 데이터 표시",
+                zeroRecords: "검색 결과 없음",
+                search: "검색:",
+                info: "현재 _START_ - _END_ / 총 _TOTAL_건",
+                infoEmpty: "데이터 없음",
+                infoFiltered: "( _MAX_건의 데이터에서 필터링됨 )",
+                loadingRecords: "로딩중...",
+                processing: "잠시만 기다려 주세요...",
+                paginate: {
+                    "next": "다음",
+                    "previous": "이전"
+                },
+                select: {
+                    rows: ""
+                }
+            }
+        });
+        setCheckbox();
+    });
+}
+
 function setTableBtns(table) {
     setFilter(table);
 
@@ -120,19 +167,63 @@ function setCheckbox() {
                 break;
         }
     });
+    setSaveBtn();
+}
+
+function setSaveBtn() {
     var rows = $('#dataTable tbody tr');
 
     for (let i = 0; i < rows.length; i++) {
         var row = $(rows[i]);
-        var lastCellText = row.find('td:last-child').text();
-        var save_str = '<a id=\"' + lastCellText + '\" class=\"btn btn-primary btn-refresh\"><span class=\"button-content\">저장</span></a>';
+        var save_str = '<a class=\"btn btn-primary btn-refresh\"><span class=\"button-content\">저장</span></a>';
         row.find('td:last-child').html(save_str);
+    }
+
+    const saveButtons = document.querySelectorAll('.btn-refresh');
+    saveButtons.forEach(button => {
+        button.addEventListener('click', clickSaveBtn.bind(null, button));
+    });
+}
+
+async function clickSaveBtn(button) {
+    const row = button.closest('tr');
+    const rowData = {
+        name: row.querySelector('td:nth-child(1)').textContent,
+        checkbox1: row.querySelector('td:nth-child(2) input').checked ? 'o' : 'x',
+        checkbox2: row.querySelector('td:nth-child(3) input').checked ? 'o' : 'x',
+        checkbox3: row.querySelector('td:nth-child(4) input').checked ? 'o' : 'x',
+        checkbox4: row.querySelector('td:nth-child(5) input').checked ? 'o' : 'x',
+        checkbox5: row.querySelector('td:nth-child(6) input').checked ? 'o' : 'x',
+        checkbox6: row.querySelector('td:nth-child(7) input').checked ? 'o' : 'x',
+        checkbox7: row.querySelector('td:nth-child(8) input').checked ? 'o' : 'x',
+        checkbox8: row.querySelector('td:nth-child(9) input').checked ? 'o' : 'x'
+    };
+    try {
+        const response = await fetch('/authority/updateAuth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(rowData)
+        });
+
+        const result = await response.json();
+        console.log(result);
+    } catch (error) {
+        console.error('Error:', error);
     }
 }
 
 function setSaveAllBtn() {
-    var save_str = '<a class="btn btn-primary btn-refresh" href="" style="margin: 5px;">변경사항 일괄 저장</span></a>';
+    var save_str = '<a class="btn btn-primary" onclick="clickSaveAllBtn()" style="margin: 5px;">변경사항 일괄 저장</span></a>';
     $('#dataTable_filter').prepend(save_str);
+}
+
+function clickSaveAllBtn() {
+    const saveButtons = document.querySelectorAll('.btn-refresh');
+    saveButtons.forEach(button => {
+        clickSaveBtn(button);
+    });
 }
 
 function setDBselectBtn() {
