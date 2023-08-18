@@ -5,6 +5,16 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const port = 8080;
 const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+app.use(express.static(__dirname));
+app.use(express.urlencoded({extended: false}));
+app.use(session({
+    secret: 'mysecret',
+    resave: false,
+    saveUninitialized: false
+}));
+
 const dbConnections = [
     {user: "etri", host: "192.168.100.24", database: "dmdb", password: "etri1234!", port: 15432},
     {user: "etri", host: "192.168.100.24", database: "sidb", password: "etri1234!", port: 15432},
@@ -18,19 +28,39 @@ for (const config of dbConnections) {
     const client = new Client(config);
     clients.push(client);
 }
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-app.use(express.static(__dirname));
-app.use(express.urlencoded({extended: false}));
-app.use(session({
-    secret: 'mysecret',
-    resave: false,
-    saveUninitialized: false
-}));
 
-app.get('/login', (req, res) => {
+app.get('/login', checkLogin, (req, res) => {
     res.sendFile(path.join(__dirname, '/views/login/login.html'));
 });
+
+app.post('/process/login', (req, res) => {
+    const { userId, userPassword } = req.body;
+    const query = 'SELECT * FROM main_login WHERE id = $1 AND password = $2';
+
+    clients[0].query(query, [userId, userPassword], (error, result) => {
+        if (error) {
+            console.error('로그인 정보 조회 중 오류 발생:', error);
+            res.redirect('/login');
+        } else {
+            if (result.rows.length === 1) {
+                // 로그인 성공 시 세션에 사용자 정보 저장
+                req.session.user = result.rows[0];
+                res.redirect('/index');
+            } else {
+                console.log('로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다.', userId, userPassword);
+                res.redirect('/login');
+            }
+        }
+    });
+});
+
+function checkLogin(req, res, next) {
+    if (req.session.user) {
+        res.redirect('/index');
+    } else {
+        next();
+    }
+}
 
 app.get('/logout', (req, res) => {
     if (req.session.isCreated) {
@@ -48,15 +78,10 @@ app.get('/info', (req, res) => {
 });
 
 app.put('/user/updateSession', (req, res) => {
-    const {id, password, name, email, phone, office} = req.body;
+    const {id, password} = req.body;
     const user = req.session.user;
     user.id = id;
     user.password = password;
-    user.name = name;
-    user.email = email;
-    user.phone = phone;
-    user.office = office;
-
     res.status(200).send('세션 정보가 업데이트되었습니다.');
 });
 
