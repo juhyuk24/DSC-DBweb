@@ -39,58 +39,49 @@
                                         <tr>
                                             <td class="title">아이디</td>
                                             <td class="content" id="id-content"></td>
-                                            <script>
-                                                const idContent = document.getElementById('id-content');
-                                                idContent.append(user.id);
-                                            </script>
                                         </tr>
                                         <tr>
                                             <td class="title">비밀번호</td>
                                             <td class="content" id="password-content"></td>
-                                            <script>
-                                                const passwordContent = document.getElementById('password-content');
-                                                passwordContent.append(user.password);
-                                            </script>
                                         </tr>
                                         <tr>
                                             <td class="title">이름</td>
                                             <td class="content" id="name-content"></td>
-                                            <script>
-                                                const nameContent = document.getElementById('name-content');
-                                                nameContent.append(user.name);
-                                            </script>
                                         </tr>
                                         <tr>
                                             <td class="title">기관명</td>
                                             <td class="content" id="office-content"></td>
-                                            <script>
-                                                const officeContent = document.getElementById('office-content');
-                                                officeContent.append(user.office);
-                                            </script>
                                         </tr>
                                         <tr>
                                             <td class="title">이메일</td>
                                             <td class="content" id="email-content"></td>
-                                            <script>
-                                                const emailContent = document.getElementById('email-content');
-                                                emailContent.append(user.email);
-                                            </script>
                                         </tr>
                                         <tr>
                                             <td class="title">전화번호</td>
                                             <td class="content" id="phone-content"></td>
-                                            <script>
-                                                const phoneContent = document.getElementById('phone-content');
-                                                phoneContent.append(user.phone);
-                                            </script>
                                         </tr>
                                         </tbody>
+                                        <script>
+                                            const idContent = document.getElementById('id-content');
+                                            const passwordContent = document.getElementById('password-content');
+                                            const nameContent = document.getElementById('name-content');
+                                            const officeContent = document.getElementById('office-content');
+                                            const emailContent = document.getElementById('email-content');
+                                            const phoneContent = document.getElementById('phone-content');
+                                            const user = JSON.parse('{{user}}');
+                                            idContent.append(user.id);
+                                            passwordContent.append(user.password);
+                                            nameContent.append(user.name);
+                                            officeContent.append(user.office);
+                                            emailContent.append(user.email);
+                                            phoneContent.append(user.phone);
+                                        </script>
                                     </table>
 
                                     <hr>
 
                                     <div class="text-center">
-                                        <a class="medium" href="#">수정</a>
+                                        <a class="medium" href="">수정</a>
                                         <a>&nbsp&nbsp&nbsp</a>
                                         <a class="medium" href="/index">메인</a>
                                     </div>

@@ -56,35 +56,35 @@ $(document).ready(function setSideTree() {
     myMaindtree.add(++a, -1, 'ETRI');
 
         myMaindtree.add(++b, a, '사용량 모니터링', '', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
-            myMaindtree.add(++c, b, 'DB별 사용량', '/monitoring/db', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
-            myMaindtree.add(++c, b, 'tablespace별 사용량', '/monitoring/tablespace', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
-            myMaindtree.add(++c, b, 'table별 사용량', '/monitoring/table', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
-            myMaindtree.add(++c, b, 'index별 사용량', '/monitoring/indexusage', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'DB별 사용량', '/monitor-db', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'tablespace별 사용량', '/monitor-tablespace', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'table별 사용량', '/monitor-table', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'index별 사용량', '/monitor-indexusage', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
 
         myMaindtree.add(++b, a, 'session 관리', '', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
-            myMaindtree.add(++c, b, '접속자 정보 확인', '/session/userinfo', '', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
-            myMaindtree.add(++c, b, 'session 정보 확인', '/session/sessioninfo', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
+            myMaindtree.add(++c, b, '접속자 정보 확인', '/session-user', '', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
+            myMaindtree.add(++c, b, 'session 정보 확인', '/session-info', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
 
         myMaindtree.add(++b, a, 'SQL 통계 정보', '', '', '', 'fa fa-list-alt', 'fa fa-list-alt');
-            myMaindtree.add(++c, b, '디스크 사용량 기준 TOP 50', '/sql/disk', '', '', 'fa fa-list-alt', 'fa fa-list-alt');
-            myMaindtree.add(++c, b, '실행시간 기준 TOP 50', '/sql/runtime', '', '', 'fa fa-list-alt', 'fa fa-list-alt');
+            myMaindtree.add(++c, b, '디스크 사용량 기준 TOP 50', '/disk-top', '', '', 'fa fa-list-alt', 'fa fa-list-alt');
+            myMaindtree.add(++c, b, '실행시간 기준 TOP 50', '/runtime-top', '', '', 'fa fa-list-alt', 'fa fa-list-alt');
 
         myMaindtree.add(++b, a, '트랜잭션 정보', '', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
-            myMaindtree.add(++c, b, '일정 시간 이상 실행되는 SQL 정보', '/transaction/certaintime-sql', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
-            myMaindtree.add(++c, b, 'wait 또는 blocking 되는 session', '/transaction/wait-block', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
-            myMaindtree.add(++c, b, 'query block 사용자 확인', '/transaction/queryblock-user', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
-            myMaindtree.add(++c, b, 'lock 발생 query 확인', '/transaction/lock-query', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
+            myMaindtree.add(++c, b, '일정 시간 이상 실행되는 SQL 정보', '/trans-time', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
+            myMaindtree.add(++c, b, 'wait 또는 blocking 되는 session', '/trans-wait', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
+            myMaindtree.add(++c, b, 'query block 사용자 확인', '/trans-block', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
+            myMaindtree.add(++c, b, 'lock 발생 query 확인', '/trans-lock', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
 
         myMaindtree.add(++b, a, 'VACUUM 정보', '', '', '', 'fa fa-hdd', 'fa fa-hdd');
-            myMaindtree.add(++c, b, '현재 autovacuum 실행 상태', '/vacuum/run-state', '', '', 'fa fa-hdd', 'fa fa-hdd');
+            myMaindtree.add(++c, b, '현재 autovacuum 실행 상태', '/vac-state', '', '', 'fa fa-hdd', 'fa fa-hdd');
 
         myMaindtree.add(++b, a, '이중화 정보', '', '', '', 'fa fa-copy', 'fa fa-copy');
-            myMaindtree.add(++c, b, '이중화 설정 상태', '/duplication/setting-info', '', '', 'fa fa-copy', 'fa fa-copy');
-            myMaindtree.add(++c, b, '이중화 서비스 상태', '/duplication/serviceinfo', '', '', 'fa fa-copy', 'fa fa-copy');
+            myMaindtree.add(++c, b, '이중화 설정 상태', '/dup-setting', '', '', 'fa fa-copy', 'fa fa-copy');
+            myMaindtree.add(++c, b, '이중화 서비스 상태', '/dup-service', '', '', 'fa fa-copy', 'fa fa-copy');
 
         myMaindtree.add(++b, a, '스케줄링 정보', '', '', '', 'fa fa-tasks', 'fa fa-tasks');
-            myMaindtree.add(++c, b, 'job 정보', '/scheduling/job', '', '', 'fa fa-tasks', 'fa fa-tasks');
-            myMaindtree.add(++c, b, 'job 수행 로그 정보', '/scheduling/job-log', '', '', 'fa fa-tasks', 'fa fa-tasks');
+            myMaindtree.add(++c, b, 'job 정보', '/job-info', '', '', 'fa fa-tasks', 'fa fa-tasks');
+            myMaindtree.add(++c, b, 'job 수행 로그 정보', '/job-log', '', '', 'fa fa-tasks', 'fa fa-tasks');
 
     myMaindtree.add(++a, -1, '사용자 권한관리', '', '', '', 'fa fa-users', 'fa fa-users');
         setAuthority(a);
@@ -93,13 +93,13 @@ $(document).ready(function setSideTree() {
         setDBMSobjects(a);
 
     mySubdtree.add(++a, -1, '서버 관리');
-        mySubdtree.add(++b, a, 'master', '/connect/master');
-        mySubdtree.add(++b, a, 'slave', '/connect/slave');
+        mySubdtree.add(++b, a, 'master', '/master-connect');
+        mySubdtree.add(++b, a, 'slave', '/slave-connect');
 
     showmenu();
 
     async function setAuthority(a) {
-        myMaindtree.add(++b, a, '전체 보기', '/authority/authority-all', '', '', 'fa fa-users', 'fa fa-users');
+        myMaindtree.add(++b, a, '전체 보기', '/authority-all', '', '', 'fa fa-users', 'fa fa-users');
         await fetchAuthority(b);
     }
 
@@ -120,13 +120,13 @@ $(document).ready(function setSideTree() {
                         else index = -1;
                     }
                     if(index == -1) {
-                        myMaindtree.add(++c, b, data.data[i].담당기관, '/authority/authority-group/' + data.data[i].담당기관, '', '', 'fa fa-users', 'fa fa-users');
-                        myMaindtree.add(++d, c, data.data[i].모듈명, '/authority/authority-user/' + data.data[i].모듈명, '', '', 'fa fa-user', 'fa fa-user');
+                        myMaindtree.add(++c, b, data.data[i].담당기관, '/authority-group/' + data.data[i].담당기관, '', '', 'fa fa-users', 'fa fa-users');
+                        myMaindtree.add(++d, c, data.data[i].모듈명, '/authority-user/' + data.data[i].모듈명, '', '', 'fa fa-user', 'fa fa-user');
                         companys.push(data.data[i].담당기관);
                         menus.push(c);
                     }
                     else {
-                        myMaindtree.add(++d, menus[index], data.data[i].모듈명, '/authority/authority-user/' + data.data[i].모듈명, '', '', 'fa fa-user', 'fa fa-user');
+                        myMaindtree.add(++d, menus[index], data.data[i].모듈명, '/authority-user/' + data.data[i].모듈명, '', '', 'fa fa-user', 'fa fa-user');
                     }
                 }
                 showmenu();
@@ -161,14 +161,6 @@ $(document).ready(function setObjectTable() {
     $(document.body).append(table_str);
 });
 
-function setGroupValue(value) {
-    localStorage.setItem("GroupValue", value);
-}
-
-function setUserValue(value) {
-    localStorage.setItem("UserValue", value);
-}
-
 async function fetchModal(relname, datname) {
     var table = document.getElementById("modal-Tbody");
     var modal_str = '';
@@ -187,22 +179,22 @@ async function fetchModal(relname, datname) {
 }
 
 function switchmenu() {
-    var value = localStorage.getItem("Menu_Value");
+    var value = localStorage.getItem("MENU_VALUE");
     if(value == "main") {
-        localStorage.setItem("Menu_Value", "sub");
+        localStorage.setItem("MENU_VALUE", "sub");
         showmenu();
     }
     else {
-        localStorage.setItem("Menu_Value", "main");
+        localStorage.setItem("MENU_VALUE", "main");
         showmenu();
     }
 }
 
 function showmenu() {
-    var value = localStorage.getItem("Menu_Value");
+    var value = localStorage.getItem("MENU_VALUE");
 
     if(!value)
-        localStorage.setItem("Menu_Value", "main");
+        localStorage.setItem("MENU_VALUE", "main");
 
     if(value == "main") {
         document.getElementById('dTreeview').innerHTML = myMaindtree;
