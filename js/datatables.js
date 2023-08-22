@@ -245,34 +245,34 @@ function setDBselectBtn() {
 }
 
 function setAdditionalBtn() {
-    if (document.URL.endsWith('/tablespace') || document.URL.endsWith('/table') || document.URL.endsWith('/indexusage')) {
+    if (document.URL.endsWith('monitor-tablespace') || document.URL.endsWith('table') || document.URL.endsWith('indexusage')) {
         var showChart_str = '<a class="btn btn-primary btn-refresh" href="chart-showtable.html" style="margin: 5px;">차트로 보기</a>';
         $('#dataTable_filter').prepend(showChart_str);
     }
 
-    if (document.URL.endsWith('/serviceinfo')) {
+    if (document.URL.endsWith('dup-service')) {
         var selectDate_str = '<span>검색 기간: </span><input type=\"datetime-local\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"datetime-local\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
         $('#dataTable_filter').prepend(selectDate_str);
     }
 
-    if (document.URL.endsWith('/infoJob')) {
+    if (document.URL.endsWith('job-info')) {
         var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
         $('#dataTable_filter').prepend(selectDate_str);
         var showChart_str = '<span>활성화 상태: </span><select style="margin: 5px;"><option>전체</option><option>t</option><option>f</option></select>';
         $('#dataTable_filter').prepend(showChart_str);
     }
 
-    if (document.URL.endsWith('/logJob')) {
+    if (document.URL.endsWith('job-log')) {
         var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
         $('#dataTable_filter').prepend(selectDate_str);
     }
 
-    if (document.URL.endsWith('/runtime')) {
+    if (document.URL.endsWith('trans-time')) {
         var selectDate_str = '<span>검색 시간: </span><input type=\"time\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"time\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
         $('#dataTable_filter').prepend(selectDate_str);
     }
 
-    if (document.URL.endsWith('/sessioninfo')) {
+    if (document.URL.endsWith('session-info')) {
         var showChart_str = '<span>세션 상태: </span><select style="margin: 5px;"><option>전체</option><option>active</option><option>idle</option></select>';
         $('#dataTable_filter').prepend(showChart_str);
     }

@@ -69,20 +69,15 @@
                                             const emailContent = document.getElementById('email-content');
                                             const phoneContent = document.getElementById('phone-content');
                                             const user = JSON.parse('{{user}}');
-                                            idContent.append(user.id);
-                                            passwordContent.append(user.password);
-                                            nameContent.append(user.name);
-                                            officeContent.append(user.office);
-                                            emailContent.append(user.email);
-                                            phoneContent.append(user.phone);
+                                            idContent.append(user.id ? user.id : '');
+                                            passwordContent.append(user.password ? user.password : '');
+                                            nameContent.append(user.name ? user.name : '');
+                                            officeContent.append(user.office ? user.office : '');
+                                            emailContent.append(user.email ? user.email : '');
+                                            phoneContent.append(user.phone ? user.phone : '');
                                         </script>
                                     </table>
-
-                                    <hr>
-
                                     <div class="text-center">
-                                        <a class="medium" href="">수정</a>
-                                        <a>&nbsp&nbsp&nbsp</a>
                                         <a class="medium" href="/index">메인</a>
                                     </div>
                                 </div>

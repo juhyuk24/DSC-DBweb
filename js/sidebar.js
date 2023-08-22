@@ -93,8 +93,8 @@ $(document).ready(function setSideTree() {
         setDBMSobjects(a);
 
     mySubdtree.add(++a, -1, '서버 관리');
-        mySubdtree.add(++b, a, 'master', '/master-connect');
-        mySubdtree.add(++b, a, 'slave', '/slave-connect');
+        mySubdtree.add(++b, a, 'master', '/master-connect', '', '', 'fa fa-laptop', 'fa fa-laptop');
+        mySubdtree.add(++b, a, 'slave', '/slave-connect', '', '', 'fa fa-laptop', 'fa fa-laptop');
 
     showmenu();
 

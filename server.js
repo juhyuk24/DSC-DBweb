@@ -1,4 +1,4 @@
-const {Client} = require('pg');
+const {Pool} = require('pg');
 const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
@@ -17,52 +17,51 @@ app.use(session({
     saveUninitialized: false
 }));
 
-const dbConnections = [
-    {user: "etri", host: "192.168.100.24", database: "dmdb", password: "etri1234!", port: 15432},
-    {user: "etri", host: "192.168.100.24", database: "sidb", password: "etri1234!", port: 15432},
-    {user: "etri", host: "192.168.100.24", database: "tmdb", password: "etri1234!", port: 15432},
-    {user: "etri", host: "192.168.100.24", database: "msdb", password: "etri1234!", port: 15432},
-    {user: "etri", host: "192.168.100.24", database: "postgres", password: "etri1234!", port: 15432},
-    {user: "etri", host: "192.168.100.24", database: "test", password: "etri1234!", port: 15432}
-];
-const clients = [];
-for (const config of dbConnections) {
-    const client = new Client(config);
-    clients.push(client);
+const dbConnection = {
+    user: "etri",
+    host: "192.168.100.24",
+    database: "dmdb",
+    password: "etri1234!",
+    port: 15432
 }
+const mainPool = new Pool(dbConnection);
+app.locals.dbPool = mainPool;
+app.use((req, res, next) => {
+    req.dbPool = mainPool;
+    next();
+});
 
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/login/login.html'));
 });
 
-app.post('/process/login', (req, res) => {
+app.post('/process/login',  (req, res) => {
     const { userId, userPassword } = req.body;
     const query = 'SELECT * FROM main_login WHERE id = $1 AND password = $2';
 
-    clients[0].query(query, [userId, userPassword], (error, result) => {
-        if (error) {
-            console.error('로그인 정보 조회 중 오류 발생:', error);
-            res.redirect('/login');
-        } else {
-            if (result.rows.length === 1) {
-                // 로그인 성공 시 세션에 사용자 정보 저장
-                req.session.user = result.rows[0];
-                console.log('로그인 성공: ', userId, ', ', userPassword);
-                res.redirect('/index');
-            } else {
-                console.log('로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다.', userId, userPassword);
+    try {
+        const dbPool = new Pool({ ...dbConnection, database: 'dmdb' });
+        dbPool.query(query, [userId, userPassword], (error, result) => {
+            if (error) {
+                console.error('로그인 정보 조회 중 오류 발생:', error);
                 res.redirect('/login');
+            } else {
+                if (result.rows.length === 1) {
+                    // 로그인 성공 시 세션에 사용자 정보 저장
+                    req.session.user = result.rows[0];
+                    console.log('로그인 성공: ', userId, ', ', userPassword);
+                    res.redirect('/index');
+                } else {
+                    console.log('로그인 실패: 아이디 또는 비밀번호가 잘못되었습니다.', userId, userPassword);
+                    res.redirect('/login');
+                }
             }
-        }
-    });
-});
-
-app.put('/user/updateSession', (req, res) => {
-    const {id, password} = req.body;
-    const user = req.session.user;
-    user.id = id;
-    user.password = password;
-    res.status(200).send('세션 정보가 업데이트되었습니다.');
+        });
+        dbPool.end();
+    }
+    catch (e) {
+        console.log('DB설정 오류: ', e);
+    }
 });
 
 app.get('/logout', (req, res) => {
@@ -77,6 +76,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 
+// 요청에 따라 페이지를 반환해주는 메소드
 app.get('/:user_input', (req, res) => {
     const userInput = req.params.user_input;
     if (req.session.user) {
@@ -97,24 +97,30 @@ app.get('/:user_input', (req, res) => {
 });
 
 //sql 쿼리문 처리 - result: {data:[{key:value}]}
-app.get('/query/:user_input/:db_input', (req, res) => {
+app.get('/query/:user_input/:db_input', async (req, res) => {
     const userInput = req.params.user_input;
     const dbInput = req.params.db_input;
-    let dbNum = setDataBase(dbInput);
     let query = setQuery(userInput);
 
-    clients[dbNum].query(query, (error, result) => {
-        if (error) {
-            console.error('쿼리문 처리 중 오류 발생:', error);
-            res.json({"data": [{"쿼리문 오류 발생" : null}]});
-        } else {
-            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
-            if (result.rows.length == 0)
-                res.json({"data": [{"테이블 데이터 없음" : null}]});
-            else
-                res.json({"data": result.rows});
-        }
-    });
+    try {
+        const dbPool = new Pool({ ...dbConnection, database: dbInput });
+        dbPool.query(query, (error, result) => {
+            if (error) {
+                console.error('쿼리문 처리 중 오류 발생:', error);
+                res.json({"data": [{"쿼리문 오류 발생" : null}]});
+            } else {
+                console.log(dbInput + ' 쿼리문 요청 데이터 전송 선공: ', query);
+                if (result.rows.length == 0)
+                    res.json({"data": [{"테이블 데이터 없음" : null}]});
+                else
+                    res.json({"data": result.rows});
+            }
+        });
+        dbPool.end();
+    }
+    catch (e) {
+        console.log('DB설정 오류: ', e);
+    }
 });
 
 app.get('/authority-group/:user_input', (req, res) => {
@@ -154,117 +160,109 @@ app.get('/authority-user/:user_input', (req, res) => {
 });
 
 //권한 관련 쿼리문 처리
-app.get('/authority/authGroup/:user_input', (req, res) => {
+app.get('/authority/authGroup/:user_input', async (req, res) => {
     const userInput = req.params.user_input;
-    let dbNum = 4;
     var query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority WHERE company_name = \'" + userInput + "\';";
 
-    clients[dbNum].query(query, (error, result) => {
-        if (error) {
-            console.error('쿼리문 처리 중 오류 발생:', error);
-            res.json({"data": [{"쿼리문 오류 발생" : null}]});
-        } else {
-            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
-            if (result.rows.length == 0)
-                res.json({"data": [{"테이블 데이터 없음" : null}]});
-            else
-                res.json({"data": result.rows});
-        }
-    });
+    try {
+        const dbPool = new Pool({ ...dbConnection, database: 'postgres' });
+        dbPool.query(query, (error, result) => {
+            if (error) {
+                console.error('쿼리문 처리 중 오류 발생:', error);
+                res.json({"data": [{"쿼리문 오류 발생" : null}]});
+            } else {
+                console.log('postgres 쿼리문 요청 데이터 전송 선공: ', query);
+                if (result.rows.length == 0)
+                    res.json({"data": [{"테이블 데이터 없음" : null}]});
+                else
+                    res.json({"data": result.rows});
+            }
+        });
+        dbPool.end();
+    }
+    catch (e) {
+        console.log('DB설정 오류: ', e);
+    }
 });
 
-app.get('/authority/authUser/:user_input', (req, res) => {
+app.get('/authority/authUser/:user_input', async (req, res) => {
     const userInput = req.params.user_input;
-    let dbNum = 4;
     var query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority WHERE module_name = \'" + userInput + "\';"
 
-    clients[dbNum].query(query, (error, result) => {
-        if (error) {
-            console.error('쿼리문 처리 중 오류 발생:', error);
-            res.json({"data": [{"쿼리문 오류 발생" : null}]});
-        } else {
-            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
-            if (result.rows.length == 0)
-                res.json({"data": [{"테이블 데이터 없음" : null}]});
-            else
-                res.json({"data": result.rows});
-        }
-    });
+    try {
+        const dbPool = new Pool({ ...dbConnection, database: 'postgres' });
+        dbPool.query(query, (error, result) => {
+            if (error) {
+                console.error('쿼리문 처리 중 오류 발생:', error);
+                res.json({"data": [{"쿼리문 오류 발생" : null}]});
+            } else {
+                console.log('postgres 쿼리문 요청 데이터 전송 선공: ', query);
+                if (result.rows.length == 0)
+                    res.json({"data": [{"테이블 데이터 없음" : null}]});
+                else
+                    res.json({"data": result.rows});
+            }
+        });
+        dbPool.end();
+    }
+    catch (e) {
+        console.log('DB설정 오류: ', e);
+    }
 });
 
-app.post('/authority/updateAuth', (req, res) => {
+app.post('/authority/updateAuth', async (req, res) => {
     const rowData = req.body;
-    let dbNum = 4;
     const query = `UPDATE public.authority SET sidb_read = $1, sidb_write = $2, msdb_read = $3, msdb_write = $4, tmdb_read = $5, tmdb_write = $6, dmdb_read = $7, dmdb_write = $8 WHERE module_name = $9;`;
-
     const values = [rowData.checkbox1, rowData.checkbox2, rowData.checkbox3, rowData.checkbox4, rowData.checkbox5, rowData.checkbox6, rowData.checkbox7, rowData.checkbox8, rowData.name];
 
-    clients[dbNum].query(query, values, (error, result) => {
-        if (error) {
-            console.error('권한 수정 처리 중 오류 발생:', error);
-            res.json('권한 수정 처리 중 오류 발생:' + error);
-        } else {
-            console.log(clients[dbNum].database, ' 권한 수정 성공: ', rowData.name);
-            res.json('권한 수정 성공: ' + rowData.name);
-        }
-    });
+    try {
+        const dbPool = new Pool({ ...dbConnection, database: 'postgres' });
+        dbPool.query(query, values, (error, result) => {
+            if (error) {
+                console.error('권한 수정 중 오류 발생:', error);
+                res.json('권한 수정 중 오류 발생: ' + error);
+            } else {
+                console.log('postgres 권한 수정 성공: ', rowData.name);
+                res.json('권한 수정 성공: ' + rowData.name);
+            }
+        });
+        dbPool.end();
+    }
+    catch (e) {
+        console.log('DB설정 오류: ', e);
+    }
 });
 
 //테이블 정보 쿼리문 처리
-app.get('/infoTable/:user_input/:db_input', (req, res) => {
+app.get('/infoTable/:user_input/:db_input', async (req, res) => {
     const userInput = req.params.user_input;
     const dbInput = req.params.db_input;
     const query = "SELECT column_name, data_type, CASE WHEN column_name IN (SELECT column_name FROM information_schema.key_column_usage WHERE table_name = \'" + userInput + "\' AND constraint_name = \'" + userInput + "_pkey\') THEN \'PK\' ELSE \'\' END AS primary_key FROM information_schema.columns WHERE table_name = \'" + userInput + "\'\;";
-    let dbNum = setDataBase(dbInput);
 
-    clients[dbNum].query(query, (error, result) => {
-        if (error) {
-            console.error('쿼리문 처리 중 오류 발생:', error);
-            res.json({"data": [{"쿼리문 오류 발생" : null}]});
-        } else {
-            console.log(clients[dbNum].database + ' 쿼리문 요청 데이터 전송 선공: ', query);
-            if (result.rows.length == 0)
-                res.json({"data": [{"테이블 데이터 없음" : null}]});
-            else
-                res.json({"data": result.rows});
-        }
-    });
+    try {
+        const dbPool = new Pool({ ...dbConnection, database: dbInput });
+        dbPool.query(query, (error, result) => {
+            if (error) {
+                console.error('쿼리문 처리 중 오류 발생:', error);
+                res.json({"data": [{"쿼리문 오류 발생" : null}]});
+            } else {
+                console.log(dbPool.database + ' 쿼리문 요청 데이터 전송 선공: ', query);
+                if (result.rows.length == 0)
+                    res.json({"data": [{"테이블 데이터 없음" : null}]});
+                else
+                    res.json({"data": result.rows});
+            }
+        });
+        dbPool.end();
+    }
+    catch (e) {
+        console.log('DB설정 오류: ', e);
+    }
 });
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
-    for (let i = 0; i < clients.length; i++) {
-        connectDB(clients[i]);
-    }
 });
-
-function connectDB(client) {
-    client.connect()
-        .then(() => console.log(`${client.database} database 연결 성공`))
-        .catch(err => console.error(`${client.database} database 연결 중 에러 발생:`, err));
-}
-
-function setDataBase(dbInput) {
-    switch (dbInput) {
-        case 'dmdb':
-            return 0;
-        case 'sidb':
-            return 1;
-        case 'tmdb':
-            return 2;
-        case 'msdb':
-            return 3;
-        case 'postgres':
-            return 4;
-        case 'test':
-            return 5;
-        case 'all':
-            return 0;
-        default:
-            console.log("db설정 오류: ", dbInput);
-            return 0;
-    }
-}
 
 function setQuery(userInput) {
     switch (userInput) {
@@ -339,12 +337,15 @@ function setQuery(userInput) {
 
 function setFilePath(userInput) {
     switch (userInput) {
+        //초기 페이지
         case 'index':
             return '/views/index.html';
 
+        //사용자 정보 조회 페이지
         case 'info':
             return '/views/login/info.html';
 
+        //사용량 모니터링 페이지
         case 'monitor-db':
             return '/views/monitoring/db.html';
         case 'monitor-tablespace':
@@ -354,16 +355,19 @@ function setFilePath(userInput) {
         case 'monitor-indexusage':
             return '/views/monitoring/indexusage.html';
 
+        //세션 관리 페이지
         case 'session-user':
             return '/views/session/user-info.html';
         case 'session-info':
             return '/views/session/session-info.html';
 
+        //SQL 통계 정보 페이지
         case 'disk-top':
             return '/views/sql/disk.html';
         case 'runtime-top':
             return '/views/sql/runtime.html';
 
+        //트랜잭션 정보 페이지
         case 'trans-time':
             return '/views/transaction/certaintime-sql.html';
         case 'trans-wait':
@@ -373,19 +377,23 @@ function setFilePath(userInput) {
         case 'trans-lock':
             return '/views/transaction/lock-query.html';
 
+        //VACUUM 정보 페이지
         case 'vac-state':
             return '/views/vacuum/run-state.html';
 
+        //이중화 정보 페이지
         case 'dup-setting':
             return '/views/duplication/setting-info.html';
         case 'dup-service':
             return '/views/duplication/service-info.html';
 
+        //스케줄링 정보 페이지
         case 'job-info':
             return '/views/scheduling/job.html';
         case 'job-log':
             return '/views/scheduling/job-log.html';
 
+        //사용자 권한 관리 페이지
         case 'authority-all':
             return '/views/authority/authority-all.html';
         case 'authority-group':
@@ -393,11 +401,13 @@ function setFilePath(userInput) {
         case 'authority-user':
             return '/views/authority/authority-user.html';
 
+        //서버 관리 페이지
         case 'master-connect':
             return '/views/connect/master.html';
         case 'slave-connect':
             return '/views/connect/slave.html';
 
+        //404 NOT FOUNT 에러 표시 페이지
         default:
             return '/views/error/404.html';
     }
