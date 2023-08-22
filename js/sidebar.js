@@ -59,7 +59,7 @@ $(document).ready(function setSideTree() {
             myMaindtree.add(++c, b, 'DB별 사용량', '/monitor-db', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
             myMaindtree.add(++c, b, 'tablespace별 사용량', '/monitor-tablespace', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
             myMaindtree.add(++c, b, 'table별 사용량', '/monitor-table', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
-            myMaindtree.add(++c, b, 'index별 사용량', '/monitor-indexusage', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'index별 사용량', '/monitor-index', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
 
         myMaindtree.add(++b, a, 'session 관리', '', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
             myMaindtree.add(++c, b, '접속자 정보 확인', '/session-user', '', '', '', 'fa fa-sitemap', 'fa fa-sitemap');

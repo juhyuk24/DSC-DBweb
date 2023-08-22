@@ -245,8 +245,8 @@ function setDBselectBtn() {
 }
 
 function setAdditionalBtn() {
-    if (document.URL.endsWith('monitor-tablespace') || document.URL.endsWith('table') || document.URL.endsWith('indexusage')) {
-        var showChart_str = '<a class="btn btn-primary btn-refresh" href="chart-showtable.html" style="margin: 5px;">차트로 보기</a>';
+    if (document.URL.endsWith('monitor-tablespace') || document.URL.endsWith('monitor-table') || document.URL.endsWith('monitor-index')) {
+        var showChart_str = '<a class="btn btn-primary btn-refresh" href="/monitor-chart" style="margin: 5px;">차트로 보기</a>';
         $('#dataTable_filter').prepend(showChart_str);
     }
 

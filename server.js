@@ -17,6 +17,7 @@ app.use(session({
     saveUninitialized: false
 }));
 
+//초기 db연결을 위한 정보
 const dbConnection = {
     user: "etri",
     host: "192.168.100.24",
@@ -24,6 +25,8 @@ const dbConnection = {
     password: "etri1234!",
     port: 15432
 }
+
+//커넥션 풀을 설정하여 dbConnection에서 database만 변경하여 사용할 수 있게
 const mainPool = new Pool(dbConnection);
 app.locals.dbPool = mainPool;
 app.use((req, res, next) => {
@@ -31,10 +34,12 @@ app.use((req, res, next) => {
     next();
 });
 
+//로그인 페이지 반환
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/login/login.html'));
 });
 
+//로그인 처리
 app.post('/process/login',  (req, res) => {
     const { userId, userPassword } = req.body;
     const query = 'SELECT * FROM main_login WHERE id = $1 AND password = $2';
@@ -60,10 +65,11 @@ app.post('/process/login',  (req, res) => {
         dbPool.end();
     }
     catch (e) {
-        console.log('DB설정 오류: ', e);
+        console.log(e);
     }
 });
 
+//로그아웃 하면 세션, 쿠키 없애기
 app.get('/logout', (req, res) => {
     if (req.session.isCreated) {
         req.session.destroy((err) => {
@@ -76,7 +82,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 
-// 요청에 따라 페이지를 반환해주는 메소드
+//입력에 따라 페이지를 반환
 app.get('/:user_input', (req, res) => {
     const userInput = req.params.user_input;
     if (req.session.user) {
@@ -96,33 +102,26 @@ app.get('/:user_input', (req, res) => {
     }
 });
 
-//sql 쿼리문 처리 - result: {data:[{key:value}]}
+//입력에 따른 SQL 쿼리문 처리 - result: {data:[{key:value}]}
 app.get('/query/:user_input/:db_input', async (req, res) => {
     const userInput = req.params.user_input;
     const dbInput = req.params.db_input;
     let query = setQuery(userInput);
 
     try {
-        const dbPool = new Pool({ ...dbConnection, database: dbInput });
-        dbPool.query(query, (error, result) => {
-            if (error) {
-                console.error('쿼리문 처리 중 오류 발생:', error);
-                res.json({"data": [{"쿼리문 오류 발생" : null}]});
-            } else {
-                console.log(dbInput + ' 쿼리문 요청 데이터 전송 선공: ', query);
-                if (result.rows.length == 0)
-                    res.json({"data": [{"테이블 데이터 없음" : null}]});
-                else
-                    res.json({"data": result.rows});
-            }
-        });
-        dbPool.end();
+        if(dbInput == 'all') {
+            sendQueryAll(res, query);
+        }
+        else {
+            sendQuery(res, query, dbInput);
+        }
     }
     catch (e) {
-        console.log('DB설정 오류: ', e);
+        console.log(e);
     }
 });
 
+//그룹 권한 페이지 처리
 app.get('/authority-group/:user_input', (req, res) => {
     if (req.session.user) {
         const filePath = path.join(__dirname, 'views/authority/authority-group.html');
@@ -141,6 +140,7 @@ app.get('/authority-group/:user_input', (req, res) => {
     }
 });
 
+//유저 권한 페이지 처리
 app.get('/authority-user/:user_input', (req, res) => {
     if (req.session.user) {
         const filePath = path.join(__dirname, 'views/authority/authority-user.html');
@@ -159,57 +159,23 @@ app.get('/authority-user/:user_input', (req, res) => {
     }
 });
 
-//권한 관련 쿼리문 처리
+//그룹 권한 조회 쿼리문 처리
 app.get('/authority/authGroup/:user_input', async (req, res) => {
     const userInput = req.params.user_input;
     var query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority WHERE company_name = \'" + userInput + "\';";
 
-    try {
-        const dbPool = new Pool({ ...dbConnection, database: 'postgres' });
-        dbPool.query(query, (error, result) => {
-            if (error) {
-                console.error('쿼리문 처리 중 오류 발생:', error);
-                res.json({"data": [{"쿼리문 오류 발생" : null}]});
-            } else {
-                console.log('postgres 쿼리문 요청 데이터 전송 선공: ', query);
-                if (result.rows.length == 0)
-                    res.json({"data": [{"테이블 데이터 없음" : null}]});
-                else
-                    res.json({"data": result.rows});
-            }
-        });
-        dbPool.end();
-    }
-    catch (e) {
-        console.log('DB설정 오류: ', e);
-    }
+    sendQuery(res, query, dbInput);
 });
 
+//유저 권한 조회 쿼리문 처리
 app.get('/authority/authUser/:user_input', async (req, res) => {
     const userInput = req.params.user_input;
     var query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority WHERE module_name = \'" + userInput + "\';"
 
-    try {
-        const dbPool = new Pool({ ...dbConnection, database: 'postgres' });
-        dbPool.query(query, (error, result) => {
-            if (error) {
-                console.error('쿼리문 처리 중 오류 발생:', error);
-                res.json({"data": [{"쿼리문 오류 발생" : null}]});
-            } else {
-                console.log('postgres 쿼리문 요청 데이터 전송 선공: ', query);
-                if (result.rows.length == 0)
-                    res.json({"data": [{"테이블 데이터 없음" : null}]});
-                else
-                    res.json({"data": result.rows});
-            }
-        });
-        dbPool.end();
-    }
-    catch (e) {
-        console.log('DB설정 오류: ', e);
-    }
+    sendQuery(res, query, dbInput);
 });
 
+//권한 업데이트 쿼리문 처리
 app.post('/authority/updateAuth', async (req, res) => {
     const rowData = req.body;
     const query = `UPDATE public.authority SET sidb_read = $1, sidb_write = $2, msdb_read = $3, msdb_write = $4, tmdb_read = $5, tmdb_write = $6, dmdb_read = $7, dmdb_write = $8 WHERE module_name = $9;`;
@@ -229,7 +195,7 @@ app.post('/authority/updateAuth', async (req, res) => {
         dbPool.end();
     }
     catch (e) {
-        console.log('DB설정 오류: ', e);
+        console.log(e);
     }
 });
 
@@ -239,16 +205,26 @@ app.get('/infoTable/:user_input/:db_input', async (req, res) => {
     const dbInput = req.params.db_input;
     const query = "SELECT column_name, data_type, CASE WHEN column_name IN (SELECT column_name FROM information_schema.key_column_usage WHERE table_name = \'" + userInput + "\' AND constraint_name = \'" + userInput + "_pkey\') THEN \'PK\' ELSE \'\' END AS primary_key FROM information_schema.columns WHERE table_name = \'" + userInput + "\'\;";
 
+    sendQuery(res, query, dbInput);
+});
+
+//node.js 서버 포트 열기
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+});
+
+//db에 쿼리문 보내기
+function sendQuery(res, query, dbInput) {
     try {
         const dbPool = new Pool({ ...dbConnection, database: dbInput });
         dbPool.query(query, (error, result) => {
             if (error) {
-                console.error('쿼리문 처리 중 오류 발생:', error);
-                res.json({"data": [{"쿼리문 오류 발생" : null}]});
+                console.error(dbInput, ' 쿼리문 처리 중 오류 발생:', error);
+                res.json({"data": [{"쿼리문 오류 발생" : error.message}]});
             } else {
-                console.log(dbPool.database + ' 쿼리문 요청 데이터 전송 선공: ', query);
+                console.log(dbInput, ' 쿼리문 요청 데이터 전송 선공: ', query);
                 if (result.rows.length == 0)
-                    res.json({"data": [{"테이블 데이터 없음" : null}]});
+                    res.json({"data": []});
                 else
                     res.json({"data": result.rows});
             }
@@ -256,25 +232,79 @@ app.get('/infoTable/:user_input/:db_input', async (req, res) => {
         dbPool.end();
     }
     catch (e) {
-        console.log('DB설정 오류: ', e);
+        console.log(e);
     }
-});
+}
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
-});
+//모든 db에 쿼리문 보내기
+async function sendQueryAll(res, query) {
+    const databaseListQuery = 'SELECT datname FROM pg_database WHERE datistemplate = false;';
+    const { rows } = await mainPool.query(databaseListQuery);
+    const databaseNames = rows.map(row => row.datname);
+    const dataArr = [];
+    let cnt = 0;
 
+    try {
+        for (const dbName of databaseNames) {
+            const dbPool = new Pool({ ...dbConnection, database: dbName });
+            dbPool.query(query, (error, result) => {
+                if (error) {
+                    console.error(dbName, '쿼리문 처리 중 오류 발생: ', error);
+                } else {
+                    console.log(dbName, ' 쿼리문 요청 데이터 전송 선공: ', query);
+                    if (result.rows.length != 0) {
+                        const resultWithDB = result.rows.map(row => {
+                            return {
+                                '검색한 db명': dbName,
+                                ...row
+                            }
+                        });
+                        for(let i= 0; i < resultWithDB.length; i++) {
+                            dataArr.push(resultWithDB[i]);
+                        }
+                    }
+                }
+                dbPool.end();
+                cnt++;
+                if(cnt > databaseNames.length - 1) {
+                    console.log(dataArr);
+                    if(!(dataArr.length === 0))
+                        res.json({"data": dataArr});
+                    else
+                        res.json({"data": []});
+                }
+            });
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
+//입력에 따른 쿼리문 처리
 function setQuery(userInput) {
     switch (userInput) {
         //사용량 관리
         case 'dbUsage':
             return "SELECT pg_database.datname, pg_size_pretty(pg_database_size(pg_database.datname)) AS size FROM pg_database;";
         case 'tablespaceUsage':
-            return "select spcname AS tablespace명, pg_size_pretty(pg_tablespace_size(spcname)) AS 사용량 from pg_tablespace;";
+            return "select spcname AS tablespace명, pg_size_pretty(pg_tablespace_size(spcname)) AS 사용량 from pg_tablespace ORDER BY CASE " +
+                "WHEN pg_size_pretty(pg_tablespace_size(spcname)) LIKE '%GB' THEN substring(pg_size_pretty(pg_tablespace_size(spcname)), 1, length(pg_size_pretty(pg_tablespace_size(spcname))) - 2)::numeric * 1024 * 1024 * 1024 " +
+                "WHEN pg_size_pretty(pg_tablespace_size(spcname)) LIKE '%MB' THEN substring(pg_size_pretty(pg_tablespace_size(spcname)), 1, length(pg_size_pretty(pg_tablespace_size(spcname))) - 2)::numeric * 1024 * 1024 " +
+                "WHEN pg_size_pretty(pg_tablespace_size(spcname)) LIKE '%kB' THEN substring(pg_size_pretty(pg_tablespace_size(spcname)), 1, length(pg_size_pretty(pg_tablespace_size(spcname))) - 2)::numeric * 1024 " +
+                "WHEN pg_size_pretty(pg_tablespace_size(spcname)) LIKE '%bytes' THEN substring(pg_size_pretty(pg_tablespace_size(spcname)), 1, length(pg_size_pretty(pg_tablespace_size(spcname))) - 5)::numeric END DESC;";
         case 'tableUsage':
-            return "SELECT tablename AS table명, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS 사용량 FROM pg_tables where schemaname NOT IN ('utl_file','information_schema','pg_catalog');";
+            return "SELECT tablename AS table명, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS 사용량 FROM pg_tables where schemaname NOT IN ('utl_file','information_schema','pg_catalog') ORDER BY CASE " +
+                "WHEN pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) LIKE '%GB' THEN substring(pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)), 1, length(pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))) - 2)::numeric * 1024 * 1024 * 1024" +
+                "WHEN pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) LIKE '%MB' THEN substring(pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)), 1, length(pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))) - 2)::numeric * 1024 * 1024 " +
+                "WHEN pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) LIKE '%kB' THEN substring(pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)), 1, length(pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))) - 2)::numeric * 1024 " +
+                "WHEN pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) LIKE '%bytes' THEN substring(pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)), 1, length(pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))) - 5)::numeric END DESC;";
         case 'indexUsage':
-            return "SELECT indexrelid::regclass AS index명,  pg_size_pretty(pg_relation_size(indexrelid::regclass)) AS 사용량 FROM pg_index where indexrelid > 16000;";
+            return "SELECT indexrelid::regclass AS index명,  pg_size_pretty(pg_relation_size(indexrelid::regclass)) AS 사용량 FROM pg_index where indexrelid > 16000 ORDER BY CASE " +
+                "WHEN pg_size_pretty(pg_relation_size(indexrelid::regclass)) LIKE '%GB' THEN substring(pg_size_pretty(pg_relation_size(indexrelid::regclass)), 1, length(pg_size_pretty(pg_relation_size(indexrelid::regclass))) - 2)::numeric * 1024 * 1024 * 1024 " +
+                "WHEN pg_size_pretty(pg_relation_size(indexrelid::regclass)) LIKE '%MB' THEN substring(pg_size_pretty(pg_relation_size(indexrelid::regclass)), 1, length(pg_size_pretty(pg_relation_size(indexrelid::regclass))) - 2)::numeric * 1024 * 1024 " +
+                "WHEN pg_size_pretty(pg_relation_size(indexrelid::regclass)) LIKE '%kB' THEN substring(pg_size_pretty(pg_relation_size(indexrelid::regclass)), 1, length(pg_size_pretty(pg_relation_size(indexrelid::regclass))) - 2)::numeric * 1024 " +
+                "WHEN pg_size_pretty(pg_relation_size(indexrelid::regclass)) LIKE '%bytes' THEN substring(pg_size_pretty(pg_relation_size(indexrelid::regclass)), 1, length(pg_size_pretty(pg_relation_size(indexrelid::regclass))) - 5)::numeric END DESC;"
 
         //session 관리
         case 'userSession':
@@ -335,6 +365,7 @@ function setQuery(userInput) {
     }
 }
 
+//입력에 따른 페이지 파일 경로 설정
 function setFilePath(userInput) {
     switch (userInput) {
         //초기 페이지
@@ -352,8 +383,10 @@ function setFilePath(userInput) {
             return '/views/monitoring/tablespace.html';
         case 'monitor-table':
             return '/views/monitoring/table.html';
-        case 'monitor-indexusage':
-            return '/views/monitoring/indexusage.html';
+        case 'monitor-index':
+            return '/views/monitoring/index-usage.html';
+        case 'monitor-chart':
+            return '/views/monitoring/chart-usage.html'
 
         //세션 관리 페이지
         case 'session-user':
