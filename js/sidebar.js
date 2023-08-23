@@ -1,8 +1,10 @@
+//페이지의 태그가 모두 불러와지면 사이드바에 로고 넣기
 $(document).ready(function setLogo() {
     const logo_str = '<a class="sidebar-brand d-flex" href="/index"><h3>DAS 모니터링 도구</h3></a><hr class="sidebar-divider my-0">';
     $('#accordionSidebar').prepend(logo_str);
 });
 
+//페이지의 태그가 모두 불러와지면 사이드바 우측에 사이드바 리사이즈 핸들 넣기
 $(document).ready(function sideResize() {
     let sidebarSize = localStorage.getItem('sidebarSize');
     if (sidebarSize)
@@ -41,18 +43,21 @@ $(document).ready(function sideResize() {
     });
 });
 
+//페이지의 태그가 모두 불러와지면 사이드바에 트리구조 메뉴 넣기
+//dtree는 .add() 메소드를 통해 트리구조를 만듦
 $(document).ready(function setSideTree() {
     $('.dtree').prepend('<button id="switchBtn" class="fa fa-cog border" onclick="switchmenu()"></button><span><a id="openAll" href="javascript: myMaindtree.openAll();">모두 펼치기</a> | <a id="closeAll" href="javascript: myMaindtree.closeAll();">모두 접기</a></span>');
     let a = -1, b = 9, c = 99, d = 999;   // a가 최상위 메뉴, 마지막 알파벳이 최하위 메뉴
-    myMaindtree = new dTree('myMaindtree');
-    mySubdtree = new dTree('mySubdtree');
+    myMaindtree = new dTree('myMaindtree'); //모니터링, 권한관리 메뉴
+    mySubdtree = new dTree('mySubdtree');   //DB 스키마 보기, 서버 관리 메뉴
 
-
+    //인덱스(초기화면) 페이지면 쿠키 초기화(펼쳐져 있거나 하이라이트 되어 있는 메뉴들 초기화)
     if (document.URL.endsWith('/index')) {
         myMaindtree.clearCookie();
         mySubdtree.clearCookie();
     }
 
+    //pid가 -1이면 루트 노드, dtree.add(id, pid, name, url, title, target, icon, iconOpen, open)
     myMaindtree.add(++a, -1, 'ETRI');
 
         myMaindtree.add(++b, a, '사용량 모니터링', '', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
@@ -96,13 +101,16 @@ $(document).ready(function setSideTree() {
         mySubdtree.add(++b, a, 'master', '/master-connect', '', '', 'fa fa-laptop', 'fa fa-laptop');
         mySubdtree.add(++b, a, 'slave', '/slave-connect', '', '', 'fa fa-laptop', 'fa fa-laptop');
 
+    //트리구조 표시하기
     showmenu();
 
+    //트리에 권한관리 메뉴 넣기
     async function setAuthority(a) {
         myMaindtree.add(++b, a, '전체 보기', '/authority-all', '', '', 'fa fa-users', 'fa fa-users');
         await fetchAuthority(b);
     }
 
+    //권한관리 메뉴 데이터 받아와서 트리에 넣기
     function fetchAuthority(b) {
         fetch('/query/authority-all/postgres')
             .then(response => response.json())
@@ -129,10 +137,12 @@ $(document).ready(function setSideTree() {
                         myMaindtree.add(++d, menus[index], data.data[i].모듈명, '/authority-user/' + data.data[i].모듈명, '', '', 'fa fa-user', 'fa fa-user');
                     }
                 }
+                //비동기 함수라 트리구조 표시 함수 써야 함
                 showmenu();
             });
     }
 
+    //DB 스키마보기 메뉴에 들어갈 데이터 받아와서 트리에 넣기 - db 데이터
     async function setDBMSobjects(a) {
         await fetch('/query/dbList/postgres')
             .then(response => response.json())
@@ -144,6 +154,7 @@ $(document).ready(function setSideTree() {
             });
     }
 
+    //DB 스키마보기 메뉴에 들어갈 데이터 받아와서 트리에 넣기 - table 데이터
     async function fetchTable(datname, b) {
         await fetch('/query/tableList/' + datname)
             .then(response => response.json())
@@ -152,15 +163,19 @@ $(document).ready(function setSideTree() {
                     mySubdtree.add(++c, b, data.data[i].relname, '\"onclick = fetchModal(\''+ data.data[i].relname + '\',\'' + datname + '\') data-toggle=\"modal\" data-target=\"#informationModal', '', '', 'fa fa-table', 'fa fa-table');
                 }
             });
+        //여기서 트리구조 표시 함수 실행해야 db와 table 둘다 있는 구조로 표시됨
         showmenu();
     }
 });
 
+//페이지의 태그가 모두 불러와지면 informationModal을 body태그에 append
+//DB스키마 보기에 있는 각각의 메뉴를 눌렀을 때 정보를 표시할 modal
 $(document).ready(function setObjectTable() {
     table_str = "<div class=\"modal fade\" id=\"informationModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog modal-lg\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><h5 class=\"modal-title\" id=\"ModalLabel\">테이블 정보</h5><button class=\"close\" type=\"button\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button></div><div class=\"modal-body\"><table class=\"table table-bordered\"><thead><tr><th>칼럼 명</th><th>타입</th><th>PK</th></tr></thead><tbody id='modal-Tbody'></tbody></table></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" type=\"button\" data-dismiss=\"modal\">확인</button></div></div></div></div>";
     $(document.body).append(table_str);
 });
 
+//DB스키마 보기에 있는 각각의 메뉴를 눌렀을 때 onclick으로 이 함수가 호출되어 테이블 정보를 넣어 줌
 async function fetchModal(relname, datname) {
     var table = document.getElementById("modal-Tbody");
     var modal_str = '';
@@ -178,6 +193,7 @@ async function fetchModal(relname, datname) {
     table.innerHTML = modal_str;
 }
 
+//메뉴를 전환해주는 함수, localStorage 이용함
 function switchmenu() {
     var value = localStorage.getItem("MENU_VALUE");
     if(value == "main") {
@@ -190,6 +206,7 @@ function switchmenu() {
     }
 }
 
+//사이드바에 트리구조 표시해주는 함수, 현재 표시된 메뉴에 따라 모두 펼치기, 접기의 대상도 변경해 줌
 function showmenu() {
     var value = localStorage.getItem("MENU_VALUE");
 

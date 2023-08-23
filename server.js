@@ -164,7 +164,7 @@ app.get('/authority/authGroup/:user_input', async (req, res) => {
     const userInput = req.params.user_input;
     var query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority WHERE company_name = \'" + userInput + "\';";
 
-    sendQuery(res, query, dbInput);
+    sendQuery(res, query, 'postgres');
 });
 
 //유저 권한 조회 쿼리문 처리
@@ -172,7 +172,7 @@ app.get('/authority/authUser/:user_input', async (req, res) => {
     const userInput = req.params.user_input;
     var query = "SELECT module_name AS \"모듈명\", sidb_read, sidb_write, msdb_read, msdb_write, tmdb_read, tmdb_write, dmdb_read, dmdb_write, company_name AS \"담당기관\" FROM public.authority WHERE module_name = \'" + userInput + "\';"
 
-    sendQuery(res, query, dbInput);
+    sendQuery(res, query, 'postgres');
 });
 
 //권한 업데이트 쿼리문 처리
@@ -267,11 +267,10 @@ async function sendQueryAll(res, query) {
                 dbPool.end();
                 cnt++;
                 if(cnt > databaseNames.length - 1) {
-                    console.log(dataArr);
-                    if(!(dataArr.length === 0))
-                        res.json({"data": dataArr});
-                    else
+                    if(dataArr.length === 0)
                         res.json({"data": []});
+                    else
+                        res.json({"data": dataArr});
                 }
             });
         }

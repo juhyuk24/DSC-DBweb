@@ -1,6 +1,7 @@
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
+//차트 만들고 옵션 설정
 var ctx = document.getElementById("myPieChart");
 var myPieChart = new Chart(ctx, {
     type: 'pie',
@@ -11,7 +12,6 @@ var myPieChart = new Chart(ctx, {
             hoverBorderColor: "rgba(234, 236, 244, 1)",
         }],
     },
-    formatter: 'kB',
     options: {
         maintainAspectRatio: false,
         tooltips: {
@@ -30,14 +30,17 @@ var myPieChart = new Chart(ctx, {
     },
 });
 
+//pieintervalID에 반복 시간(ms)을 지정해서 setInterval하면 반복해서 실행됨
 let pieintervalID;
 let pieintervalTime = document.getElementById('setInterval-bar').value * 1000;
 fetchData();
 
+//setInterval
 pieintervalID = setInterval(() => {
     fetchData();
 }, pieintervalTime);
 
+//Interval을 변경해서 반복시간 변경하는 함수
 function changeInterval_pie() {
     pieintervalTime = document.getElementById('setInterval-pie').value * 1000;
     if(pieintervalTime >= 1000) {
@@ -48,6 +51,7 @@ function changeInterval_pie() {
     }
 }
 
+//데이터 받아오는 함수
 function fetchData() {
     let newLabels = [];
     let newDatas = [];

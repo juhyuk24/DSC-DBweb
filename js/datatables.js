@@ -1,4 +1,6 @@
+//데이터테이블을 사용하는 페이지는 body태그에 onload속성에 setTable(query)로 이 함수를 호출함
 function setTable(req) {
+    //권한관리 페이지가 아닐때만 DB_VALUE값 읽어옴
     if(!document.URL.includes('/authority')) {
         if(localStorage.getItem("DB_VALUE"))
             req += "/" + localStorage.getItem("DB_VALUE");
@@ -6,6 +8,7 @@ function setTable(req) {
             req += "/all";
     }
 
+    //테이블에 넣을 데이터 불러오기
     $.getJSON(req, function (data) {
         var columns = [];
         for (var val in data.data[0]) {
@@ -54,6 +57,7 @@ function setTable(req) {
     });
 }
 
+//권한관리 페이지에서 유저권한 페이지 테이블 생성해주는 함수
 function setUserTable(req) {
     $.getJSON(req, function (data) {
         var columns = [];
@@ -101,6 +105,7 @@ function setUserTable(req) {
     });
 }
 
+//데이터테이블 상단에 필요한 버튼들을 생성해주는 함수 - 다른 함수들을 모아서 한번에 호출하기 위함
 function setTableBtns(table) {
     setFilter(table);
 
@@ -115,6 +120,7 @@ function setTableBtns(table) {
     setAdditionalBtn();
 }
 
+//칼럼 검색 필터를 생성해주는 함수
 function setFilter(table) {
     var filter_str = '<span style="white-space: nowrap;">필터: <select id="search-filter" style="margin: 5px;"><option value="all">전체 검색</option></span>';
     var selectedColumn = -1;
@@ -147,6 +153,7 @@ function setFilter(table) {
     }
 }
 
+//권한관리 페이지에서 각 db의 읽기, 쓰기 권한에 대해 체크박스로 표시해주는 함수
 function setCheckbox() {
     $('#dataTable tbody td').each(function () {
         var auth = $(this).text();
@@ -170,6 +177,7 @@ function setCheckbox() {
     setSaveBtn();
 }
 
+//권한관리 페이지에서 각각의 행에 저장 버튼을 생성해주는 함수
 function setSaveBtn() {
     var rows = $('#dataTable tbody tr');
 
@@ -185,6 +193,7 @@ function setSaveBtn() {
     });
 }
 
+//저장 버튼이 클릭 되었을 때 실행되는 함수
 async function clickSaveBtn(button) {
     const row = button.closest('tr');
     const rowData = {
@@ -214,11 +223,13 @@ async function clickSaveBtn(button) {
     }
 }
 
+//권한관리 페이지에서 변경사항 일괄 저장 버튼 생성 함수
 function setSaveAllBtn() {
     var save_str = '<a class="btn btn-primary" onclick="clickSaveAllBtn()" style="margin: 5px;">변경사항 일괄 저장</span></a>';
     $('#dataTable_filter').prepend(save_str);
 }
 
+//변경사항 일괄 저장 버튼이 눌렸을 때 실행되는 함수
 function clickSaveAllBtn() {
     const saveButtons = document.querySelectorAll('.btn-refresh');
     saveButtons.forEach(button => {
@@ -226,14 +237,14 @@ function clickSaveAllBtn() {
     });
 }
 
+//DB선택 버튼 생성 함수
 function setDBselectBtn() {
     var selectDB_str = '<span>DB선택: </span><select id="select-db" style="margin: 5px;" onchange="changeDB(this)">';
     selectDB_str += '<option value="all">전체 선택</option>'
     selectDB_str += '<option value="sidb">sidb</option>';
     selectDB_str += '<option value="tmdb">tmdb</option>';
     selectDB_str += '<option value="dmdb">dmdb</option>';
-    selectDB_str += '<option value="msdb">msdb</option>';
-    selectDB_str += '<option value="postgres">postgres</option></select>';
+    selectDB_str += '<option value="msdb">msdb</option></select>';
     $('#dataTable_filter').prepend(selectDB_str);
 
     const select = document.querySelector("#select-db");
@@ -244,17 +255,33 @@ function setDBselectBtn() {
     }
 }
 
+//특정 페이지에만 필요한 버튼들이 생성되는 함수
 function setAdditionalBtn() {
+    //차트로 보기 버튼 - ~~별 사용량
     if (document.URL.endsWith('monitor-tablespace') || document.URL.endsWith('monitor-table') || document.URL.endsWith('monitor-index')) {
         var showChart_str = '<a class="btn btn-primary btn-refresh" href="/monitor-chart" style="margin: 5px;">차트로 보기</a>';
         $('#dataTable_filter').prepend(showChart_str);
     }
 
+    //세션 상태 별로 검색 셀렉트박스 - session 정보 확인
+    if (document.URL.endsWith('session-info')) {
+        var showChart_str = '<span>세션 상태: </span><select style="margin: 5px;"><option>전체</option><option>active</option><option>idle</option></select>';
+        $('#dataTable_filter').prepend(showChart_str);
+    }
+
+    //실행시간 조건 검색 셀렉트박스 - 일정 시간 이상 실행되는 SQL 정보
+    if (document.URL.endsWith('trans-time')) {
+        var selectDate_str = '<span>검색 시간: </span><input type=\"time\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"time\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
+        $('#dataTable_filter').prepend(selectDate_str);
+    }
+
+    //기간 지정 검색 캘린더 - 이중화 서비스 상태
     if (document.URL.endsWith('dup-service')) {
         var selectDate_str = '<span>검색 기간: </span><input type=\"datetime-local\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"datetime-local\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
         $('#dataTable_filter').prepend(selectDate_str);
     }
 
+    //기간 지정 검색 캘린더, 활성화 상태 조건 검색 셀렉트박스 - job 정보
     if (document.URL.endsWith('job-info')) {
         var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
         $('#dataTable_filter').prepend(selectDate_str);
@@ -262,22 +289,14 @@ function setAdditionalBtn() {
         $('#dataTable_filter').prepend(showChart_str);
     }
 
+    //기간 지정 검색 캘린더 - job 수행 로그 정보
     if (document.URL.endsWith('job-log')) {
         var selectDate_str = '<span>검색 기간: </span><input type=\"date\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"date\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
         $('#dataTable_filter').prepend(selectDate_str);
     }
-
-    if (document.URL.endsWith('trans-time')) {
-        var selectDate_str = '<span>검색 시간: </span><input type=\"time\" id=\"startdate\"><script>document.getElementById(\'startdate\').value = new Date().toISOString().substring(0, 10);</script><span> - </span><input type=\"time\" id=\"enddate\" style="margin: 5px;"><script>document.getElementById(\'enddate\').value = new Date().toISOString().substring(0, 10);</script>';
-        $('#dataTable_filter').prepend(selectDate_str);
-    }
-
-    if (document.URL.endsWith('session-info')) {
-        var showChart_str = '<span>세션 상태: </span><select style="margin: 5px;"><option>전체</option><option>active</option><option>idle</option></select>';
-        $('#dataTable_filter').prepend(showChart_str);
-    }
 }
 
+//DB_VALUE를 로컬 스토리지에 저장하고 페이지 새로고침
 function changeDB(obj) {
     var selectVal = $(obj).val();
     localStorage.setItem("DB_VALUE", selectVal);
