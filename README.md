@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=Waving&color=58BFA2&fontColor=FFFFFF&height=300&text=DB%20Table%20Web)
+![header](https://capsule-render.vercel.app/api?type=Waving&color=4e73df&fontColor=FFFFFF&height=300&text=DB%20Table%20Web)
 
 
 ## 프로젝트 개요
