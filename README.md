@@ -17,8 +17,8 @@
 
 
 ## 샘플 페이지
-https://juhyuk24.github.io/DSC-DBweb/
-io-version branch를 deploy했습니다.
+https://juhyuk24.github.io/DSC-DBweb/ <br>
+main branch를 그대로 사용하면 html의 경로가 달라서 io-version branch를 만들어 github pages를 이용해서 만들었습니다.
 
 
 ## Copyright and License
