@@ -18,7 +18,8 @@
 
 ## 샘플 페이지
 ![DB웹1](https://github.com/juhyuk24/DSC-DBweb/assets/102583124/6f20529b-0abb-4745-8497-a178413cacf3) | ![DB웹2](https://github.com/juhyuk24/DSC-DBweb/assets/102583124/cdb05fa3-d53f-44e5-ad62-0e0eec34b296)
---- | --- |
+--- | --- | 
+<br>
 https://juhyuk24.github.io/DSC-DBweb/ <br>
 main branch를 그대로 사용하면 html의 경로가 달라서 io-version branch를 만들어 github pages를 이용해서 만들었습니다.
 
