@@ -16,7 +16,8 @@
 </div>
 
 
-## 샘플 페이지 : https://juhyuk24.github.io/DSC-DBweb/
+## 샘플 페이지
+https://juhyuk24.github.io/DSC-DBweb/
 
 
 ## Copyright and License
