@@ -1,6 +1,6 @@
 //페이지의 태그가 모두 불러와지면 사이드바에 로고 넣기
 $(document).ready(function setLogo() {
-    const logo_str = '<a class="sidebar-brand d-flex" href="/index"><h3>DAS 모니터링 도구</h3></a><hr class="sidebar-divider my-0">';
+    const logo_str = '<a class="sidebar-brand d-flex" href="index"><h3>DAS 모니터링 도구</h3></a><hr class="sidebar-divider my-0">';
     $('#accordionSidebar').prepend(logo_str);
 });
 

@@ -23,5 +23,5 @@
 }
 @font-face {
     font-family: 'LogoFont';
-    src: url('/fonts/BlackHanSans-Regular.ttf') format('truetype');
+    src: url('fonts/BlackHanSans-Regular.ttf') format('truetype');
 }
