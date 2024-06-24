@@ -1,4 +1,4 @@
-## https://juhyuk24.github.io/sbadmin2_webproject/
+## https://juhyuk24.github.io/DSC-DBweb/
 
 ## Copyright and License
 
