@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>DAS 모니터링 도구</title>
+
+    <!-- sbadmin2 템플릿 css, font -->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="/css/dtree.css" rel="StyleSheet" type="text/css"/>
+
+    <!-- 커스텀 css -->
+    <link href="/css/sidebar.css" rel="stylesheet" type="text/css">
+
+    <!-- bootstrap, chart.js, datatables 자바스크립트 -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sb-admin-2.min.js"></script>
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- 페이지에 적용되는 자바스크립트 -->
+    <script src="/js/dtree.js" type="text/javascript"></script>
+    <script src="/js/sidebar.js" type="text/javascript"></script>
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+
+        <!-- 사이드바 -->
+        <ul class="navbar-nav bg-light sidebar sidebar-divider accordion border-right" id="accordionSidebar">
+            <!-- 트리 뷰 -->
+            <div class="dtree">
+                <!-- 트리 뷰 들어갈 div -->
+                <div id="dTreeview"></div>
+            </div>
+        </ul>
+
+        <!-- 사이드바 크기조절 핸들 -->
+        <div id="resize-handle"></div>
+
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <!-- 탑 바 -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-3 static-top shadow">
+                    <ul class="navbar-nav ml-auto">
+                        <div class="topbar-divider d-none d-sm-block"></div>
+                        <!-- 사용자 정보 -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="user-name">사용자 명</span>
+                                <script>
+                                    const user = JSON.parse('{{user}}');
+                                    document.getElementById("user-name").textContent = user.id + " 님";
+                                </script>
+                                <img class="img-profile rounded-circle"
+                                     src="img/undraw_profile.svg">
+                            </a>
+                            <!-- 사용자 드롭다운 메뉴 -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="info.html">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    사용자 정보 조회
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="login.html">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    로그아웃
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- main 콘텐츠 영역 -->
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card o-hidden border-0 shadow-lg my-5">
+                                <div class="card-body p-0">
+                                    <!-- Nested Row within Card Body -->
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="p-5">
+                                                <div class="text-center">
+                                                    <h1 class="h4 text-gray-900 mb-2">slave 연결 설정</h1>
+                                                </div>
+                                                <form class="user">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control form-control-user"
+                                                               placeholder="username">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control form-control-user"
+                                                               placeholder="host">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control form-control-user"
+                                                               placeholder="database">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="password" class="form-control form-control-user"
+                                                               placeholder="password">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control form-control-user"
+                                                               placeholder="port">
+                                                    </div>
+                                                    <a href="" class="btn btn-primary btn-user btn-block">
+                                                        연결
+                                                    </a>
+                                                </form>
+                                                <hr>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; ETRI 2023</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 페이지 최상단 스크롤 버튼 -->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    
+    <!-- 테이블, 칼럼 정보 인터페이스 -->
+    <div class="modal fade" id="informationModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">테이블 정보</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>칼럼 명</th>
+                            <th>타입</th>
+                            <th>PK</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="title">column1</td>
+                            <td>varchar(100)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column2</td>
+                            <td>smallint</td>
+                            <td>O</td>
+                        </tr>
+                        <tr>
+                            <td class="title">column3</td>
+                            <td>integer</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column4</td>
+                            <td>decimal</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column5</td>
+                            <td>varchar(10)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column6</td>
+                            <td>double precision</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column7</td>
+                            <td>timestamp</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column8</td>
+                            <td>text</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column9</td>
+                            <td>text</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column10</td>
+                            <td>date</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column11</td>
+                            <td>date</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column12</td>
+                            <td>boolean</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="title">column13</td>
+                            <td>boolean</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" data-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

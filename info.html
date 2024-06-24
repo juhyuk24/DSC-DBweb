@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>DAS 모니터링 도구</title>
+
+    <!-- sbadmin2 템플릿 css, font -->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- bootstrap 자바스크립트 -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="js/sb-admin-2.min.js"></script>
+</head>
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-12 col-md-9">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">개인정보 조회</h1>
+                                    </div>
+
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                        <tr>
+                                            <td class="title">아이디</td>
+                                            <td class="content" id="id-content"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="title">비밀번호</td>
+                                            <td class="content" id="password-content"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="title">이름</td>
+                                            <td class="content" id="name-content"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="title">기관명</td>
+                                            <td class="content" id="office-content"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="title">이메일</td>
+                                            <td class="content" id="email-content"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="title">전화번호</td>
+                                            <td class="content" id="phone-content"></td>
+                                        </tr>
+                                        </tbody>
+                                        <script>
+                                            const idContent = document.getElementById('id-content');
+                                            const passwordContent = document.getElementById('password-content');
+                                            const nameContent = document.getElementById('name-content');
+                                            const officeContent = document.getElementById('office-content');
+                                            const emailContent = document.getElementById('email-content');
+                                            const phoneContent = document.getElementById('phone-content');
+                                            const user = JSON.parse('{{user}}');
+                                            idContent.append(user.id ? user.id : '');
+                                            passwordContent.append(user.password ? user.password : '');
+                                            nameContent.append(user.name ? user.name : '');
+                                            officeContent.append(user.office ? user.office : '');
+                                            emailContent.append(user.email ? user.email : '');
+                                            phoneContent.append(user.phone ? user.phone : '');
+                                        </script>
+                                    </table>
+                                    <div class="text-center">
+                                        <a class="medium" href="index.html">메인</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
