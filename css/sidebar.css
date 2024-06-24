@@ -3,19 +3,25 @@
 }
 .sidebar-brand {
     max-width: 168px;
-    justify-content: flex-start;
-    margin-left: 10px;
+    white-space: nowrap;
+    /*margin-left: 10px;*/
+    font-family: 'LogoFont';
 }
 .sidebar-logo {
     object-fit: cover;
     overflow: auto;
 }
-.logButtonContainer {
-    text-align: end;
-    margin-bottom: 10px;
-}
 #resize-handle {
     background-color: #cbd5e0;
     cursor: ew-resize;
-    width: 5px;
+    width: 8px;
+}
+#switchBtn {
+    color: #4e73df;
+    font-size: 20px;
+    border-radius: 3px 3px 3px 3px;
+}
+@font-face {
+    font-family: 'LogoFont';
+    src: url('/fonts/BlackHanSans-Regular.ttf') format('truetype');
 }
