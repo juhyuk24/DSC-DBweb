@@ -140,6 +140,9 @@ $(document).ready(function setSideTree() {
 
     mySubdtree.add(++a, -1, 'DB 스키마 보기', '', '', '', 'fa fa-inbox', 'fa fa-inbox');
         mySubdtree.add(++b, a, 'dmdb', '\" data-toggle=\"modal\" data-target=\"#informationModal', '', '', 'fa fa-laptop', 'fa fa-laptop');
+        mySubdtree.add(++b, a, 'tmdb', '\" data-toggle=\"modal\" data-target=\"#informationModal', '', '', 'fa fa-laptop', 'fa fa-laptop');
+        mySubdtree.add(++b, a, 'sidb', '\" data-toggle=\"modal\" data-target=\"#informationModal', '', '', 'fa fa-laptop', 'fa fa-laptop');
+        mySubdtree.add(++b, a, 'msdb', '\" data-toggle=\"modal\" data-target=\"#informationModal', '', '', 'fa fa-laptop', 'fa fa-laptop');
 
     mySubdtree.add(++a, -1, '서버 관리');
         mySubdtree.add(++b, a, 'master', 'master.html', '', '', 'fa fa-laptop', 'fa fa-laptop');
