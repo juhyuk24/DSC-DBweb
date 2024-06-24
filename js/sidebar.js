@@ -1,13 +1,20 @@
+//페이지의 태그가 모두 불러와지면 사이드바에 로고 넣기
+$(document).ready(function setLogo() {
+    const logo_str = '<a class="sidebar-brand d-flex" href="/index"><h3>DAS 모니터링 도구</h3></a><hr class="sidebar-divider my-0">';
+    $('#accordionSidebar').prepend(logo_str);
+});
+
+//페이지의 태그가 모두 불러와지면 사이드바 우측에 사이드바 리사이즈 핸들 넣기
 $(document).ready(function sideResize() {
     let sidebarSize = localStorage.getItem('sidebarSize');
-
-    if(sidebarSize) document.getElementById('accordionSidebar').style.width = sidebarSize + 'px';
-    else document.getElementById('accordionSidebar').style.width = '220px';
+    if (sidebarSize)
+        document.getElementById('accordionSidebar').style.width = sidebarSize + 'px';
+    else
+        document.getElementById('accordionSidebar').style.width = '290px';
 
     const resizeData = {
         tracking: false,
-        startWidth: null,
-        startCursorX: null,
+        startCursorScreenX: null,
         maxWidth: 900,
         minWidth: 100
     };
@@ -15,138 +22,205 @@ $(document).ready(function sideResize() {
     document.getElementById('resize-handle').addEventListener('mousedown', event => {
         event.preventDefault();
         event.stopPropagation();
-        resizeData.startWidth = document.getElementById('accordionSidebar').clientWidth;
-        resizeData.startCursorX = event.clientX;
+        resizeData.startWidth = parseInt(document.getElementById('accordionSidebar').style.width);
+        resizeData.startCursorScreenX = event.clientX;
         resizeData.tracking = true;
-        console.log(event.clientX);
     });
 
     document.addEventListener('mousemove', event => {
         if (resizeData.tracking) {
-            const cursorXDelta = event.clientX - resizeData.startCursorX;
-            let newWidth = resizeData.startWidth + cursorXDelta;
-            newWidth = Math.min(resizeData.maxWidth, Math.max(resizeData.minWidth, newWidth));
+            const cursorScreenXDelta = event.clientX - resizeData.startCursorScreenX;
+            let newWidth = Math.min(resizeData.startWidth + cursorScreenXDelta, resizeData.maxWidth);
+            newWidth = Math.max(resizeData.minWidth, newWidth);
             document.getElementById('accordionSidebar').style.width = newWidth + 'px';
+            console.log(newWidth, ",  " + resizeData.startWidth);
             localStorage.setItem('sidebarSize', newWidth);
-            document.body.style.cursor = 'ew-resize';
         }
     });
 
     document.addEventListener('mouseup', event => {
-        if (resizeData.tracking) resizeData.tracking = false;
-        document.body.style.cursor = 'auto';
+        if (resizeData.tracking) resizeData.tracking = false
     });
 });
 
-$(document).ready(function sideTree() {
-    d = new dTree('d');
+//페이지의 태그가 모두 불러와지면 사이드바에 트리구조 메뉴 넣기
+//dtree는 .add() 메소드를 통해 트리구조를 만듦
+$(document).ready(function setSideTree() {
+    $('.dtree').prepend('<button id="switchBtn" class="fa fa-cog border" onclick="switchmenu()"></button><span><a id="openAll" href="javascript: myMaindtree.openAll();">모두 펼치기</a> | <a id="closeAll" href="javascript: myMaindtree.closeAll();">모두 접기</a></span>');
+    let a = -1, b = 9, c = 99, d = 999;   // a가 최상위 메뉴, 마지막 알파벳이 최하위 메뉴
+    myMaindtree = new dTree('myMaindtree'); //모니터링, 권한관리 메뉴
+    mySubdtree = new dTree('mySubdtree');   //DB 스키마 보기, 서버 관리 메뉴
 
-    if (document.URL.endsWith('/index.html')) {
-        d.clearCookie();
+    //인덱스(초기화면) 페이지면 쿠키 초기화(펼쳐져 있거나 하이라이트 되어 있는 메뉴들 초기화)
+    if (document.URL.endsWith('/index')) {
+        myMaindtree.clearCookie();
+        mySubdtree.clearCookie();
     }
 
-    d.add(0, -1, 'ETRI');
+    //pid가 -1이면 루트 노드, dtree.add(id, pid, name, url, title, target, icon, iconOpen, open)
+    myMaindtree.add(++a, -1, 'ETRI');
 
-    d.add(11, 0, '서버 관리');
-    d.add(110, 11, 'master','manageConnection-master.html');
-    d.add(111, 11, 'slave','manageConnection-slave.html');
+        myMaindtree.add(++b, a, '사용량 모니터링', '', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'DB별 사용량', '/monitor-db', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'tablespace별 사용량', '/monitor-tablespace', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'table별 사용량', '/monitor-table', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
+            myMaindtree.add(++c, b, 'index별 사용량', '/monitor-index', '', '', 'fa fa-chart-line', 'fa fa-chart-line');
 
-    d.add(10, 0, '사용량 모니터링');
-    d.add(100, 10, 'DB별 사용량', 'db.html');
-    d.add(101, 10, 'tablespace별 사용량', 'tablespace.html');
-    d.add(102, 10, 'table별 사용량', 'table.html');
-    d.add(103, 10, 'index별 사용량', 'indexusage.html');
+        myMaindtree.add(++b, a, 'session 관리', '', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
+            myMaindtree.add(++c, b, '접속자 정보 확인', '/session-user', '', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
+            myMaindtree.add(++c, b, 'session 정보 확인', '/session-info', '', '', 'fa fa-sitemap', 'fa fa-sitemap');
 
-    d.add(20, 0, 'session 관리');
-    d.add(200, 20, '접속자 정보 확인', 'userinfo.html');
-    d.add(201, 20, 'session 정보 확인', 'sessioninfo.html');
+        myMaindtree.add(++b, a, 'SQL 통계 정보', '', '', '', 'fa fa-list-alt', 'fa fa-list-alt');
+            myMaindtree.add(++c, b, '디스크 사용량 기준 TOP 50', '/disk-top', '', '', 'fa fa-list-alt', 'fa fa-list-alt');
+            myMaindtree.add(++c, b, '실행시간 기준 TOP 50', '/runtime-top', '', '', 'fa fa-list-alt', 'fa fa-list-alt');
 
-    d.add(30, 0, 'SQL 통계 정보');
-    d.add(300, 30, '디스크 사용량 기준 TOP 50', 'disk.html');
-    d.add(301, 30, '실행시간 기준 TOP 50', 'runtime.html');
+        myMaindtree.add(++b, a, '트랜잭션 정보', '', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
+            myMaindtree.add(++c, b, '일정 시간 이상 실행되는 SQL 정보', '/trans-time', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
+            myMaindtree.add(++c, b, 'wait 또는 blocking 되는 session', '/trans-wait', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
+            myMaindtree.add(++c, b, 'query block 사용자 확인', '/trans-block', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
+            myMaindtree.add(++c, b, 'lock 발생 query 확인', '/trans-lock', '', '', 'fa fa-exchange-alt', 'fa fa-exchange-alt');
 
-    d.add(40, 0, '트랜잭션 정보');
-    d.add(400, 40, '일정 시간 이상 실행되는 SQL 정보', 'runsql.html');
-    d.add(401, 40, 'wait 또는 blocking 되는 session', 'waitsession.html');
-    d.add(402, 40, 'query block 사용자 확인', 'queryblock.html');
-    d.add(403, 40, 'lock 발생 query 확인', 'querylock.html');
+        myMaindtree.add(++b, a, 'VACUUM 정보', '', '', '', 'fa fa-hdd', 'fa fa-hdd');
+            myMaindtree.add(++c, b, '현재 autovacuum 실행 상태', '/vac-state', '', '', 'fa fa-hdd', 'fa fa-hdd');
 
-    d.add(50, 0, 'VACUUM 정보');
-    d.add(500, 50, '현재 autovacuum 실행 상태', 'vacuuminfo.html');
+        myMaindtree.add(++b, a, '이중화 정보', '', '', '', 'fa fa-copy', 'fa fa-copy');
+            myMaindtree.add(++c, b, '이중화 설정 상태', '/dup-setting', '', '', 'fa fa-copy', 'fa fa-copy');
+            myMaindtree.add(++c, b, '이중화 서비스 상태', '/dup-service', '', '', 'fa fa-copy', 'fa fa-copy');
 
-    d.add(60, 0, '이중화 정보');
-    d.add(600, 60, '이중화 설정 상태', 'duplicationinfo.html');
-    d.add(601, 60, '이중화 서비스 상태', 'serviceinfo.html');
+        myMaindtree.add(++b, a, '스케줄링 정보', '', '', '', 'fa fa-tasks', 'fa fa-tasks');
+            myMaindtree.add(++c, b, 'job 정보', '/job-info', '', '', 'fa fa-tasks', 'fa fa-tasks');
+            myMaindtree.add(++c, b, 'job 수행 로그 정보', '/job-log', '', '', 'fa fa-tasks', 'fa fa-tasks');
 
-    d.add(70, 0, '스케줄링 정보');
-    d.add(700, 70, 'job 정보', 'jobinfo.html');
-    d.add(701, 70, 'job 수행 로그 정보', 'joblog.html');
+    myMaindtree.add(++a, -1, '사용자 권한관리', '', '', '', 'fa fa-users', 'fa fa-users');
+        setAuthority(a);
 
-    d.add(80, 0, 'DBMS object');
-    d.add(800, 80, 'dmdb');
-    d.add(8000, 800, 'table1', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(8001, 800, 'table2', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(8002, 800, 'table3', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(810, 80, 'tmdb');
-    d.add(8003, 810, 'table1', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(8004, 810, 'table2', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(8005, 810, 'table3', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(820, 80, 'sidb');
-    d.add(8006, 820, 'table1', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(8007, 820, 'table2', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(8008, 820, 'table3', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(830, 80, 'msdb');
-    d.add(8009, 830, 'table1', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(8010, 830, 'table2', '#" data-toggle="modal" data-target="#informationModal');
-    d.add(8011, 830, 'table3', '#" data-toggle="modal" data-target="#informationModal');
+    mySubdtree.add(++a, -1, 'DB 스키마 보기', '', '', '', 'fa fa-inbox', 'fa fa-inbox');
+        setDBMSobjects(a);
 
-    d.add(1, -1, '사용자 권한관리');
-    d.add(90, 1, '전체 보기', 'authority.html');
+    mySubdtree.add(++a, -1, '서버 관리');
+        mySubdtree.add(++b, a, 'master', '/master-connect', '', '', 'fa fa-laptop', 'fa fa-laptop');
+        mySubdtree.add(++b, a, 'slave', '/slave-connect', '', '', 'fa fa-laptop', 'fa fa-laptop');
 
-    d.add(900, 90, 'ETRI', 'authority-group1.html');
-    d.add(9000, 900, 'IRMM', 'authority-user1.html');
-    d.add(9001, 900, 'DVIM', 'authority-user2.html');
-    d.add(9002, 900, 'DPAM', 'authority-user3.html');
+    //트리구조 표시하기
+    showmenu();
 
-    d.add(901, 90, 'VAIV(ETRI)', 'authority-group2.html');
-    d.add(9003, 901, 'EPMM(SEDU)', 'authority-user4.html');
+    //트리에 권한관리 메뉴 넣기
+    async function setAuthority(a) {
+        myMaindtree.add(++b, a, '전체 보기', '/authority-all', '', '', 'fa fa-users', 'fa fa-users');
+        await fetchAuthority(b);
+    }
 
-    d.add(902, 90, 'VAIV', 'authority-group3.html');
-    d.add(9004, 902, 'TMCM', 'authority-user5.html');
-    d.add(9005, 902, 'DRMM', 'authority-user6.html');
+    //권한관리 메뉴 데이터 받아와서 트리에 넣기
+    function fetchAuthority(b) {
+        fetch('/query/authority-all/postgres')
+            .then(response => response.json())
+            .then(data => {
+                var companys = [];
+                var menus = [];
+                let index = -1;
 
-    d.add(903, 90, '스탠스', 'authority-group4.html');
-    d.add(9006, 903, 'TMTM', 'authority-user7.html');
+                for (let i = 0; i < data.data.length; i++) {
+                    for (let j = 0; j < companys.length; j++) {
+                        if(companys[j] == data.data[i].담당기관) {
+                            index = j;
+                            break;
+                        }
+                        else index = -1;
+                    }
+                    if(index == -1) {
+                        myMaindtree.add(++c, b, data.data[i].담당기관, '/authority-group/' + data.data[i].담당기관, '', '', 'fa fa-users', 'fa fa-users');
+                        myMaindtree.add(++d, c, data.data[i].모듈명, '/authority-user/' + data.data[i].모듈명, '', '', 'fa fa-user', 'fa fa-user');
+                        companys.push(data.data[i].담당기관);
+                        menus.push(c);
+                    }
+                    else {
+                        myMaindtree.add(++d, menus[index], data.data[i].모듈명, '/authority-user/' + data.data[i].모듈명, '', '', 'fa fa-user', 'fa fa-user');
+                    }
+                }
+                //비동기 함수라 트리구조 표시 함수 써야 함
+                showmenu();
+            });
+    }
 
-    d.add(904, 90, '안양대학교', 'authority-group5.html');
-    d.add(9007, 904, 'SDDM', 'authority-user8.html');
+    //DB 스키마보기 메뉴에 들어갈 데이터 받아와서 트리에 넣기 - db 데이터
+    async function setDBMSobjects(a) {
+        await fetch('/query/dbList/postgres')
+            .then(response => response.json())
+            .then(data => {
+                for (let i = 0; i < data.data.length; i++) {
+                    mySubdtree.add(++b, a, data.data[i].datname, '', '', '', 'fa fa-database', 'fa fa-database');
+                    fetchTable(data.data[i].datname, b);
+                }
+            });
+    }
 
-    d.add(905, 90, 'KITV', 'authority-group6.html');
-    d.add(9008, 905, 'DMSB (SARM)', 'authority-user9.html');
-    d.add(9009, 905, 'DMSB (DESM)', 'authority-user10.html');
-    d.add(9010, 905, 'DMSB (DASM)', 'authority-user11.html');
-
-    d.add(906, 90, 'KICT', 'authority-group7.html');
-    d.add(9011, 906, 'FEDM', 'authority-user12.html');
-
-    d.add(907, 90, 'IANSIT', 'authority-group8.html');
-    d.add(9012, 907, 'SDCM', 'authority-user13.html');
-    d.add(9013, 907, 'SEMM', 'authority-user14.html');
-    d.add(9014, 907, 'CPAM', 'authority-user15.html');
-    d.add(9015, 907, 'DTGM', 'authority-user16.html');
-    d.add(9016, 907, 'SDRM', 'authority-user17.html');
-    d.add(9017, 907, 'DTSM', 'authority-user18.html');
-
-    d.add(908, 90, 'CMWORLD', 'authority-group9.html');
-    d.add(9018, 908, 'SGMM', 'authority-user19.html');
-    d.add(9019, 908, 'TGMM', 'authority-user20.html');
-    d.add(9020, 908, 'GRSM', 'authority-user21.html');
-
-    d.add(909, 90, '나모웹비즈', 'authority-group10.html');
-    d.add(9021, 909, 'VDCM', 'authority-user22.html');
-
-    d.add(910, 90, '위니텍', 'authority-group11.html');
-    d.add(9022, 910, 'UTSM', 'authority-user23.html');
-
-    document.getElementById('dTreeview').innerHTML = d;
+    //DB 스키마보기 메뉴에 들어갈 데이터 받아와서 트리에 넣기 - table 데이터
+    async function fetchTable(datname, b) {
+        await fetch('/query/tableList/' + datname)
+            .then(response => response.json())
+            .then(data => {
+                for (let i = 0; i < data.data.length; i++) {
+                    mySubdtree.add(++c, b, data.data[i].relname, '\"onclick = fetchModal(\''+ data.data[i].relname + '\',\'' + datname + '\') data-toggle=\"modal\" data-target=\"#informationModal', '', '', 'fa fa-table', 'fa fa-table');
+                }
+            });
+        //여기서 트리구조 표시 함수 실행해야 db와 table 둘다 있는 구조로 표시됨
+        showmenu();
+    }
 });
+
+//페이지의 태그가 모두 불러와지면 informationModal을 body태그에 append
+//DB스키마 보기에 있는 각각의 메뉴를 눌렀을 때 정보를 표시할 modal
+$(document).ready(function setObjectTable() {
+    table_str = "<div class=\"modal fade\" id=\"informationModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalLabel\" aria-hidden=\"true\"><div class=\"modal-dialog modal-lg\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><h5 class=\"modal-title\" id=\"ModalLabel\">테이블 정보</h5><button class=\"close\" type=\"button\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">×</span></button></div><div class=\"modal-body\"><table class=\"table table-bordered\"><thead><tr><th>칼럼 명</th><th>타입</th><th>PK</th></tr></thead><tbody id='modal-Tbody'></tbody></table></div><div class=\"modal-footer\"><button class=\"btn btn-primary\" type=\"button\" data-dismiss=\"modal\">확인</button></div></div></div></div>";
+    $(document.body).append(table_str);
+});
+
+//DB스키마 보기에 있는 각각의 메뉴를 눌렀을 때 onclick으로 이 함수가 호출되어 테이블 정보를 넣어 줌
+async function fetchModal(relname, datname) {
+    var table = document.getElementById("modal-Tbody");
+    var modal_str = '';
+
+    await fetch('/infoTable/' + relname + '/' + datname)
+        .then(response => response.json())
+        .then(data => {
+            for(let i=0; i<data.data.length; i++) {
+                if(data.data[i].primary_key == 'PK')
+                    data.data[i].primary_key = 'O';
+                modal_str += "<tr><td>" + data.data[i].column_name + "</td><td>" + data.data[i].data_type + "</td><td>" + data.data[i].primary_key + "</td></tr>";
+            }
+        });
+
+    table.innerHTML = modal_str;
+}
+
+//메뉴를 전환해주는 함수, localStorage 이용함
+function switchmenu() {
+    var value = localStorage.getItem("MENU_VALUE");
+    if(value == "main") {
+        localStorage.setItem("MENU_VALUE", "sub");
+        showmenu();
+    }
+    else {
+        localStorage.setItem("MENU_VALUE", "main");
+        showmenu();
+    }
+}
+
+//사이드바에 트리구조 표시해주는 함수, 현재 표시된 메뉴에 따라 모두 펼치기, 접기의 대상도 변경해 줌
+function showmenu() {
+    var value = localStorage.getItem("MENU_VALUE");
+
+    if(!value)
+        localStorage.setItem("MENU_VALUE", "main");
+
+    if(value == "main") {
+        document.getElementById('dTreeview').innerHTML = myMaindtree;
+        document.querySelector("#openAll").href = "javascript: myMaindtree.openAll();"
+        document.querySelector("#closeAll").href = "javascript: myMaindtree.closeAll();"
+    }
+    else {
+        document.getElementById('dTreeview').innerHTML = mySubdtree;
+        document.querySelector("#openAll").href = "javascript: mySubdtree.openAll();"
+        document.querySelector("#closeAll").href = "javascript: mySubdtree.closeAll();"
+    }
+}
